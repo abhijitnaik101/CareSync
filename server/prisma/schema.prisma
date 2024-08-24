@@ -1,0 +1,82 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum appointType {
+  IPD
+  OPD
+}
+
+model hospital {
+  id          Int         @id @default(autoincrement())
+  name        String
+  services    String[]
+  admin       admin[]
+  doctors     doctor[]
+  patients    patient[]
+  receptions  reception[]
+  inventoryman inventoryman[]
+}
+
+model admin {
+  id          Int         @id @default(autoincrement())
+  name        String
+  email       String      @unique
+  password    String
+  hospitalId  Int
+  hospital    hospital    @relation(fields: [hospitalId], references: [id])
+}
+
+model doctor {
+  id          Int         @id @default(autoincrement())
+  name        String
+  email       String      @unique
+  password    String
+  department  String
+  specialties String[]
+  hospitalId  Int
+  hospital    hospital    @relation(fields: [hospitalId], references: [id])
+}
+
+model patient {
+  id          Int         @id @default(autoincrement())
+  name        String
+  email       String      @unique
+  age         Int
+  bloodtype   String?
+  password    String
+  hospitalId  Int
+  hospital    hospital?    @relation(fields: [hospitalId], references: [id])
+  receptions  reception[]
+}
+
+model reception {
+  id          Int         @id @default(autoincrement())
+  hospitalId  Int
+  hospital    hospital    @relation(fields: [hospitalId], references: [id])
+  appointmentdate DateTime? @db.Date
+  attended    Boolean     @default(false)
+  type        appointType @default(OPD)
+  patientId   Int?
+  patient     patient?    @relation(fields: [patientId], references: [id])
+}
+
+model inventoryman {
+  id          Int         @id @default(autoincrement())
+  name        String
+  email       String      @unique
+  password    String
+  hospitalId  Int
+  hospital    hospital    @relation(fields: [hospitalId], references: [id])
+}

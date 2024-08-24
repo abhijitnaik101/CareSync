@@ -1,0 +1,19 @@
+{
+  "name": "caresync-backend",
+  "version": "1.0.0",
+  "description": "Backend server and Database",
+  "main": "index.js",
+  "scripts": {
+    "migrate": "npx prisma migrate dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/abhijitnaik101/CareSync"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^5.18.0",
+    "prisma": "^5.18.0"
+  }
+}
