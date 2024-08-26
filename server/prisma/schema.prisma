@@ -18,65 +18,129 @@ enum appointType {
   OPD
 }
 
+enum gender {
+  MALE
+  FEMALE
+  TRANS
+}
+
 model hospital {
-  id          Int         @id @default(autoincrement())
+  id          Int            @id @default(autoincrement())
   name        String
   services    String[]
   admin       admin[]
   doctors     doctor[]
   patients    patient[]
-  receptions  reception[]
+  receptionists  receptionist[]
+  tickets     ticket[]
   inventoryman inventoryman[]
+  inventory   inventory[]
+  queues      queue[]
 }
 
 model admin {
-  id          Int         @id @default(autoincrement())
+  id          Int            @id @default(autoincrement())
   name        String
-  email       String      @unique
+  email       String         @unique
   password    String
   hospitalId  Int
-  hospital    hospital    @relation(fields: [hospitalId], references: [id])
+  hospital    hospital       @relation(fields: [hospitalId], references: [id])
 }
 
 model doctor {
-  id          Int         @id @default(autoincrement())
+  id          Int            @id @default(autoincrement())
   name        String
-  email       String      @unique
+  email       String         @unique
   password    String
   department  String
-  specialties String[]
+  specialty   String
+  descripton  String?
+  workinghrs  String?
+  workingdays Int
+  averageTreatmentTime Int   @default(5) // Average treatment time in minutes
   hospitalId  Int
-  hospital    hospital    @relation(fields: [hospitalId], references: [id])
+  hospital    hospital       @relation(fields: [hospitalId], references: [id])
+  queues      queue[]
+  futureReferences futureReference[]
 }
 
 model patient {
-  id          Int         @id @default(autoincrement())
+  id          Int            @id @default(autoincrement())
   name        String
-  email       String      @unique
+  email       String         @unique
   age         Int
   bloodtype   String?
+  contact     String
   password    String
-  hospitalId  Int
-  hospital    hospital?    @relation(fields: [hospitalId], references: [id])
-  receptions  reception[]
+  ticket      ticket[]
+  hospitalId  Int?
+  hospital    hospital?      @relation(fields: [hospitalId], references: [id])
+  futureReferences futureReference[]
 }
 
-model reception {
-  id          Int         @id @default(autoincrement())
+model receptionist {
+  id          Int            @id @default(autoincrement())
   hospitalId  Int
-  hospital    hospital    @relation(fields: [hospitalId], references: [id])
-  appointmentdate DateTime? @db.Date
-  attended    Boolean     @default(false)
-  type        appointType @default(OPD)
+  hospital    hospital       @relation(fields: [hospitalId], references: [id])
+  name        String
+  email       String         @unique
+  password    String
+  timestamp   DateTime       @db.Timestamptz() @default(now())
+}
+
+model ticket {
+  id          Int            @id @default(autoincrement())
+  hospitalId  Int
+  hospital    hospital       @relation(fields: [hospitalId], references: [id])
+  name        String
+  age         Int
+  gender       gender
+  appointType  appointType
+  doctorId    Int?
   patientId   Int?
-  patient     patient?    @relation(fields: [patientId], references: [id])
+  patient     patient?       @relation(fields: [patientId], references: [id])
+  queue       queue[]
 }
 
 model inventoryman {
-  id          Int         @id @default(autoincrement())
+  id          Int            @id @default(autoincrement())
   name        String
-  email       String      @unique
+  email       String         @unique
   password    String
   hospitalId  Int
-  hospital    hospital    @relation(fields: [hospitalId], references: [id])
+  hospital    hospital       @relation(fields: [hospitalId], references: [id])
+}
+
+model inventory {
+  id          Int            @id @default(autoincrement())
+  hospitalId  Int
+  hospital    hospital       @relation(fields: [hospitalId], references: [id])
+  name        String
+  quantity    Float
+  price       Float
+  mfgdate     DateTime      @db.Date
+  expDate     DateTime      @db.Date
+  category    String
+}
+
+model queue {
+  id          Int            @id @default(autoincrement())
+  hospitalId  Int
+  hospital    hospital       @relation(fields: [hospitalId], references: [id])
+  doctorId    Int
+  doctor      doctor         @relation(fields: [doctorId], references: [id])
+  position    Int            // Patient's position in the queue
+  appointmentDate DateTime   @db.Date
+  ticketId    Int
+  ticket      ticket         @relation(fields: [ticketId], references: [id])
+}
+
+model futureReference {
+  id          Int            @id @default(autoincrement())
+  doctorId    Int
+  doctor      doctor         @relation(fields: [doctorId], references: [id])
+  patientId   Int
+  patient     patient        @relation(fields: [patientId], references: [id])
+  futureAppointmentDate DateTime @db.Date
+  notes       String?
 }
