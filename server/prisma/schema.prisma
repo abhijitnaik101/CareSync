@@ -28,6 +28,10 @@ model hospital {
   id          Int            @id @default(autoincrement())
   name        String
   services    String[]
+  adminPass   String
+  doctorPass  String
+  receptionistPass String
+  inventoryPass String
   admin       admin[]
   doctors     doctor[]
   patients    patient[]
@@ -131,6 +135,7 @@ model queue {
   doctor      doctor         @relation(fields: [doctorId], references: [id])
   position    Int            // Patient's position in the queue
   appointmentDate DateTime   @db.Date
+  pending     Boolean        @default(false)
   ticketId    Int
   ticket      ticket         @relation(fields: [ticketId], references: [id])
 }
