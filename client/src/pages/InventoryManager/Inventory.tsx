@@ -1,7 +1,28 @@
 import React, { useState } from "react";
 import MedicineDetail from "./MedicineDetail"; // Adjust the import path as needed
 
-const MedicineList = ({ medicines }) => {
+
+const medicines = [
+  { id: 1, name: "Paracetamol", price: 40, quantity: 45, expiry: "12/2025", type: "tablets" },
+  { id: 2, name: "Ibuprofen", price: 50, quantity: 30, expiry: "10/2024", type: "capsules" },
+  { id: 3, name: "Amoxicillin", price: 60, quantity: 20, expiry: "08/2024", type: "tablets" },
+  { id: 4, name: "Cetirizine", price: 35, quantity: 50, expiry: "07/2026", type: "tablets" },
+  { id: 5, name: "Metformin", price: 70, quantity: 25, expiry: "05/2025", type: "tablets" },
+  { id: 6, name: "Loratadine", price: 55, quantity: 40, expiry: "06/2025", type: "tablets" },
+  { id: 7, name: "Omeprazole", price: 80, quantity: 15, expiry: "01/2024", type: "capsules" },
+  { id: 8, name: "Amlodipine", price: 90, quantity: 22, expiry: "03/2024", type: "tablets" },
+  { id: 9, name: "Hydrochlorothiazide", price: 65, quantity: 18, expiry: "11/2024", type: "tablets" },
+  { id: 10, name: "Simvastatin", price: 75, quantity: 27, expiry: "02/2025", type: "tablets" },
+  { id: 11, name: "Vitamin C Powder", price: 25, quantity: 100, expiry: "09/2025", type: "powders" },
+  { id: 12, name: "Anti-Itch Cream", price: 45, quantity: 50, expiry: "12/2025", type: "creams" },
+  { id: 13, name: "Antibiotic Ointment", price: 40, quantity: 35, expiry: "04/2025", type: "ointments" },
+  { id: 14, name: "Insulin Injection", price: 120, quantity: 10, expiry: "06/2024", type: "injectables" },
+  { id: 15, name: "Hydrocortisone Gel", price: 50, quantity: 25, expiry: "08/2025", type: "gels" },
+  { id: 16, name: "Nasal Drops", price: 30, quantity: 60, expiry: "11/2024", type: "drops" },
+  { id: 17, name: "Antiseptic Gel", price: 55, quantity: 40, expiry: "03/2025", type: "gels" }
+];
+
+const Inventory = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedType, setSelectedType] = useState("");
   const [selectedMedicine, setSelectedMedicine] = useState(null);
@@ -25,27 +46,7 @@ const MedicineList = ({ medicines }) => {
 
   return (
     <div className="flex h-screen">
-      <div className="bg-gray-800 w-1/4 p-4 text-white">
-        <h1 className="text-xl font-bold mb-4">Dashboard</h1>
-        <ul className="list-none p-0">
-          <li className="mb-2">
-            <a href="#" className="block py-2 px-4 rounded-md hover:bg-gray-700">
-              Appointment
-            </a>
-          </li>
-          <li className="mb-2">
-            <a href="#" className="block py-2 px-4 rounded-md hover:bg-gray-700">
-              Profile
-            </a>
-          </li>
-          <li className="mb-2">
-            <a href="#" className="block py-2 px-4 rounded-md hover:bg-gray-700">
-              Notifications
-            </a>
-          </li>
-        </ul>
-      </div>
-      <div className="bg-gray-100 w-3/4 p-4">
+      <div className="bg-gray-100 w-full p-4">
         <div className="flex justify-between mb-4">
           <div className="flex items-center">
             <input
@@ -155,4 +156,4 @@ const MedicineList = ({ medicines }) => {
   );
 };
 
-export default MedicineList;
+export default Inventory;

@@ -11,7 +11,8 @@ interface AdministratorWardProps {
   patients: Patient[];
 }
 
-const AdministraterWard: React.FC<AdministratorWardProps> = ({ patients }) => {
+
+const AdminWard: React.FC<AdministratorWardProps> = ({ patients }) => {
   return (
     <div className="flex">
       {/* Sidebar */}
@@ -116,4 +117,4 @@ const AdministraterWard: React.FC<AdministratorWardProps> = ({ patients }) => {
   );
 };
 
-export default AdministraterWard;
+export default AdminWard;

@@ -39,7 +39,7 @@ const appointmentsData = [
   },
 ];
 
-const HospitalNotification: React.FC = () => {
+const PatientNotification: React.FC = () => {
   const [selectedPeriod, setSelectedPeriod] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [appointments, setAppointments] = useState(appointmentsData);
@@ -226,4 +226,4 @@ const HospitalNotification: React.FC = () => {
   );
 };
 
-export default HospitalNotification;
+export default PatientNotification;

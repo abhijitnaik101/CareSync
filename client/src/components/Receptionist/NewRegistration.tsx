@@ -40,7 +40,7 @@ const NewRegistration: React.FC<NewRegistrationProps> = ({ onNewRegistration }) 
     console.log("Form Data Submitted:", formData);
     onNewRegistration(formData);
 
-    navigate("/registration");
+    navigate("/receptionist/dashboard");
   };
 
   return (
@@ -48,7 +48,7 @@ const NewRegistration: React.FC<NewRegistrationProps> = ({ onNewRegistration }) 
       <div className="flex justify-end">
         <button
           className="bg-transparent border-none text-2xl cursor-pointer"
-          onClick={() => navigate("/registration")}
+          onClick={() => navigate("/receptionist/dashboard")}
         >
           &#x2715;
         </button>

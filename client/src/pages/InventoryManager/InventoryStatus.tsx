@@ -1,6 +1,6 @@
 import React from "react";
 
-interface MedicineTrackProps {
+interface InventoryStatusProps {
   name: string;
   supplier: string;
   arrival: string;
@@ -9,14 +9,9 @@ interface MedicineTrackProps {
   to: string;
 }
 
-const MedicineTrack: React.FC<MedicineTrackProps> = ({
-  name,
-  supplier,
-  arrival,
-  status,
-  from,
-  to,
-}) => {
+
+
+const InventoryStatus: React.FC<InventoryStatusProps> = ({name, supplier, arrival, status, from, to}) => {
   // Calculate width based on status
   const getProgressWidth = () => {
     switch (status) {
@@ -113,4 +108,4 @@ const MedicineTrack: React.FC<MedicineTrackProps> = ({
   );
 };
 
-export default MedicineTrack;
+export default InventoryStatus;
