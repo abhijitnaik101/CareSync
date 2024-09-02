@@ -1,25 +1,143 @@
 import React, { useState } from "react";
 import MedicineDetail from "./MedicineDetail"; // Adjust the import path as needed
 
-
 const medicines = [
-  { id: 1, name: "Paracetamol", price: 40, quantity: 45, expiry: "12/2025", type: "tablets" },
-  { id: 2, name: "Ibuprofen", price: 50, quantity: 30, expiry: "10/2024", type: "capsules" },
-  { id: 3, name: "Amoxicillin", price: 60, quantity: 20, expiry: "08/2024", type: "tablets" },
-  { id: 4, name: "Cetirizine", price: 35, quantity: 50, expiry: "07/2026", type: "tablets" },
-  { id: 5, name: "Metformin", price: 70, quantity: 25, expiry: "05/2025", type: "tablets" },
-  { id: 6, name: "Loratadine", price: 55, quantity: 40, expiry: "06/2025", type: "tablets" },
-  { id: 7, name: "Omeprazole", price: 80, quantity: 15, expiry: "01/2024", type: "capsules" },
-  { id: 8, name: "Amlodipine", price: 90, quantity: 22, expiry: "03/2024", type: "tablets" },
-  { id: 9, name: "Hydrochlorothiazide", price: 65, quantity: 18, expiry: "11/2024", type: "tablets" },
-  { id: 10, name: "Simvastatin", price: 75, quantity: 27, expiry: "02/2025", type: "tablets" },
-  { id: 11, name: "Vitamin C Powder", price: 25, quantity: 100, expiry: "09/2025", type: "powders" },
-  { id: 12, name: "Anti-Itch Cream", price: 45, quantity: 50, expiry: "12/2025", type: "creams" },
-  { id: 13, name: "Antibiotic Ointment", price: 40, quantity: 35, expiry: "04/2025", type: "ointments" },
-  { id: 14, name: "Insulin Injection", price: 120, quantity: 10, expiry: "06/2024", type: "injectables" },
-  { id: 15, name: "Hydrocortisone Gel", price: 50, quantity: 25, expiry: "08/2025", type: "gels" },
-  { id: 16, name: "Nasal Drops", price: 30, quantity: 60, expiry: "11/2024", type: "drops" },
-  { id: 17, name: "Antiseptic Gel", price: 55, quantity: 40, expiry: "03/2025", type: "gels" }
+  {
+    id: 1,
+    name: "Paracetamol",
+    price: 40,
+    quantity: 45,
+    expiry: "12/2025",
+    type: "tablets",
+  },
+  {
+    id: 2,
+    name: "Ibuprofen",
+    price: 50,
+    quantity: 30,
+    expiry: "10/2024",
+    type: "capsules",
+  },
+  {
+    id: 3,
+    name: "Amoxicillin",
+    price: 60,
+    quantity: 20,
+    expiry: "08/2024",
+    type: "tablets",
+  },
+  {
+    id: 4,
+    name: "Cetirizine",
+    price: 35,
+    quantity: 50,
+    expiry: "07/2026",
+    type: "tablets",
+  },
+  {
+    id: 5,
+    name: "Metformin",
+    price: 70,
+    quantity: 25,
+    expiry: "05/2025",
+    type: "tablets",
+  },
+  {
+    id: 6,
+    name: "Loratadine",
+    price: 55,
+    quantity: 40,
+    expiry: "06/2025",
+    type: "tablets",
+  },
+  {
+    id: 7,
+    name: "Omeprazole",
+    price: 80,
+    quantity: 15,
+    expiry: "01/2024",
+    type: "capsules",
+  },
+  {
+    id: 8,
+    name: "Amlodipine",
+    price: 90,
+    quantity: 22,
+    expiry: "03/2024",
+    type: "tablets",
+  },
+  {
+    id: 9,
+    name: "Hydrochlorothiazide",
+    price: 65,
+    quantity: 18,
+    expiry: "11/2024",
+    type: "tablets",
+  },
+  {
+    id: 10,
+    name: "Simvastatin",
+    price: 75,
+    quantity: 27,
+    expiry: "02/2025",
+    type: "tablets",
+  },
+  {
+    id: 11,
+    name: "Vitamin C Powder",
+    price: 25,
+    quantity: 100,
+    expiry: "09/2025",
+    type: "powders",
+  },
+  {
+    id: 12,
+    name: "Anti-Itch Cream",
+    price: 45,
+    quantity: 50,
+    expiry: "12/2025",
+    type: "creams",
+  },
+  {
+    id: 13,
+    name: "Antibiotic Ointment",
+    price: 40,
+    quantity: 35,
+    expiry: "04/2025",
+    type: "ointments",
+  },
+  {
+    id: 14,
+    name: "Insulin Injection",
+    price: 120,
+    quantity: 10,
+    expiry: "06/2024",
+    type: "injectables",
+  },
+  {
+    id: 15,
+    name: "Hydrocortisone Gel",
+    price: 50,
+    quantity: 25,
+    expiry: "08/2025",
+    type: "gels",
+  },
+  {
+    id: 16,
+    name: "Nasal Drops",
+    price: 30,
+    quantity: 60,
+    expiry: "11/2024",
+    type: "drops",
+  },
+  {
+    id: 17,
+    name: "Antiseptic Gel",
+    price: 55,
+    quantity: 40,
+    expiry: "03/2025",
+    type: "gels",
+  },
 ];
 
 const Inventory = () => {
@@ -28,8 +146,10 @@ const Inventory = () => {
   const [selectedMedicine, setSelectedMedicine] = useState(null);
 
   // Filter medicines based on search term and selected type
-  const filteredMedicines = medicines.filter(medicine => {
-    const matchesName = medicine.name.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredMedicines = medicines.filter((medicine) => {
+    const matchesName = medicine.name
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
     const matchesType = selectedType === "" || medicine.type === selectedType;
     return matchesName && matchesType;
   });
@@ -45,7 +165,7 @@ const Inventory = () => {
   };
 
   return (
-    <div className="flex h-screen">
+    <div className="flex ">
       <div className="bg-gray-100 w-full p-4">
         <div className="flex justify-between mb-4">
           <div className="flex items-center">
@@ -60,7 +180,12 @@ const Inventory = () => {
               className="ml-2 px-3 py-2 rounded-md bg-blue-500 text-white"
               onClick={() => setSearchTerm(searchTerm)}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
                 <path
                   fillRule="evenodd"
                   d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
