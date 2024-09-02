@@ -28,3 +28,4 @@ build
 .env
 testfront
 venv
+__pycache__
