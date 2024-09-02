@@ -12,8 +12,8 @@ import MedicineOrder from "./pages/InventoryManager/InventoryOrder";
 import MedicineTrack from "./pages/InventoryManager/InventoryStatus";
 import Map from "./pages/Patient/Map";
 import HospitalSpecialization from "./pages/Patient/HospitalSpecialization";
-import HospitalHistory from "./pages/Patient/HospitalHistory";
-import HospitalNotification from "./pages/Patient/HospitalNotification";
+import HospitalHistory from "./pages/Patient/PatientHistory";
+import HospitalNotification from "./pages/Patient/PatientNotification";
 
 function App() {
   const orders = [
@@ -179,98 +179,7 @@ function App() {
     },
     // Other entries...
   ];
-  const historyItems = [
-    {
-      hospital: "Apollo Hospital",
-      doctor: "Anna Grace",
-      visitDate: "20/11/2024",
-      disease: "P.Versicolor",
-    },
-    {
-      hospital: "Fortis Hospital",
-      doctor: "John Smith",
-      visitDate: "15/10/2024",
-      disease: "Diabetes",
-    },
-    {
-      hospital: "AIIMS",
-      doctor: "Sophie Turner",
-      visitDate: "05/09/2024",
-      disease: "Hypertension",
-    },
-    {
-      hospital: "Max Healthcare",
-      doctor: "Robert Brown",
-      visitDate: "22/08/2024",
-      disease: "Asthma",
-    },
-    {
-      hospital: "Manipal Hospital",
-      doctor: "Olivia Williams",
-      visitDate: "10/07/2024",
-      disease: "Migraine",
-    },
-    {
-      hospital: "Medanta",
-      doctor: "Liam Johnson",
-      visitDate: "02/06/2024",
-      disease: "Covid-19",
-    },
-    {
-      hospital: "Sir Ganga Ram Hospital",
-      doctor: "Emily Davis",
-      visitDate: "28/05/2024",
-      disease: "Malaria",
-    },
-    {
-      hospital: "Columbia Asia",
-      doctor: "James Wilson",
-      visitDate: "18/04/2024",
-      disease: "Thyroid Disorder",
-    },
-    {
-      hospital: "Jupiter Hospital",
-      doctor: "Mia Moore",
-      visitDate: "12/03/2024",
-      disease: "Skin Allergy",
-    },
-    {
-      hospital: "Lilavati Hospital",
-      doctor: "Charlotte Taylor",
-      visitDate: "06/02/2024",
-      disease: "Pneumonia",
-    },
-    {
-      hospital: "Global Hospital",
-      doctor: "Benjamin Walker",
-      visitDate: "22/01/2024",
-      disease: "Heart Disease",
-    },
-    {
-      hospital: "Sunshine Hospital",
-      doctor: "Sophia Lee",
-      visitDate: "17/12/2023",
-      disease: "Arthritis",
-    },
-    {
-      hospital: "Rainbow Hospital",
-      doctor: "Michael Harris",
-      visitDate: "05/11/2023",
-      disease: "Eczema",
-    },
-    {
-      hospital: "Hiranandani Hospital",
-      doctor: "Isabella Clark",
-      visitDate: "25/10/2023",
-      disease: "Bronchitis",
-    },
-    {
-      hospital: "Saifee Hospital",
-      doctor: "Ethan Martinez",
-      visitDate: "10/09/2023",
-      disease: "Gastritis",
-    },
-  ];
+  
   const medicines = [
     { id: 1, name: "Paracetamol", price: 40, quantity: 45, expiry: "12/2025", type: "tablets" },
     { id: 2, name: "Ibuprofen", price: 50, quantity: 30, expiry: "10/2024", type: "capsules" },

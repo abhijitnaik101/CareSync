@@ -1,107 +1,163 @@
-import React from "react";
+import React, { useRef, useEffect, useState } from 'react';
+import mapboxgl from 'mapbox-gl';
+import { Geocoder } from "@mapbox/search-js-react";
+import SearchBox from './SearchBox';
+import HospitalLocations from './data.js';
 
-const Map: React.FC = () => {
+// Mapbox access token
+mapboxgl.accessToken = 'pk.eyJ1IjoiYWJoaWppdG5haWsiLCJhIjoiY2ptOXpvbzJpMDNxYTN2bXZwZm9ibWc4MCJ9.hl8pE-4Uf56VpiBBKIcjeQ';
+
+const MapComponent: React.FC = () => {
+  const mapContainer = useRef<HTMLDivElement | null>(null);
+  const map = useRef<mapboxgl.Map | null>(null);
+
+  const start: [number, number] = [85.776628, 20.275725];
+  const [endCoords, setEndCoords] = useState<[number, number] | null>(null); // Initially null
+
+  useEffect(() => {
+    if (map.current) return;
+
+    map.current = new mapboxgl.Map({
+      container: mapContainer.current!,
+      style: 'mapbox://styles/mapbox/streets-v12',
+      center: start,
+      zoom: 12
+    });
+
+    map.current.addControl(new mapboxgl.NavigationControl());
+
+    map.current.on('load', () => {
+      addStartPoint();
+
+      // Add click event listener to the map
+      // map.current!.on('click', (e) => {
+      //   const coords: [number, number] = [e.lngLat.lng, e.lngLat.lat];
+      //   setEndCoords(coords); // Update endCoords with clicked point coordinates
+      // });
+    });
+  }, []);
+
+  useEffect(() => {
+    if (endCoords) {
+      updateEndPoint(endCoords);
+      getRoute(endCoords);
+    }
+  }, [endCoords]);
+
+  const addStartPoint = () => {
+    map.current!.addLayer({
+      id: 'start-point',
+      type: 'circle',
+      source: {
+        type: 'geojson',
+        data: {
+          type: 'FeatureCollection',
+          features: [{
+            type: 'Feature',
+            geometry: {
+              type: 'Point',
+              coordinates: start
+            }
+          }]
+        }
+      },
+      paint: {
+        'circle-radius': 10,
+        'circle-color': '#3887be'
+      }
+    });
+  };
+
+  const addEndPoint = (coords: [number, number]) => {
+    const end = {
+      type: 'FeatureCollection',
+      features: [{
+        type: 'Feature',
+        geometry: {
+          type: 'Point',
+          coordinates: coords
+        }
+      }]
+    };
+
+    if (map.current!.getLayer('end-point')) {
+      (map.current!.getSource('end-point') as mapboxgl.GeoJSONSource).setData(end);
+    } else {
+      map.current!.addLayer({
+        id: 'end-point',
+        type: 'circle',
+        source: {
+          type: 'geojson',
+          data: end
+        },
+        paint: {
+          'circle-radius': 10,
+          'circle-color': '#f30'
+        }
+      });
+    }
+  };
+
+  const updateEndPoint = (coords: [number, number]) => {
+    addEndPoint(coords);
+  };
+
+  const getRoute = async (end: [number, number]) => {
+    const query = await fetch(
+      `https://api.mapbox.com/directions/v5/mapbox/cycling/${start[0]},${start[1]};${end[0]},${end[1]}?steps=true&geometries=geojson&access_token=${mapboxgl.accessToken}`,
+      { method: 'GET' }
+    );
+    const json = await query.json();
+    const data = json.routes[0];
+
+    const distance = data.distance;
+    console.log(`Distance between start and end point: ${distance} meters`);
+
+    const route = data.geometry.coordinates;
+    const geojson = {
+      type: 'Feature',
+      properties: {},
+      geometry: {
+        type: 'LineString',
+        coordinates: route
+      }
+    };
+
+    if (map.current!.getSource('route')) {
+      (map.current!.getSource('route') as mapboxgl.GeoJSONSource).setData(geojson);
+    } else {
+      map.current!.addLayer({
+        id: 'route',
+        type: 'line',
+        source: {
+          type: 'geojson',
+          data: geojson
+        },
+        layout: {
+          'line-join': 'round',
+          'line-cap': 'round'
+        },
+        paint: {
+          'line-color': '#1E201E',
+          'line-width': 5,
+          'line-opacity': 0.75
+        }
+      });
+    }
+  };
+
   return (
-    <div className="flex h-screen bg-gray-100">
-      {/* Sidebar */}
-      <aside className="w-1/4 bg-gray-900 text-white">
-        <nav className="flex flex-col p-6 space-y-2">
-          <a href="#" className="py-2 text-lg hover:bg-gray-700">
-            Map
-          </a>
-          <a href="#" className="py-2 text-lg hover:bg-gray-700">
-            Appointment
-          </a>
-          <a href="#" className="py-2 text-lg hover:bg-gray-700">
-            History
-          </a>
-          <a href="#" className="py-2 text-lg hover:bg-gray-700">
-            Notifications
-          </a>
-        </nav>
-      </aside>
-
-      {/* Main Content */}
-      <div className="w-3/4 p-6">
-        <h1 className="text-2xl font-bold mb-6">Find Hospitals</h1>
-
-        {/* Map and Search */}
-        <div className="bg-white rounded-lg shadow p-6 relative">
-          <div className="relative w-full h-[500px] bg-gray-200 rounded-md mb-4">
-            <img
-              src="map-placeholder.jpg" // Replace with actual map image or map component
-              alt="Map"
-              className="w-full h-full object-cover rounded-md"
-            />
-            <div className="absolute top-4 left-4 bg-white rounded-full shadow-lg p-2 flex items-center">
-              <input
-                type="text"
-                placeholder="Search hospitals"
-                className="px-4 py-2 border rounded-l-lg focus:outline-none"
-              />
-              <button className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded-r-lg">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  className="w-6 h-6 text-gray-600"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  />
-                </svg>
-              </button>
-            </div>
-          </div>
-
-          {/* Bottom Search Bar */}
-          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-3/4 bg-white rounded-full shadow-lg p-2 flex items-center">
-            <button className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded-l-lg">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                className="w-6 h-6 text-gray-600"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
-            </button>
-            <input
-              type="text"
-              placeholder="Specialty"
-              className="px-4 py-2 border-t border-b border-r rounded-r-lg focus:outline-none w-full"
-            />
-            <button className="p-2 bg-gray-300 hover:bg-gray-400 rounded-full ml-2">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                className="w-6 h-6 text-gray-600"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M20 12H4"
-                />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
+    <div>
+      <Geocoder
+        accessToken={mapboxgl.accessToken}
+        map={map.current!}
+        mapboxgl={mapboxgl}
+      />
+      <SearchBox coordsCallback={(coords) => setEndCoords(coords)} />
+      <div ref={mapContainer} className='w-full h-screen' />
+      <div className='h-24 w-full bg-red-400'>End-coord: {endCoords?.join(', ')}</div>
     </div>
   );
 };
 
-export default Map;
+export default MapComponent;

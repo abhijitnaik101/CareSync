@@ -4,6 +4,7 @@ import Dashboard from '../components/Dashboard';
 import { Routes, Route } from 'react-router-dom';
 import PatientHistory from '../pages/Patient/PatientHistory';
 import PatientProfile from '../pages/Patient/PatientProfile';
+import Map from '../pages/Patient/Map';
 
 const PatientLayout: React.FC = () => {
   const patientLinks = [
@@ -13,13 +14,15 @@ const PatientLayout: React.FC = () => {
   ];
 
   return (
-    <div className="flex">
+    <div className="flex w-full">
       <Sidebar links={patientLinks} />
+      <div className='w-full'>
       <Routes>
-        <Route path="map" element={<Dashboard title="Patient Profile" />} />
+        <Route path="map" element={<Map/>} />
         <Route path="medical-history" element={<PatientHistory/>} />
         <Route path="profile" element={<PatientProfile/>} />
       </Routes>
+      </div>
     </div>
   );
 };
