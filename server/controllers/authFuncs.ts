@@ -137,8 +137,8 @@ export const registerUser = async (req: Request, res: Response) => {
                 return res.status(400).json({ message: 'Invalid role' });
         }
 
-        const token = generateToken(user!.id, role);
-        res.json({ token });
+        const token = generateToken(user.id, role);
+        res.json({ token, user: {...user, password: null} });
     } catch (error) {
         res.status(500).json({ message: 'User registration failed' });
     }
@@ -154,19 +154,19 @@ export const loginUser = async (req: Request, res: Response) => {
         let user: any; // Use any to handle different user types
 
         switch (role) {
-            case 'admin':
+            case 'Admin':
                 user = await prisma.admin.findUnique({ where: { email } });
                 break;
-            case 'doctor':
+            case 'Doctor':
                 user = await prisma.doctor.findUnique({ where: { email } });
                 break;
-            case 'patient':
+            case 'Patient':
                 user = await prisma.patient.findUnique({ where: { email } });
                 break;
-            case 'inventoryman':
+            case 'Inventoryman':
                 user = await prisma.inventoryman.findUnique({ where: { email } });
                 break;
-            case 'reception':
+            case 'Receptionist':
                 user = await prisma.receptionist.findUnique({ where: { email } });
                 break;
             default:
@@ -180,7 +180,7 @@ export const loginUser = async (req: Request, res: Response) => {
 
         // Generate token based on user id and role
         const token = generateToken(user.id, role);
-        res.json({ token });
+        res.json({ token, user: {...user, password: null} });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Login failed' });
