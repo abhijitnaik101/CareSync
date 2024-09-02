@@ -1,80 +1,54 @@
-import { PrismaClient } from '@prisma/client';
+import { Request, Response } from 'express';
+import { prisma } from '..'; // Assuming you've set up Prisma client
 
-const prisma = new PrismaClient();
+// Function to handle reordering of medicines based on expiration date
+export const reorderByExpiry = async (req: Request, res: Response) => {
+    try {
+        const { medicineId } = req.body;
 
-// Function to reorder items after expiry
-async function reorderAfterExpiry() {
-    const today = new Date();
-
-    // Find expired items
-    const expiredItems = await prisma.inventory.findMany({
-        where: {
-            expDate: {
-                lt: today, // Expiry date is less than today
-            },
-            quantity: {
-                gt: 0, // Ensure quantity is greater than 0 before reordering
-            },
-        },
-    });
-
-    for (const item of expiredItems) {
-        console.log(`Reordering expired item: ${item.name}`);
-
-        // Reorder logic
-        // Here, we simply update the quantity and reset expiry for demonstration purposes
-        await prisma.inventory.update({
-            where: { id: item.id },
-            data: {
-                quantity: 100, // Default reorder quantity
-                // Optionally, reset the expDate or any other logic needed
-            },
+        // Find the medicine by ID
+        const medicine = await prisma.inventory.findUnique({
+            where: { id: medicineId },
         });
 
-        console.log(`Item ${item.name} reordered successfully.`);
+        // Check if the medicine exists and if it's expired
+        if (medicine && new Date(medicine.expDate) < new Date()) {
+            // Logic to reorder the medicine, for example, by increasing the quantity
+            const updatedMedicine = await prisma.inventory.update({
+                where: { id: medicineId },
+                data: { quantity: { increment: 10 } }, // Reorder by adding 10 units
+            });
+            return res.json(updatedMedicine);
+        }
+
+        return res.status(400).json({ message: 'Medicine not expired or not found' });
+    } catch (error) {
+        return res.status(500).json({ error: 'Error reordering medicine by expiration' });
     }
-}
+};
 
-// Function to reorder items with low stock
-async function reorderLowStock() {
-    const lowStockThreshold = 5; // Define your threshold for low stock
+// Function to handle reordering of medicines based on stock depletion
+export const reorderByOutstock = async (req: Request, res: Response) => {
+    try {
+        const { medicineId } = req.body;
 
-    // Find items with low stock
-    const lowStockItems = await prisma.inventory.findMany({
-        where: {
-            quantity: {
-                lt: lowStockThreshold,
-            },
-        },
-    });
-
-    for (const item of lowStockItems) {
-        console.log(`Reordering low stock item: ${item.name}`);
-
-        // Reorder logic
-        // For demonstration, we're assuming we reorder to a default quantity
-        await prisma.inventory.update({
-            where: { id: item.id },
-            data: {
-                quantity: 100, // Default reorder quantity
-            },
+        // Find the medicine by ID
+        const medicine = await prisma.inventory.findUnique({
+            where: { id: medicineId },
         });
 
-        console.log(`Item ${item.name} reordered successfully.`);
+        // Check if the medicine exists and if it's out of stock
+        if (medicine && medicine.quantity <= 0) {
+            // Logic to reorder the medicine, for example, by increasing the quantity
+            const updatedMedicine = await prisma.inventory.update({
+                where: { id: medicineId },
+                data: { quantity: { increment: 10 } }, // Reorder by adding 10 units
+            });
+            return res.json(updatedMedicine);
+        }
+
+        return res.status(400).json({ message: 'Medicine not out of stock or not found' });
+    } catch (error) {
+        return res.status(500).json({ error: 'Error reordering medicine by stock depletion' });
     }
-}
-
-// Main function to perform the reordering tasks
-async function performReorders() {
-    await reorderAfterExpiry();
-    await reorderLowStock();
-}
-
-// Run the reordering tasks
-performReorders()
-    .catch(e => {
-        console.error('Error occurred during reordering:', e);
-    })
-    .finally(async () => {
-        await prisma.$disconnect();
-    });
+};

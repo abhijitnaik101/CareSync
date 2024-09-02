@@ -6,6 +6,7 @@ import { ticketRouter } from './routes/ticket_routes';
 import { queueRouter } from './routes/opdqueue_routes';
 import { bedManage } from './routes/bedManageRoutes';
 import { mlRouter } from './routes/mlRoutes';
+import inventoryRouter from './routes/inventoryRoutes';
 
 dotenv.config();
 
@@ -17,6 +18,7 @@ app.use('/booking', ticketRouter);
 app.use('/queuing', queueRouter);
 app.use('/beds', bedManage);
 app.use('/recommend', mlRouter);
+app.use('./inventory',inventoryRouter)
 
 const PORT = process.env.PORT || 3000;
 export const prisma = new PrismaClient();
