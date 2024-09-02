@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import MedicineTrack from "./MedicineTrack";
+import MedicineTrack from "./InventoryStatus";
 
-interface MedicineOrderProps {
+interface InventoryOrderProps {
   orders: {
     name: string;
     supplier: string;
@@ -10,15 +10,38 @@ interface MedicineOrderProps {
     status: string;
   }[];
 }
-
-const MedicineOrder: React.FC<MedicineOrderProps> = ({ orders }) => {
+const orders = [
+  {
+    name: "Aspirin",
+    supplier: "Wellness Meds",
+    category: "Medicine",
+    arrival: "4 days",
+    status: "arrived",
+  },
+  {
+    name: "Amoxicillin",
+    supplier: "CarePlus Pharmacy",
+    category: "Antibiotic",
+    arrival: "2 days",
+    status: "shipped",
+  },
+  {
+    name: "Metformin",
+    supplier: "Diabetes Care",
+    category: "Medicine",
+    arrival: "6 days",
+    status: "processing",
+  },
+  
+];
+const InventoryOrder: React.FC<InventoryOrderProps> = () => {
   const [selectedOrder, setSelectedOrder] = useState<
-    null | MedicineOrderProps["orders"][0]
+    null | InventoryOrderProps["orders"][0]
   >(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<string>("");
 
-  const handleTrackClick = (order: MedicineOrderProps["orders"][0]) => {
+  const handleTrackClick = (order: InventoryOrderProps["orders"][0]) => {
     setSelectedOrder(order);
   };
 
@@ -47,24 +70,6 @@ const MedicineOrder: React.FC<MedicineOrderProps> = ({ orders }) => {
 
   return (
     <div className="flex h-screen bg-gray-100">
-      {/* Sidebar */}
-      <aside className="w-1/4 bg-gray-900 text-white">
-        <nav className="flex flex-col p-6">
-          <a href="#" className="py-2 text-lg hover:bg-gray-700">
-            Dashboard
-          </a>
-          <a href="#" className="py-2 text-lg hover:bg-gray-700">
-            Appointment
-          </a>
-          <a href="#" className="py-2 text-lg hover:bg-gray-700 bg-gray-800">
-            Orders
-          </a>
-          <a href="#" className="py-2 text-lg hover:bg-gray-700">
-            Notifications
-          </a>
-        </nav>
-      </aside>
-
       {/* Main Content */}
       <div className="w-3/4 p-6">
         {/* Header Buttons */}
@@ -183,4 +188,4 @@ const MedicineOrder: React.FC<MedicineOrderProps> = ({ orders }) => {
   );
 };
 
-export default MedicineOrder;
+export default InventoryOrder;
