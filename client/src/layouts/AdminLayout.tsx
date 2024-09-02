@@ -22,19 +22,19 @@ const AdminLayout: React.FC = () => {
       name: "John Doe",
       bed: 101,
       gender: "Male",
-      status: "Stable",
+      status: "Available",
     },
     {
       name: "Jane Smith",
       bed: 202,
       gender: "Female",
-      status: "Critical",
+      status: "Occupied",
     },
     {
       name: "Robert Johnson",
       bed: 303,
       gender: "Male",
-      status: "Recovering",
+      status: "Available",
     },
   ];
 
