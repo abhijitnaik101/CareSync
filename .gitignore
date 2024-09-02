@@ -27,3 +27,4 @@ build
 # Environment variables
 .env
 testfront
+venv

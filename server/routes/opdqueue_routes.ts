@@ -9,7 +9,7 @@ queueRouter.get('/queues/status/active', getDocQueueStatus);
 
 queueRouter.get("queues/status/archive", getStatusArchive);
 
-queueRouter.delete("/queues/:doctorId", deleteQueueUser);
+queueRouter.delete("/queues", deleteQueueUser);
 
 queueRouter.put("/queues/mark-pending", putPending);
 

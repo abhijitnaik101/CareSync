@@ -40,6 +40,7 @@ model hospital {
   inventoryman inventoryman[]
   inventory   inventory[]
   queues      queue[]
+  ward        ward[]
 }
 
 model admin {
@@ -104,6 +105,9 @@ model ticket {
   patientId   Int?
   patient     patient?       @relation(fields: [patientId], references: [id])
   queue       queue[]
+  approved    Boolean        @default(false) 
+  wardId      Int?           // Reference to the ward assigned to the patient
+  ward        ward?          @relation(fields: [wardId], references: [id])
 }
 
 model inventoryman {
@@ -148,4 +152,15 @@ model futureReference {
   patient     patient        @relation(fields: [patientId], references: [id])
   futureAppointmentDate DateTime @db.Date
   notes       String?
+}
+
+model ward {
+  id             Int      @id @default(autoincrement())
+  hospitalId     Int
+  hospital       hospital @relation(fields: [hospitalId], references: [id])
+  name           String   // Name of the ward (e.g., "ICU", "General Ward")
+  totalBeds      Int      // Total number of beds in the ward
+  occupiedBeds   Int      // Number of beds currently occupied
+  availableBeds  Int      // Number of beds currently available
+  tickets        ticket[] // Relation to the ticket model
 }

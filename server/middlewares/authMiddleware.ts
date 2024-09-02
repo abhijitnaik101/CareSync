@@ -16,11 +16,16 @@ export const authenticate = (req: Request, res: Response, next: NextFunction) =>
   }
 };
 
-export const authorizeRoles = (...roles: string[]) => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    if (!roles.includes(req.user.role)) {
+export const authorizeReceptionist =  (req: Request, res: Response, next: NextFunction) => {
+    if (req.user.role != "Receptionist") {
       return res.status(403).json({ message: 'Forbidden' });
     }
     next();
-  };
+};
+
+export const authorizeAdmin =  (req: Request, res: Response, next: NextFunction) => {
+  if (req.user.role != "Admin") {
+    return res.status(403).json({ message: 'Forbidden' });
+  }
+  next();
 };
