@@ -39,7 +39,7 @@ const AdminLayout: React.FC = () => {
   ];
 
   return (
-    <div className="flex">
+    <div className="flex ">
       <Sidebar links={adminLinks} />
       <div className="flex-1 p-4">
         <Routes>
