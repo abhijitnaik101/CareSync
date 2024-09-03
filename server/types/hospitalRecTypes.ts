@@ -1,6 +1,6 @@
 import z from "zod";
 
-export const hospitalRecommendReq = z.object({
+export const hospitalRecommendRequest = z.object({
     Disease: z.string(),
     "Distance from AIIMS Bhubaneswar": z.number(),
     "Distance from IGKC Multispeciality hospital": z.number(),
@@ -18,7 +18,7 @@ export const hospitalRecommendReq = z.object({
     ])
 });
 
-export const waitTimeReq = z.object({
+export const waitTimeRequest = z.object({
     Hospital: z.string(),
     "Arrival Time": z.string(),
     "Day of the Week": z.union([

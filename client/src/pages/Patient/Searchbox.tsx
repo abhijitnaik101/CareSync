@@ -1,18 +1,18 @@
 // src/components/SearchBox.tsx
 import React, { useEffect, useState } from 'react';
+import { bhubaneswarHospitals } from '../../DB/HospitalLocations';
 
 interface Hospital {
+  hospital_id: number;
   name: string;
   coordinates: [number, number];
+  departments: {
+      department: string;
+      doctors: number[];
+  }[];
 }
 
-const hospitals: Hospital[] = [
-  { name: 'Apollo Hospitals', coordinates: [85.819348, 20.296059] },
-  { name: 'AIIMS Bhubaneswar', coordinates: [85.819619, 20.272411] },
-  { name: 'SUM Hospital', coordinates: [85.801390, 20.285620] },
-  { name: 'Kalinga Hospital', coordinates: [85.816028, 20.290069] },
-  { name: 'CARE Hospital', coordinates: [85.844437, 20.310586] },
-];
+const hospitals: Hospital[] = bhubaneswarHospitals;
 
 const SearchBox: React.FC = ({coordsCallback}) => {
   const [searchTerm, setSearchTerm] = useState('');

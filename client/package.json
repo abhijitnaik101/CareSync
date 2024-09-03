@@ -14,13 +14,12 @@
     "@headlessui/react": "^2.1.3",
     "@mapbox/mapbox-gl-geocoder": "^5.0.2",
     "@mapbox/search-js-react": "^1.0.0-beta.22",
+    "chart.js": "^4.4.4",
     "mapbox-gl": "^3.6.0",
     "react": "^18.3.1",
-<<<<<<< HEAD
     "react-autosuggest": "^10.1.0",
-=======
     "react-calendar": "^5.0.0",
->>>>>>> 86072a26dd36295fe3defb784b6628f1fb8f174b
+    "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.26.1",
     "recharts": "^2.12.7"

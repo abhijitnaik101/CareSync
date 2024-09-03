@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { AdminRequest, DocRequest, loginRequest, PatientRequest, ReceptionRequest, roleSchema } from "../types/userTypes";
+import { AdminRequest, DocRequest, loginRequest, PatientRequest, ReceptionRequest, roleSchema } from "./UserTypes";
 import { comparePassword, generateToken, hashPassword } from "../utils/auth";
 import { prisma } from "..";
 

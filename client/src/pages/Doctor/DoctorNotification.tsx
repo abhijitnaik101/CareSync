@@ -5,29 +5,29 @@ const DoctorNotification: React.FC = () => {
   const [activeNotification, setActiveNotification] = useState<string>('appointment');
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-4 ">
       <div className="bg-white shadow-lg rounded-lg p-6 mb-6">
-        <div className="flex border justify-between mb-4 border-b border-gray-300 pb-4">
+        <div className="flex items-center justify-start bg-slate-200 mb-4 p-2 rounded-md ">
           <button
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md"
+            className="mr-2 bg-blue-500 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg shadow-md"
             onClick={() => setActiveNotification('appointment')}
           >
             Appointment
           </button>
           <button
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md"
+            className="mr-2 bg-blue-500 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg shadow-md"
             onClick={() => setActiveNotification('test')}
           >
             Tests
           </button>
           <button
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md"
+            className="mr-2 bg-blue-500 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg shadow-md"
             onClick={() => setActiveNotification('administrative')}
           >
             Administrative
           </button>
           <button
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md"
+            className="mr-2 bg-blue-500 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg shadow-md"
             onClick={() => setActiveNotification('reminder')}
           >
             Reminder
@@ -36,7 +36,7 @@ const DoctorNotification: React.FC = () => {
         <div className="grid grid-cols-1 gap-4">
           {/* Conditional rendering based on activeNotification state */}
           {activeNotification === 'appointment' && (
-            <div className="bg-green-100 rounded-lg p-4 shadow-md">
+            <div className="bg-red-300 rounded-lg p-4 shadow-md">
               <h3 className="text-lg font-bold">Upcoming Appointments</h3>
               <p className="text-gray-700">
                 You have 3 upcoming appointments scheduled for today.

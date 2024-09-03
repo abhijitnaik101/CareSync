@@ -1,10 +1,12 @@
 import { Router } from "express";
-import { authenticatePatient } from "../middlewares/patientAuth";
-import { authenticate } from "../middlewares/authMiddleware";
-import { getHospitalRecommend, getWaitTimeRecommend } from "../controllers/mlFuncs";
+import { authenticatePatient } from "./patientAuth";
+import { authenticate } from "./authMiddleware";
+import { getHospitalRecommendations, getHospitalWaitTimes } from "./MLController";
 
 export const mlRouter = Router();
 
-mlRouter.get("/hospital", authenticate, authenticatePatient, getHospitalRecommend);
+// Get hospital recommendations
+mlRouter.get("/hospital", authenticate, authenticatePatient, getHospitalRecommendations);
 
-mlRouter.get("/waittime", getWaitTimeRecommend);
+// Get estimated waiting times for hospitals
+mlRouter.get("/waittime", getHospitalWaitTimes);

@@ -1,13 +1,13 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import authRoutes from './routes/authRoutes';
+import authRoutes from './routes/AuthRoutes';
 import { PrismaClient } from '@prisma/client';
-import { ticketRouter } from './routes/ticket_routes';
-import { queueRouter } from './routes/opdqueue_routes';
-import { bedManage } from './routes/bedManageRoutes';
-import { mlRouter } from './routes/mlRoutes';
-import inventoryRouter from './routes/inventoryRoutes';
-import { hospitalRoute } from './routes/hospitalroute';
+import { ticketRouter } from './routes/TicketRoutes';
+import { queueRouter } from './routes/OPDQueueRoutes';
+import { bedManage } from './routes/BedManageRoutes';
+import { mlRouter } from './routes/MLRoutes';
+import inventoryRouter from './routes/InventoryRoutes';
+import { hospitalRoute } from './routes/HospitalRoutes';
 
 dotenv.config();
 

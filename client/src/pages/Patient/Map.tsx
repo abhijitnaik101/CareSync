@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import { Geocoder } from "@mapbox/search-js-react";
 import SearchBox from './SearchBox';
-import HospitalLocations from './data.js';
+import Map from 'react-map-gl/dist/esm/components/map';
 
 // Mapbox access token
 mapboxgl.accessToken = 'pk.eyJ1IjoiYWJoaWppdG5haWsiLCJhIjoiY2ptOXpvbzJpMDNxYTN2bXZwZm9ibWc4MCJ9.hl8pE-4Uf56VpiBBKIcjeQ';
