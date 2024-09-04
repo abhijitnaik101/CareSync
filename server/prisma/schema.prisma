@@ -32,6 +32,7 @@ model hospital {
   doctorPass  String
   receptionistPass String
   inventoryPass String
+  coordinates Decimal[]      @db.Decimal(9, 6)
   admin       admin[]
   doctors     doctor[]
   patients    patient[]

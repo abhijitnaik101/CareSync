@@ -7,28 +7,40 @@ import { Request, Response } from "express";
  * @param req The Express request object containing the ticket ID and hospital ID.
  * @param res The Express response object for sending the response.
  */
-export const approveBedAndUpdateWard = async (req: Request, res: Response) => {
+export const approveBed = async (req: Request, res: Response) => {
   const ticketId = Number(req.params.ticketId);
   const { hospitalId } = req.body;
 
   try {
     // Use a Prisma transaction to ensure both updates are performed atomically
-    await prisma.$transaction([
-      prisma.ticket.update({
+      const ticket = await prisma.ticket.update({
         where: {
           id: ticketId,
           hospitalId,
         },
         data: { approved: true },
-      }),
-      prisma.ward.update({
-        where: { hospitalId }, // Assuming the ward is associated with the hospital
-        data: {
-          occupiedBeds: { increment: 1 },
-          availableBeds: { decrement: 1 },
-        },
-      }),
-    ]);
+      });
+
+      if (ticket.appointType == "OPD") {
+        const queueCount = await prisma.queue.count({
+          where: {
+            hospitalId,
+            doctorId: ticket.doctorId!,
+            appointmentDate: new Date().toISOString(),
+          },
+        });
+
+        const queue = await prisma.queue.create({
+          data: {
+            hospitalId,
+            doctorId: ticket.doctorId!,
+            position: queueCount + 1,
+            appointmentDate: new Date().toISOString(), // Use the provided date
+            pending: false,
+            ticketId: ticket.id,
+          },
+        });
+      }
 
     res.json({ message: "Ticket approved and bed assigned successfully" });
   } catch (error) {

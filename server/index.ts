@@ -9,6 +9,7 @@ const { mlRouter } = require('./routes/MLRoutes');
 const inventoryRouter = require('./routes/InventoryRoutes');
 const { hospitalRoute } = require('./routes/HospitalRoutes');
 
+
 dotenv.config();
 
 const app = express();

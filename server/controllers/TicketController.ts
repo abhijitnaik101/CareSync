@@ -5,7 +5,7 @@ import { ticketAppointRequest } from "./QueueServiceTypes";
 /**
  * Handles booking an appointment for a patient.
  *
- * This function creates a new ticket entry in the database and optionally adds the patient to the queue for an OPD (Outpatient Department) appointment.
+ * This function creates a new ticket entry in the database
  *
  * @param req The Express request object containing appointment details.
  * @param res The Express response object for sending the booking response.
@@ -33,42 +33,37 @@ export const bookAppointment = async (req: Request, res: Response) => {
       },
     });
 
-    let queuePosition = null;
-
-    // If it's an OPD appointment, add the patient to the queue
-    if (appointType === 'OPD') {
-      // Get the current queue count for the doctor on the selected date
-      const queueCount = await prisma.queue.count({
-        where: {
-          hospitalId,
-          doctorId,
-          appointmentDate: new Date(appointmentDate).toISOString(),
-        },
-      });
-
-      // Create a new queue entry for the patient
-      const queue = await prisma.queue.create({
-        data: {
-          hospitalId,
-          doctorId,
-          position: queueCount + 1,
-          appointmentDate: new Date(appointmentDate), // Use the provided date
-          pending: false,
-          ticketId: ticket.id,
-        },
-      });
-
-      queuePosition = queue.position;
-    }
-
     // Respond with success message, ticket details, and queue position (if OPD)
     res.json({
       message: 'Appointment booked successfully!',
       ticket,
-      queuePosition,
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'An error occurred while booking the appointment' });
+  }
+};
+
+export const getAppointments = async (req: Request, res: Response) => {
+  const { patientId } = req.query;
+
+  try {
+    const appointments = await prisma.ticket.findMany({
+      where: { 
+        patientId: Number(patientId)
+      },
+      include: {
+        hospital: {
+          select: {
+            name: true,
+            services: true
+          }
+        }
+      }
+    });
+
+    res.json(appointments);
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
   }
 };

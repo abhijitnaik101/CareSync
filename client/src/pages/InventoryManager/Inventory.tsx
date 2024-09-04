@@ -166,7 +166,7 @@ const Inventory = () => {
 
   return (
     <div className="flex ">
-      <div className="bg-gray-100 w-full p-4">
+      <div className="bg-gray-50 w-full p-4">
         <div className="flex justify-between mb-4">
           <div className="flex items-center">
             <input
@@ -216,21 +216,21 @@ const Inventory = () => {
           <p className="text-center text-gray-500">No medicine found</p>
         ) : (
           <table className="w-full text-left table-auto text-gray-500">
-            <thead className="bg-blue-500 text-white">
+            <thead className="bg-blue-500 text-white min-w-full text-left text-md">
               <tr>
-                <th className="px-4 py-3"></th>
-                <th className="px-4 py-3">Item</th>
-                <th className="px-4 py-3">Price</th>
-                <th className="px-4 py-3">Quantity</th>
-                <th className="px-4 py-3">Expiry</th>
-                <th className="px-4 py-3">Type</th>
-                <th className="px-4 py-3"></th>
+                <th className="p-2"></th>
+                <th className="p-2">Item</th>
+                <th className="p-2">Price</th>
+                <th className="p-2">Quantity</th>
+                <th className="p-2">Expiry</th>
+                <th className="p-2">Type</th>
+                <th className="p-2"></th>
               </tr>
             </thead>
             <tbody>
               {filteredMedicines.map((medicine) => (
-                <tr key={medicine.id}>
-                  <td className="px-4 py-3">
+                <tr key={medicine.id} className="border-t">
+                  <td className="px-4">
                     <button
                       className="bg-green-500 text-white px-2 py-1 rounded-md"
                       onClick={() => handleOpenModal(medicine)}
@@ -238,14 +238,14 @@ const Inventory = () => {
                       +
                     </button>
                   </td>
-                  <td className="px-4 py-3">{medicine.name}</td>
-                  <td className="px-4 py-3">{medicine.price}</td>
-                  <td className="px-4 py-3">{medicine.quantity}</td>
-                  <td className="px-4 py-3 text-red-500">{medicine.expiry}</td>
-                  <td className="px-4 py-3">{medicine.type}</td>
-                  <td className="px-4 py-3">
+                  <td className="p-2">{medicine.name}</td>
+                  <td className="p-2">{medicine.price}</td>
+                  <td className="p-2">{medicine.quantity}</td>
+                  <td className="p-2 text-red-500">{medicine.expiry}</td>
+                  <td className="p-2">{medicine.type}</td>
+                  <td className="p-2">
                     <button
-                      className="bg-blue-500 text-white px-2 py-1 rounded-md"
+                      className="text-blue-600 px-2 py-1 rounded-md"
                       onClick={() => handleOpenModal(medicine)}
                     >
                       details

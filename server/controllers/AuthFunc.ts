@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { AdminRequest, DocRequest, loginRequest, PatientRequest, ReceptionRequest, roleSchema } from "./UserTypes";
+import { AdminRequest, DocRequest, loginRequest, PatientRequest, ReceptionRequest, roleSchema } from "../types/userTypes";
 import { comparePassword, generateToken, hashPassword } from "../utils/auth";
 import { prisma } from "..";
 
@@ -38,7 +38,7 @@ export const registerUser = async (req: Request, res: Response) => {
                     return res.status(401).json({ message: 'Invalid admin password' });
 
                 user = await prisma.admin.create({
-                    data: { name, email, password: hashedPassword!, hospitalId: req.body.hospitalId }, // Add hospitalId
+                    data: { name, email, password: hashedPassword!, hospitalId: hospitalPass.id }, // Add hospitalId
                 });
                 break;
 
@@ -65,7 +65,7 @@ export const registerUser = async (req: Request, res: Response) => {
                         department: 'General',
                         specialty: req.body.speciality || "General",
                         hospitalId: hospitalPass.id,
-                        workingdays: req.body.workingdays as number
+                        workingdays: Number(req.body.workingdays)
                     },
                 });
                 break;
@@ -77,7 +77,7 @@ export const registerUser = async (req: Request, res: Response) => {
                 user = await prisma.patient.create({
                     data: {
                         name, email, password: hashedPassword!,
-                        age: req.body.age as number,
+                        age: Number(req.body.age),
                         contact: req.body.contact as string
                     },
                 });
