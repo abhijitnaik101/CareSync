@@ -17,7 +17,7 @@ export const getHospitalIdByName = async (req: Request, res: Response) => {
   try {
     const hospital = await prisma.hospital.findFirst({
       where: {
-        name: hospitalName,
+        name: hospitalName.toString(),
       },
       select: {
         id: true,

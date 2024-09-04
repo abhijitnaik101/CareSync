@@ -33,39 +33,10 @@ export const bookAppointment = async (req: Request, res: Response) => {
       },
     });
 
-    let queuePosition = null;
-
-    // If it's an OPD appointment, add the patient to the queue
-    if (appointType === 'OPD') {
-      // Get the current queue count for the doctor on the selected date
-      const queueCount = await prisma.queue.count({
-        where: {
-          hospitalId,
-          doctorId,
-          appointmentDate: new Date(appointmentDate).toISOString(),
-        },
-      });
-
-      // Create a new queue entry for the patient
-      const queue = await prisma.queue.create({
-        data: {
-          hospitalId,
-          doctorId,
-          position: queueCount + 1,
-          appointmentDate: new Date(appointmentDate), // Use the provided date
-          pending: false,
-          ticketId: ticket.id,
-        },
-      });
-
-      queuePosition = queue.position;
-    }
-
     // Respond with success message, ticket details, and queue position (if OPD)
     res.json({
       message: 'Appointment booked successfully!',
       ticket,
-      queuePosition,
     });
   } catch (error) {
     console.error(error);
