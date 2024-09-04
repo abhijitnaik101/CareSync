@@ -36,3 +36,19 @@ export const getHospitalIdByName = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const getHospitals = async (req: Request, res: Response) => {
+  try {
+    const hospitals = await prisma.hospital.findMany({
+      select: {
+        id: true, 
+        name: true,
+        coordinates: true
+      },
+    });
+
+    res.json(hospitals); // Send the list of hospitals
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+};

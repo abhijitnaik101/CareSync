@@ -5,7 +5,7 @@ import { ticketAppointRequest } from "./QueueServiceTypes";
 /**
  * Handles booking an appointment for a patient.
  *
- * This function creates a new ticket entry in the database and optionally adds the patient to the queue for an OPD (Outpatient Department) appointment.
+ * This function creates a new ticket entry in the database
  *
  * @param req The Express request object containing appointment details.
  * @param res The Express response object for sending the booking response.
@@ -41,5 +41,29 @@ export const bookAppointment = async (req: Request, res: Response) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'An error occurred while booking the appointment' });
+  }
+};
+
+export const getAppointments = async (req: Request, res: Response) => {
+  const { patientId } = req.query;
+
+  try {
+    const appointments = await prisma.ticket.findMany({
+      where: { 
+        patientId: Number(patientId)
+      },
+      include: {
+        hospital: {
+          select: {
+            name: true,
+            services: true
+          }
+        }
+      }
+    });
+
+    res.json(appointments);
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
   }
 };
