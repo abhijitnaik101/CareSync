@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { hospitalRecommendRequest, waitTimeRequest } from "./HospitalRecTypes";
+import { hospitalRecommendRequest, waitTimeRequest } from "../types/hospitalRecTypes";
 
 /**
  * Retrieves hospital recommendations based on user preferences.
