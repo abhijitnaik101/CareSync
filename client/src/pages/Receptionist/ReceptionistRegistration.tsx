@@ -17,6 +17,7 @@ interface RegistrationProps {
 const ReceptionistRegistration: React.FC<RegistrationProps> = ({ registrations: initialRegistrations }) => {
   const [registrations, setRegistrations] = useState(initialRegistrations);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [apiResponse, setApiResponse] = useState(null); // To store API response
 
   const handleNewRegistrationClick = () => {
     setIsModalOpen(true); // Open the modal
@@ -26,7 +27,7 @@ const ReceptionistRegistration: React.FC<RegistrationProps> = ({ registrations: 
     setIsModalOpen(false); // Close the modal
   };
 
-  const handleNewRegistration = (formData: {
+  const handleNewRegistration = async (formData: {
     name: string;
     age: string;
     gender: string;
@@ -38,16 +39,43 @@ const ReceptionistRegistration: React.FC<RegistrationProps> = ({ registrations: 
     const newRegistration = {
       ...formData,
       register: "Registered",
-      visit: "Scheduled"
+      visit: "Scheduled",
     };
-    
-    setRegistrations([...registrations, newRegistration]);
 
-    setIsModalOpen(false); // Close the modal after submission
+    try {
+      const response = await fetch('http://your-api-url/ticket', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          age: parseInt(formData.age),
+          gender: formData.gender.toUpperCase(),
+          appointType: "OPD", // Assuming OPD for registration
+          patientId: 1, // Assuming patientId for example
+          doctorId: 1, // Assuming doctorId for example
+          hospitalId: 1, // Assuming hospitalId for example
+          appointmentDate: formData.visitDate, // Assuming visitDate as appointmentDate
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to book appointment');
+      }
+
+      const data = await response.json();
+      setApiResponse(data); // Store the API response
+      setRegistrations([...registrations, newRegistration]); // Update registrations list
+
+      setIsModalOpen(false); // Close the modal after submission
+    } catch (error) {
+      console.error('Error booking appointment:', error);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
+    <div className="min-h-screen w-full bg-gray-100 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
@@ -106,6 +134,16 @@ const ReceptionistRegistration: React.FC<RegistrationProps> = ({ registrations: 
             </tbody>
           </table>
         </div>
+
+        {/* API Response Display */}
+        {apiResponse && (
+          <div className="bg-green-100 p-4 mt-4 rounded-md shadow-md">
+            <h3 className="text-lg font-semibold text-green-800">Appointment Response</h3>
+            <p>Message: {apiResponse.message}</p>
+            <p>Ticket ID: {apiResponse.ticket.id}</p>
+            <p>Queue Position: {apiResponse.queuePosition}</p>
+          </div>
+        )}
 
         {/* Modal for New Registration */}
         {isModalOpen && (

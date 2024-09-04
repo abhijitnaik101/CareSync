@@ -1,13 +1,13 @@
-import express from 'express';
-import dotenv from 'dotenv';
-import authRoutes from './routes/AuthRoutes';
-import { PrismaClient } from '@prisma/client';
-import { ticketRouter } from './routes/TicketRoutes';
-import { queueRouter } from './routes/OPDQueueRoutes';
-import { bedManage } from './routes/BedManageRoutes';
-import { mlRouter } from './routes/MLRoutes';
-import inventoryRouter from './routes/InventoryRoutes';
-import { hospitalRoute } from './routes/HospitalRoutes';
+const express = require('express');
+const dotenv = require('dotenv');
+const authRoutes = require('./routes/AuthRoutes');
+const { PrismaClient } = require('@prisma/client');
+const { ticketRouter } = require('./routes/TicketRoutes');
+const { queueRouter } = require('./routes/OPDQueueRoutes');
+const { bedManage } = require('./routes/BedManageRoutes');
+const { mlRouter } = require('./routes/MLRoutes');
+const inventoryRouter = require('./routes/InventoryRoutes');
+const { hospitalRoute } = require('./routes/HospitalRoutes');
 
 dotenv.config();
 
@@ -19,11 +19,11 @@ app.use('/booking', ticketRouter);
 app.use('/queuing', queueRouter);
 app.use('/beds', bedManage);
 app.use('/recommend', mlRouter);
-app.use('/inventory',inventoryRouter);
+app.use('/inventory', inventoryRouter);
 app.use('/', hospitalRoute);
 
 const PORT = process.env.PORT || 3000;
-export const prisma = new PrismaClient();
+const prisma = new PrismaClient();
 
 app.listen(PORT, () => {
   prisma.$connect();

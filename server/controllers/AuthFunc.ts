@@ -24,7 +24,6 @@ export const registerUser = async (req: Request, res: Response) => {
             case 'Admin':
                 if (!AdminRequest.safeParse(req.body).success)
                     return res.status(400).json({ message: 'Invalid request' });
-
                 hospitalPass = await prisma.hospital.findFirst({
                     where: {
                         name: req.body.hospitalName
@@ -39,7 +38,7 @@ export const registerUser = async (req: Request, res: Response) => {
                     return res.status(401).json({ message: 'Invalid admin password' });
 
                 user = await prisma.admin.create({
-                    data: { name, email, password: hashedPassword!, hospitalId: req.body.hospitalAdminpass }, // Add hospitalId
+                    data: { name, email, password: hashedPassword!, hospitalId: req.body.hospitalId }, // Add hospitalId
                 });
                 break;
 

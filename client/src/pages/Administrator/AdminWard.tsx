@@ -10,7 +10,7 @@ interface Patient {
 interface AdministratorWardProps {
   patients: Patient[];
 }
- 
+
 const AdministratorWard: React.FC<AdministratorWardProps> = ({ patients }) => {
   return (
     <div className="min-h-screen bg-gray-100 p-2">
