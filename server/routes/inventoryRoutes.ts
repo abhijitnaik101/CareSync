@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { reorderByExpiry, reorderByOutstock } from './InventoryController';
+import { reorderByExpiry, reorderByOutstock } from '../controllers/InventoryController';
 
 const inventoryRouter = Router();
 

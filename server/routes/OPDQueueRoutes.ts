@@ -6,7 +6,7 @@ import {
   getQueueTotal,
   createFutureAppointment,
   markQueueEntryPending,
-} from "./QueueController";
+} from "../controllers/QueueController";
 
 export const queueRouter = Router();
 

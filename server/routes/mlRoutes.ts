@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { authenticatePatient } from "./patientAuth";
-import { authenticate } from "./authMiddleware";
-import { getHospitalRecommendations, getHospitalWaitTimes } from "./MLController";
+import { authenticatePatient } from "../middlewares/patientAuth";
+import { authenticate } from "../middlewares/authMiddleware";
+import { getHospitalRecommendations, getHospitalWaitTimes } from "../controllers/MLController";
 
 export const mlRouter = Router();
 

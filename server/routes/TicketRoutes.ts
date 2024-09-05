@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { bookAppointment, getAppointments } from "./TicketController";
+import { bookAppointment, getAppointments } from "../controllers/TicketController";
 
 export const ticketRouter = Router();
 

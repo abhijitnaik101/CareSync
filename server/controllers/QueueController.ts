@@ -1,5 +1,5 @@
 import { prisma } from "..";
-import { queueRequest } from "./QueueServiceTypes";
+import { queueRequest } from "../types/QueueServiceTypes";
 import { Request, Response } from "express";
 
 // Retrieves the queue for a specific doctor, appointment date, and hospital.

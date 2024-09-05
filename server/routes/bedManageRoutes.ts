@@ -1,6 +1,6 @@
-import { authenticate, authorizeAdmin, authorizeReceptionist } from "./authMiddleware";
+import { authenticate, authorizeAdmin, authorizeReceptionist } from "../middlewares/authMiddleware";
 import { Router } from "express";
-import { approveBed, assignTicketToWard, getWardInformation } from "./BedController";
+import { approveBed, assignTicketToWard, getWardInformation } from "../controllers/BedController";
 
 export const bedManage = Router();
 // Route for receptionists to approve a bed ticket and update ward information (assuming previous discussions)

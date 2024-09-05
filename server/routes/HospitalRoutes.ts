@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getHospitalIdByName, getHospitals } from "./HospitalController";
+import { getHospitalIdByName, getHospitals } from "../controllers/HospitalController";
 
 export const hospitalRoute = Router();
 

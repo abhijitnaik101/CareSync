@@ -1,6 +1,6 @@
 import { prisma } from "..";
 import { Request, Response } from "express";
-import { ticketAppointRequest } from "./QueueServiceTypes";
+import { ticketAppointRequest } from "../types/QueueServiceTypes";
 
 /**
  * Handles booking an appointment for a patient.
