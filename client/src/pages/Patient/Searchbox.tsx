@@ -5,7 +5,7 @@ import { bhubaneswarHospitals } from '../../DB/HospitalLocations';
 interface Hospital {
   hospital_id: number;
   name: string;
-  coordinates: [number, number];
+  coordinates: number[];
   departments: {
       department: string;
       doctors: number[];
@@ -14,10 +14,10 @@ interface Hospital {
 
 const hospitals: Hospital[] = bhubaneswarHospitals;
 
-const SearchBox: React.FC = ({coordsCallback}) => {
+const SearchBox: React.FC<{coordsCallback: (num: number[] | null) => void }> = ({coordsCallback}) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [suggestions, setSuggestions] = useState<Hospital[]>([]);
-  const [selectedCoordinates, setSelectedCoordinates] = useState<[number, number] | null>(null);
+  const [selectedCoordinates, setSelectedCoordinates] = useState<number[] | null>(null);
 
   useEffect(() => {
     coordsCallback(selectedCoordinates);
