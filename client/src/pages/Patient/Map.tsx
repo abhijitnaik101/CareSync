@@ -2,10 +2,13 @@ import React, { useRef, useEffect, useState } from 'react';
 import mapboxgl, { Marker } from 'mapbox-gl';
 import { Geocoder } from "@mapbox/search-js-react";
 import SearchBox from './Searchbox';
+<<<<<<< HEAD
 import { NavigationControl } from 'react-map-gl';
 
 
 
+=======
+>>>>>>> f3dbcd1e6ac039568c3d642f95cb2404a22559a7
 
 // Mapbox access token
 mapboxgl.accessToken = 'pk.eyJ1IjoiYWJoaWppdG5haWsiLCJhIjoiY2ptOXpvbzJpMDNxYTN2bXZwZm9ibWc4MCJ9.hl8pE-4Uf56VpiBBKIcjeQ';
@@ -15,7 +18,7 @@ const MapComponent: React.FC = () => {
   const map = useRef<mapboxgl.Map | null>(null);
 
   const start: [number, number] = [85.776628, 20.275725];
-  const [endCoords, setEndCoords] = useState<[number, number] | null>(null); // Initially null
+  const [endCoords, setEndCoords] = useState<number[] | null>(null); // Initially null
 
   useEffect(() => {
     if (map.current) return;
@@ -55,7 +58,10 @@ const MapComponent: React.FC = () => {
               type: 'Point',
               coordinates: start
             },
-            properties: {}
+            properties: {
+              description: 'Start Point'
+            }
+
           }]
         }
       },
@@ -80,14 +86,16 @@ const MapComponent: React.FC = () => {
     // }
   };
 
-  const addEndPoint = (coords: [number, number]) => {
-    const end = {
+  const addEndPoint = (coords: number[]) => {
+const end: GeoJSON.GeoJSON= {
       type: 'FeatureCollection',
       features: [{
         type: 'Feature',
         geometry: {
           type: 'Point',
           coordinates: coords
+        }, properties: {
+          description: 'End Point'
         }
       }]
     };
@@ -110,11 +118,11 @@ const MapComponent: React.FC = () => {
     }
   };
 
-  const updateEndPoint = (coords: [number, number]) => {
+  const updateEndPoint = (coords: number[]) => {
     addEndPoint(coords);
   };
 
-  const getRoute = async (end: [number, number]) => {
+  const getRoute = async (end: number[]) => {
     const query = await fetch(
       `https://api.mapbox.com/directions/v5/mapbox/cycling/${start[0]},${start[1]};${end[0]},${end[1]}?steps=true&geometries=geojson&access_token=${mapboxgl.accessToken}`,
       { method: 'GET' }
@@ -126,7 +134,7 @@ const MapComponent: React.FC = () => {
     console.log(`Distance between start and end point: ${distance} meters`);
 
     const route = data.geometry.coordinates;
-    const geojson = {
+    const geojson: GeoJSON.GeoJSON = {
       type: 'Feature',
       properties: {},
       geometry: {
@@ -160,8 +168,18 @@ const MapComponent: React.FC = () => {
 
 
   return (
+<<<<<<< HEAD
     <div className="relative h-screen overflow-clip  w-full flex justify-center items-center">
       
+=======
+    <div>
+      {/*@ts-ignore*/}
+      <Geocoder
+        accessToken={mapboxgl.accessToken}
+        map={map.current!}
+        mapboxgl={mapboxgl}
+      />
+>>>>>>> f3dbcd1e6ac039568c3d642f95cb2404a22559a7
       <SearchBox coordsCallback={(coords) => setEndCoords(coords)} />
       <div ref={mapContainer} style={{ height: '100%', width: '100%' }} />
 

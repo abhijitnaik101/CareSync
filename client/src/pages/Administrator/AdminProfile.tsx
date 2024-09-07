@@ -38,7 +38,7 @@ const AdminProfile: React.FC = () => {
     }));
   };
 
-  const handleListChange = (listName: string, index: number, value: string) => {
+const handleListChange = (listName: keyof typeof formData, index: number, value: string) => {
     const updatedList = [...formData[listName]];
     updatedList[index] = value;
     setFormData((prevData) => ({

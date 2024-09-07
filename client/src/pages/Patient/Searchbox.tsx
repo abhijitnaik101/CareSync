@@ -8,7 +8,7 @@ import HospitalsComponent from './HospitalModal';
 interface Hospital {
   id: number;
   name: string;
-  coordinates: [number, number];
+  coordinates: number[];
   departments: {
     department: string;
     doctors: number[];
@@ -31,7 +31,7 @@ const doctors: Doctor[] = doctorsDB;
 const SearchBox: React.FC<{ coordsCallback: (coords: [number, number] | null) => void }> = ({ coordsCallback }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [suggestions, setSuggestions] = useState<Hospital[]>([]);
-  const [selectedCoordinates, setSelectedCoordinates] = useState<[number, number] | null>(null);
+  const [selectedCoordinates, setSelectedCoordinates] = useState<number[] | null>(null);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [appointmentDetails, setAppointmentDetails] = useState({
