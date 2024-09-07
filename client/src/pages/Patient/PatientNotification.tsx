@@ -102,20 +102,7 @@ const PatientNotification: React.FC = () => {
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
-      <div className="w-1/4 bg-gray-800 text-white">
-        <ul>
-          <li className="py-4 px-6 hover:bg-gray-700 cursor-pointer">Map</li>
-          <li className="py-4 px-6 hover:bg-gray-700 cursor-pointer bg-gray-700">
-            Notification
-          </li>
-          <li className="py-4 px-6 hover:bg-gray-700 cursor-pointer">
-            History
-          </li>
-          <li className="py-4 px-6 hover:bg-gray-700 cursor-pointer">
-            Notifications
-          </li>
-        </ul>
-      </div>
+      
 
       {/* Main Content */}
       <div className="flex-grow p-8 bg-white">

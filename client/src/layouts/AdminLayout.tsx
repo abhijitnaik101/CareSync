@@ -41,18 +41,12 @@ const AdminLayout: React.FC = () => {
   return (
     <div className="flex ">
       <Sidebar links={adminLinks} />
-      <div className="flex-1 p-4">
+      <div className="flex-1 p-4 overflow-y-scroll h-screen">
         <Routes>
-          <Route
-            path="dashboard"
-            element={<AdminDashboard title="Admin Dashboard" />}
-          />
+          <Route path="dashboard" element={<AdminDashboard title="Admin Dashboard" />}/>
           <Route path="ward" element={<AdminWard patients={patientDummy} />} />
           <Route path="opd" element={<AdminOPD title="OPD Management" />} />
-          <Route
-            path="notification"
-            element={<AdminNotifications title="Notification" />}
-          />
+          <Route path="notification" element={<AdminNotifications title="Notification" />}/>
           <Route path="profile" element={<AdminProfile title="Profile" />} />
         </Routes>
       </div>

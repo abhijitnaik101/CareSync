@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
-import { Fade} from 'react-awesome-reveal';
+import { Fade } from 'react-awesome-reveal';
 import { motion } from 'framer-motion';
+import TestimonialsCarousel from '../components/LandingPage/Testimonial';
 
 const Landing = () => {
 
@@ -70,7 +71,7 @@ const Landing = () => {
                     </div>
                 </section>
 
-            
+
 
                 {/* About Us Section */}
                 <section className="py-20 bg-white">
@@ -172,41 +173,109 @@ const Landing = () => {
                 </section>
 
                 {/* Testimonials Section */}
-                <section className="py-20 bg-white">
+                <section className="py-20 bg-gray-50">
                     <Fade>
                         <div className="container mx-auto px-6 text-center">
-                            <h2 className="text-4xl font-bold text-gray-800">What Our Clients Say</h2>
+                            <h2 className="text-4xl font-bold text-gray-800">
+                                Our Clients' Feedback
+                            </h2>
                             <p className="text-lg text-gray-600 mt-4 max-w-3xl mx-auto">
-                                We are proud to serve hospitals and healthcare providers with top-notch solutions. Here’s what they have to say about us.
+                                We’re honored to work with healthcare leaders and hospitals to deliver cutting-edge solutions. Here's what they say about working with us.
                             </p>
                         </div>
                     </Fade>
-                    <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-10 px-6">
+
+                    <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 px-6">
                         <Fade cascade damping={0.1}>
+
                             {/* Testimonial 1 */}
-                            <div className="bg-gray-100 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+                            <div className="bg-white p-8 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 text-center">
+                                <img
+                                    src="https://via.placeholder.com/100"
+                                    alt="Profile"
+                                    className="w-24 h-24 mx-auto rounded-full mb-4"
+                                />
                                 <p className="text-gray-700 mb-6">
-                                    "The queuing system has significantly reduced wait times in our OPD. It’s a game-changer for patient satisfaction."
+                                    "The seamless integration of the system with our hospital’s existing setup was remarkable. The real-time updates make a huge difference."
                                 </p>
-                                <p className="font-semibold text-blue-600">- Dr. John Doe</p>
+                                <p className="font-semibold text-blue-600">- Dr. Sarah Lee</p>
+                                <p className="text-sm text-gray-500">Chief Medical Officer, City Hospital</p>
                             </div>
+
                             {/* Testimonial 2 */}
-                            <div className="bg-gray-100 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+                            <div className="bg-white p-8 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 text-center">
+                                <img
+                                    src="https://via.placeholder.com/100"
+                                    alt="Profile"
+                                    className="w-24 h-24 mx-auto rounded-full mb-4"
+                                />
                                 <p className="text-gray-700 mb-6">
-                                    "Real-time bed availability has improved our hospital’s efficiency and resource management. Highly recommended."
+                                    "Our workflow efficiency has improved drastically with the queuing system. Patient satisfaction has gone through the roof!"
                                 </p>
-                                <p className="font-semibold text-blue-600">- Dr. Jane Smith</p>
+                                <p className="font-semibold text-blue-600">- Dr. Michael Edwards</p>
+                                <p className="text-sm text-gray-500">Head of Surgery, Green Valley Hospital</p>
                             </div>
+
                             {/* Testimonial 3 */}
-                            <div className="bg-gray-100 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+                            <div className="bg-white p-8 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 text-center">
+                                <img
+                                    src="https://via.placeholder.com/100"
+                                    alt="Profile"
+                                    className="w-24 h-24 mx-auto rounded-full mb-4"
+                                />
                                 <p className="text-gray-700 mb-6">
-                                    "The patient admission process is now smooth and hassle-free, thanks to this integrated system."
+                                    "With real-time bed availability updates, managing patient admissions has never been easier or more efficient."
                                 </p>
-                                <p className="font-semibold text-blue-600">- Dr. Emily Johnson</p>
+                                <p className="font-semibold text-blue-600">- Dr. Emily Carter</p>
+                                <p className="text-sm text-gray-500">Director, Lakeside Medical Center</p>
                             </div>
+
+                            {/* Testimonial 4 */}
+                            <div className="bg-white p-8 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 text-center">
+                                <img
+                                    src="https://via.placeholder.com/100"
+                                    alt="Profile"
+                                    className="w-24 h-24 mx-auto rounded-full mb-4"
+                                />
+                                <p className="text-gray-700 mb-6">
+                                    "The real-time data tracking has transformed how we manage patient queues and resources. It’s been a game changer."
+                                </p>
+                                <p className="font-semibold text-blue-600">- Dr. Jason Brown</p>
+                                <p className="text-sm text-gray-500">Chief Administrator, Metro Health</p>
+                            </div>
+
+                            {/* Testimonial 5 */}
+                            <div className="bg-white p-8 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 text-center">
+                                <img
+                                    src="https://via.placeholder.com/100"
+                                    alt="Profile"
+                                    className="w-24 h-24 mx-auto rounded-full mb-4"
+                                />
+                                <p className="text-gray-700 mb-6">
+                                    "This system has streamlined our hospital operations, making our staff more productive and our patients happier."
+                                </p>
+                                <p className="font-semibold text-blue-600">- Dr. Amanda Taylor</p>
+                                <p className="text-sm text-gray-500">Chief of Staff, Horizon Medical</p>
+                            </div>
+
+                            {/* Testimonial 6 */}
+                            <div className="bg-white p-8 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 text-center">
+                                <img
+                                    src="https://via.placeholder.com/100"
+                                    alt="Profile"
+                                    className="w-24 h-24 mx-auto rounded-full mb-4"
+                                />
+                                <p className="text-gray-700 mb-6">
+                                    "Managing bed capacity and patient admissions is now efficient and stress-free, thanks to this amazing system."
+                                </p>
+                                <p className="font-semibold text-blue-600">- Dr. Natalie Johnson</p>
+                                <p className="text-sm text-gray-500">Head of Operations, Westfield Hospital</p>
+                            </div>
+
                         </Fade>
                     </div>
                 </section>
+
 
                 {/* Call to Action */}
                 <section className="py-20 bg-blue-600 text-white text-center">

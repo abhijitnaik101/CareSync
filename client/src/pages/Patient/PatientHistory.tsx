@@ -80,7 +80,7 @@ const PatientHistory: React.FC<PatientHistoryProps> = () => {
   });
 
   return (
-    <div className="w-full flex flex-col p-6 max-w-screen-md mx-auto bg-white shadow-lg rounded-lg">
+    <div className="w-full flex flex-col p-6 mx-auto  shadow-lg rounded-lg">
       <h2 className="text-xl font-semibold mb-4 text-gray-800">Medical History</h2>
 
       <div className="mb-6 relative">

@@ -1,20 +1,33 @@
-import { Server } from "socket.io";
-import { Server as HTTPServer } from "http";
+import { io } from "..";
 
+io.on("connection", (socket : any) => {
+  console.log("A user connected:", socket.id);
 
-export const initializeSockets = (server: HTTPServer) => {
-  const io = new Server(server, {
-    cors: {
-      origin: "*", // Adjust this to match your client origin
-      methods: ["GET", "POST"],
-    },
+  // **Queue Management**: Handle patient queue system
+  socket.on('queue-update', (data : any) => {
+    console.log('Queue Updated:', data);
+    io.emit('queue-update', data); // Broadcast to all connected clients
   });
 
-  io.on("connection", (socket : any) => {
-    console.log("A user connected:", socket.id);
-
-    socket.on("disconnect", () => {
-      console.log("A user disconnected:", socket.id);
-    });
+  // **Bed Management**: Handle real-time updates for bed availability
+  socket.on('bed-status', (data: any) => {
+    console.log('Bed Status Updated:', data);
+    io.emit('bed-status', data); // Broadcast to all connected clients
   });
-};
+
+  // **OPD Management**: Handle OPD (Outpatient Department) updates
+  socket.on('opd-update', (data: any) => {
+    console.log('OPD Updated:', data);
+    io.emit('opd-update', data);
+  });
+
+  // **Inventory Management**: Handle inventory system events
+  socket.on('inventory-update', (data: any) => {
+    console.log('Inventory Updated:', data);
+    io.emit('inventory-update', data);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("A user disconnected:", socket.id);
+  });
+});

@@ -46,7 +46,7 @@ export const getHospitals = async (req: Request, res: Response) => {
         coordinates: true
       },
     });
-
+    
     res.json(hospitals); // Send the list of hospitals
   } catch (error) {
     res.status(500).json({ message: "Internal server error" });

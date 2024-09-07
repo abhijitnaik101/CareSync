@@ -62,7 +62,7 @@ export const bhubaneswarHospitals = [
     {
         hospital_id: 5,
         name: "Greenview Hospital",
-        coordinates: [85.8249, 20.2965],
+        coordinates: [85.8150, 20.2965],
         departments: [
             {
                 department: "Dermatology",
@@ -77,7 +77,7 @@ export const bhubaneswarHospitals = [
     {
         hospital_id: 6,
         name: "Hope Hospital",
-        coordinates: [85.8250, 20.2966],
+        coordinates: [85.8250, 21.2966],
         departments: [
             {
                 department: "ENT",

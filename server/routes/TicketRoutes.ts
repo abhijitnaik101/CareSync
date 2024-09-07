@@ -3,6 +3,6 @@ import { bookAppointment, getAppointments } from "../controllers/TicketControlle
 
 export const ticketRouter = Router();
 
-ticketRouter.post('/', bookAppointment);
+ticketRouter.post('/bookappointment', bookAppointment);
 
 ticketRouter.get('/appointments', getAppointments);

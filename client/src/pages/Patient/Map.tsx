@@ -1,8 +1,11 @@
 import React, { useRef, useEffect, useState } from 'react';
-import mapboxgl from 'mapbox-gl';
+import mapboxgl, { Marker } from 'mapbox-gl';
 import { Geocoder } from "@mapbox/search-js-react";
-import SearchBox from './SearchBox';
-import Map from 'react-map-gl/dist/esm/components/map';
+import SearchBox from './Searchbox';
+import { NavigationControl } from 'react-map-gl';
+
+
+
 
 // Mapbox access token
 mapboxgl.accessToken = 'pk.eyJ1IjoiYWJoaWppdG5haWsiLCJhIjoiY2ptOXpvbzJpMDNxYTN2bXZwZm9ibWc4MCJ9.hl8pE-4Uf56VpiBBKIcjeQ';
@@ -21,19 +24,13 @@ const MapComponent: React.FC = () => {
       container: mapContainer.current!,
       style: 'mapbox://styles/mapbox/streets-v12',
       center: start,
-      zoom: 12
+      zoom: 15
     });
 
     map.current.addControl(new mapboxgl.NavigationControl());
 
     map.current.on('load', () => {
       addStartPoint();
-
-      // Add click event listener to the map
-      // map.current!.on('click', (e) => {
-      //   const coords: [number, number] = [e.lngLat.lng, e.lngLat.lat];
-      //   setEndCoords(coords); // Update endCoords with clicked point coordinates
-      // });
     });
   }, []);
 
@@ -52,20 +49,35 @@ const MapComponent: React.FC = () => {
         type: 'geojson',
         data: {
           type: 'FeatureCollection',
-          features: [{
+          features: [ {
             type: 'Feature',
             geometry: {
               type: 'Point',
               coordinates: start
-            }
+            },
+            properties: {}
           }]
         }
       },
       paint: {
         'circle-radius': 10,
-        'circle-color': '#3887be'
+        'circle-color': '#4CAF50' // Green
       }
     });
+  
+    // // Create an element to display custom marker
+    // const customMarkerElement = document.createElement('div');
+    // customMarkerElement.className = 'custom-marker'; // You can customize the CSS class
+    // //customMarkerElement.style.backgroundImage = 'url(D:\WebCode\caresync\client\public\vite.svg)'; // Replace with your marker image path
+    // customMarkerElement.style.width = '30px'; // Adjust the size as needed
+    // customMarkerElement.style.height = '30px';
+    // customMarkerElement.style.backgroundColor = '#F44336';
+    // //create an marker
+    // if (map.current) {
+    //   new mapboxgl.Marker(customMarkerElement)
+    //     .setLngLat(start)
+    //     .addTo(map.current);
+    // }
   };
 
   const addEndPoint = (coords: [number, number]) => {
@@ -92,7 +104,7 @@ const MapComponent: React.FC = () => {
         },
         paint: {
           'circle-radius': 10,
-          'circle-color': '#f30'
+          'circle-color': '#F44336' // Red
         }
       });
     }
@@ -138,7 +150,7 @@ const MapComponent: React.FC = () => {
           'line-cap': 'round'
         },
         paint: {
-          'line-color': '#1E201E',
+          'line-color': '#2196F3', // Blue
           'line-width': 5,
           'line-opacity': 0.75
         }
@@ -146,16 +158,14 @@ const MapComponent: React.FC = () => {
     }
   };
 
+
   return (
-    <div>
-      <Geocoder
-        accessToken={mapboxgl.accessToken}
-        map={map.current!}
-        mapboxgl={mapboxgl}
-      />
+    <div className="relative h-screen overflow-clip  w-full flex justify-center items-center">
+      
       <SearchBox coordsCallback={(coords) => setEndCoords(coords)} />
-      <div ref={mapContainer} className='w-full h-screen' />
-      <div className='h-24 w-full bg-red-400'>End-coord: {endCoords?.join(', ')}</div>
+      <div ref={mapContainer} style={{ height: '100%', width: '100%' }} />
+
+
     </div>
   );
 };

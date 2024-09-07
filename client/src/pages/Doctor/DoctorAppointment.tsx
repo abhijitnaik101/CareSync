@@ -2,123 +2,104 @@ import React from "react";
 
 const DoctorsAppointment: React.FC = () => {
   return (
-    <div className="p-6 w-80%">
+    <div className="p-6 mx-auto max-w-7xl">
       {/* Top Counters */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
-        <div className="bg-white p-4 rounded-lg shadow-md flex items-center justify-between">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <div className="bg-white p-6 rounded-lg shadow-lg flex items-center justify-between">
           <div>
-            <p className="text-gray-600">Pending Patients</p>
-            <p className="text-2xl font-bold text-blue-600">5</p>
+            <p className="text-gray-500">Pending Patients</p>
+            <p className="text-3xl font-bold text-blue-600">5</p>
           </div>
-          <div className="text-blue-600">
-            {/* Icon for pending patients */}
+          <div className="text-blue-600 text-3xl">
             <i className="fas fa-users"></i>
           </div>
         </div>
-        <div className="bg-white p-4 rounded-lg shadow-md flex items-center justify-between">
+        <div className="bg-white p-6 rounded-lg shadow-lg flex items-center justify-between">
           <div>
-            <p className="text-gray-600">Rescheduled Appointment</p>
-            <p className="text-2xl font-bold text-yellow-600">2</p>
+            <p className="text-gray-500">Rescheduled Appointments</p>
+            <p className="text-3xl font-bold text-yellow-500">2</p>
           </div>
-          <div className="text-yellow-600">
-            {/* Icon for rescheduled appointments */}
+          <div className="text-yellow-500 text-3xl">
             <i className="fas fa-calendar-alt"></i>
           </div>
         </div>
-        <div className="bg-white p-4 rounded-lg shadow-md flex items-center justify-between">
+        <div className="bg-white p-6 rounded-lg shadow-lg flex items-center justify-between">
           <div>
-            <p className="text-gray-600">Checked Patients</p>
-            <p className="text-2xl font-bold text-green-600">5</p>
+            <p className="text-gray-500">Checked Patients</p>
+            <p className="text-3xl font-bold text-green-600">5</p>
           </div>
-          <div className="text-green-600">
-            {/* Icon for checked patients */}
+          <div className="text-green-600 text-3xl">
             <i className="fas fa-check"></i>
           </div>
         </div>
       </div>
 
-      {/* Tables */}
-      <div className="mb-6">
-        <table className="w-full text-left border-collapse">
+      {/* First Table */}
+      <div className="mb-8">
+        <table className="w-full border-collapse">
           <thead>
             <tr className="bg-blue-600 text-white">
-              <th className="p-3">
+              <th className="p-4">
                 <input type="checkbox" />
               </th>
-              <th className="p-3">Patient</th>
-              <th className="p-3">Serial No.</th>
-              <th className="p-3">Time</th>
-              <th className="p-3">Gender</th>
-              <th className="p-3">Status</th>
-              <th className="p-3">Details</th>
+              <th className="p-4">Patient</th>
+              <th className="p-4">Serial No.</th>
+              <th className="p-4">Time</th>
+              <th className="p-4">Gender</th>
+              <th className="p-4">Details</th>
             </tr>
           </thead>
           <tbody>
-            {/* Rows */}
             {[
               {
                 name: "Saswat Kumar Dash",
                 serial: "20",
                 time: "10:25",
                 gender: "female",
-                status: "checking",
               },
               {
                 name: "Priyanka Behera",
-                serial: "20",
-                time: "10:25",
+                serial: "21",
+                time: "10:40",
                 gender: "male",
-                status: "pending",
               },
               {
                 name: "Sandeep Pradhan",
-                serial: "20",
-                time: "10:25",
+                serial: "22",
+                time: "11:00",
                 gender: "female",
-                status: "pending",
               },
               {
                 name: "Rasminarjan Nayak",
-                serial: "20",
-                time: "10:25",
+                serial: "23",
+                time: "11:15",
                 gender: "female",
-                status: "pending",
               },
               {
                 name: "Krishna Kumar Khuntia",
-                serial: "20",
-                time: "10:25",
+                serial: "24",
+                time: "11:30",
                 gender: "female",
-                status: "pending",
               },
             ].map((patient, index) => (
-              <tr key={index} className="bg-white border-b">
-                <td className="p-3">
+              <tr key={index} className="bg-white border-b hover:bg-gray-50">
+                <td className="p-4">
                   <input type="checkbox" />
                 </td>
-                <td className="p-3">{patient.name}</td>
-                <td className="p-3 text-blue-600">{patient.serial}</td>
-                <td className="p-3">{patient.time}</td>
-                <td className="p-3">
+                <td className="p-4">{patient.name}</td>
+                <td className="p-4 text-blue-600">{patient.serial}</td>
+                <td className="p-4">{patient.time}</td>
+                <td className="p-4">
                   <span
                     className={`text-${
                       patient.gender === "male" ? "blue" : "pink"
-                    }-600`}
+                    }-600 capitalize`}
                   >
                     {patient.gender}
                   </span>
                 </td>
-                <td className="p-3">
-                  <span
-                    className={`text-${
-                      patient.status === "checking" ? "green" : "yellow"
-                    }-600`}
-                  >
-                    {patient.status}
-                  </span>
-                </td>
-                <td className="p-3">
-                  <button className="bg-gray-200 p-2 rounded-lg">
+                <td className="p-4">
+                  <button className="text-blue-600 bg-blue-100 p-2 rounded-lg hover:bg-blue-200 transition">
                     Details
                   </button>
                 </td>
@@ -128,67 +109,67 @@ const DoctorsAppointment: React.FC = () => {
         </table>
       </div>
 
-      <div>
-        <table className="w-full text-left border-collapse">
+      {/* Second Table */}
+      <div className="mb-8">
+        <table className="w-full border-collapse">
           <thead>
-            <tr className="bg-red-500 text-white">
-              <th className="p-3">
+            <tr className="bg-red-600 text-white">
+              <th className="p-4">
                 <input type="checkbox" />
               </th>
-              <th className="p-3">Patient</th>
-              <th className="p-3">Serial No.</th>
-              <th className="p-3">Time</th>
-              <th className="p-3">Gender</th>
-              <th className="p-3">Status</th>
-              <th className="p-3">Details</th>
+              <th className="p-4">Patient</th>
+              <th className="p-4">Serial No.</th>
+              <th className="p-4">Time</th>
+              <th className="p-4">Gender</th>
+              <th className="p-4">Status</th>
+              <th className="p-4">Details</th>
             </tr>
           </thead>
           <tbody>
-            {/* Rows can be similar to the first table */}
             {[
               {
                 name: "Saswat Kumar Dash",
-                serial: "20",
-                time: "10:25",
+                serial: "25",
+                time: "12:00",
                 gender: "female",
                 status: "checking",
               },
               {
                 name: "Priyanka Behera",
-                serial: "20",
-                time: "10:25",
+                serial: "26",
+                time: "12:15",
                 gender: "male",
                 status: "pending",
               },
               // Add other rows as needed...
             ].map((patient, index) => (
-              <tr key={index} className="bg-white border-b">
-                <td className="p-3">
+              <tr key={index} className="bg-white border-b hover:bg-gray-50">
+                <td className="p-4">
                   <input type="checkbox" />
                 </td>
-                <td className="p-3">{patient.name}</td>
-                <td className="p-3 text-blue-600">{patient.serial}</td>
-                <td className="p-3">{patient.time}</td>
-                <td className="p-3">
+                <td className="p-4">{patient.name}</td>
+                <td className="p-4 text-blue-600">{patient.serial}</td>
+                <td className="p-4">{patient.time}</td>
+                <td className="p-4">
                   <span
                     className={`text-${
                       patient.gender === "male" ? "blue" : "pink"
-                    }-600`}
+                    }-600 capitalize`}
                   >
                     {patient.gender}
                   </span>
                 </td>
-                <td className="p-3">
+                <td className="p-4">
                   <span
                     className={`text-${
                       patient.status === "checking" ? "green" : "yellow"
-                    }-600`}
+                    }-600 capitalize`}
                   >
                     {patient.status}
                   </span>
                 </td>
-                <td className="p-3">
-                  <button className="bg-gray-200 p-2 rounded-lg">
+                <td className="p-4">
+                  <button className="text-red-600 bg-red-100 p-2 rounded-lg hover:bg-red-200 transition">
                     Details
                   </button>
                 </td>
