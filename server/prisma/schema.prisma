@@ -121,16 +121,22 @@ model inventoryman {
 }
 
 model inventory {
-  id          Int            @id @default(autoincrement())
+  id          Int        @id @default(autoincrement())
   hospitalId  Int
-  hospital    hospital       @relation(fields: [hospitalId], references: [id])
+  hospital    hospital   @relation(fields: [hospitalId], references: [id])
   name        String
   quantity    Float
   price       Float
-  mfgdate     DateTime      @db.Date
-  expDate     DateTime      @db.Date
+  mfgdate     DateTime    @db.Date
+  expDate     DateTime    @db.Date
   category    String
+  supplier    String?     // Supplier field added
+  description String?     // Optional description field
+  orderdate   DateTime    @db.Date
+  orderedtime String
+  expecteddeliverdate DateTime @db.Date
 }
+
 
 model queue {
   id          Int            @id @default(autoincrement())
