@@ -43,7 +43,8 @@ export const getHospitals = async (req: Request, res: Response) => {
       select: {
         id: true, 
         name: true,
-        coordinates: true
+        coordinates: true,
+        services: true
       },
     });
     

@@ -1,18 +1,16 @@
 // src/components/SearchBox.tsx
 import React, { useEffect, useState } from 'react';
-import { bhubaneswarHospitals } from '../../DB/HospitalLocations';
 import { FaSearch, FaMapMarkerAlt } from 'react-icons/fa';
 import { doctorsDB } from '../../DB/Doctors';
 import HospitalsComponent from './HospitalModal';
+import axios from 'axios';
+import { route } from '../../../backendroute';
 
 interface Hospital {
   id: number;
   name: string;
   coordinates: number[];
-  departments: {
-    department: string;
-    doctors: number[];
-  }[];
+  services: string[];
 }
 
 interface Doctor {
@@ -25,13 +23,13 @@ interface Doctor {
   availability: string;
 }
 
-const hospitals: Hospital[] = bhubaneswarHospitals;
 const doctors: Doctor[] = doctorsDB;
 
-const SearchBox: React.FC<{ coordsCallback: (coords: [number, number] | null) => void }> = ({ coordsCallback }) => {
+const SearchBox: React.FC<{ coordsCallback: (coords: number[] | null) => void }> = ({ coordsCallback }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [suggestions, setSuggestions] = useState<Hospital[]>([]);
   const [selectedCoordinates, setSelectedCoordinates] = useState<number[] | null>(null);
+  const [hospitals, setHospitals] = useState<Hospital[]>([]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [appointmentDetails, setAppointmentDetails] = useState({
@@ -45,11 +43,19 @@ const SearchBox: React.FC<{ coordsCallback: (coords: [number, number] | null) =>
     appointmentDate: '',
   });
 
+  async function fetchHospitals() {
+    const response = await axios.get(route + '/hospitals');
+    if (response.status === 500 || !response) {
+      console.error('Failed to fetch hospitals');
+      return;
+    }
+
+    setHospitals(response.data);
+  }
+
   useEffect(() => {
     coordsCallback(selectedCoordinates);
   }, [selectedCoordinates]);
-
-
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -75,33 +81,6 @@ const SearchBox: React.FC<{ coordsCallback: (coords: [number, number] | null) =>
   useEffect(() => {
     fetchHospitals();
   }, [])
-  //const [hospitalls,setHospitalls] = useState<Hospital[]>([]);
-  async function fetchHospitals() {
-    try {
-      const response = await fetch('/hospitals', {
-        method: 'GET',
-      });
-  
-      if (!response.ok) {
-        throw new Error('Failed to fetch hospitals');
-      }
-  
-      const data = await response.json();
-  
-      // Basic validation to ensure data is an array of objects
-      if (!Array.isArray(data) || data.some(item => typeof item !== 'object')) {
-        throw new Error('Invalid response format');
-      }
-  
-      console.log("Hospitals : ", data);
-    } catch (error) {
-      console.error('Error fetching hospitals:', error);
-      throw error;
-    }
-  }
-
-
-
 
   return (
     <div>
@@ -120,7 +99,7 @@ const SearchBox: React.FC<{ coordsCallback: (coords: [number, number] | null) =>
         <ul className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg">
           {suggestions.map((hospital) => (
             <li
-              key={hospital.hospital_id}
+              key={hospital.id}
               className="flex items-center p-2 cursor-pointer hover:bg-gray-200"
               onClick={() => handleSelectSuggestion(hospital)}
             >
