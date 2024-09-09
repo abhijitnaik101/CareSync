@@ -1,27 +1,27 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import axios from 'axios';
+import { route } from '../../backendroute';
 
-const rolePasswords: { [key: string]: string } = {
-    admin: 'admin',
-    patient: 'patient',
-    doctor: 'doctor',
-    'inventory-manager': 'inventory manager',
-    receptionist: 'receptionist',
-};
+type roles = "Admin" | "Patient" | "Doctor" | "Inventoryman" | "Receptionist" | "";
 
 const Login = () => {
-    const [role, setRole] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
+    const [email, setEmail] = useState<string>('');
+    const [role, setRole] = useState<roles>('');
+    const [password, setPassword] = useState<string>('');
+    const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
 
-    const handleLogin = () => {
-        if (rolePasswords[role] === password) {
-            setError('');
-            navigate(`/${role}`);
-        } else {
-            setError("Wrong password, can't enter");
+    const handleLogin = async () => {
+        try {
+            const responce = await axios.post(route + '/auth/login', {
+                email, password, role
+            });
+            localStorage.setItem('token', responce.data.token);
+            navigate(`/${role === "Inventoryman" ? "inventory-manager" : role.toLowerCase()}`);
+        } catch (error) {
+            setError("Wrong email or password");
         }
     };
 
@@ -37,17 +37,25 @@ const Login = () => {
                     Login
                 </h1>
 
+                <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter Email"
+                    className="mb-4 w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+
                 <select
                     value={role}
-                    onChange={(e) => setRole(e.target.value)}
+                    onChange={(e) => setRole(e.target.value as roles)}
                     className="mb-4 w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                     <option value="">Select Role</option>
-                    <option value="admin">Administrator</option>
-                    <option value="patient">Patient</option>
-                    <option value="doctor">Doctor</option>
-                    <option value="inventory-manager">Inventory Manager</option>
-                    <option value="receptionist">Receptionist</option>
+                    <option value="Admin">Administrator</option>
+                    <option value="Patient">Patient</option>
+                    <option value="Doctor">Doctor</option>
+                    <option value="Inventoryman">Inventory Manager</option>
+                    <option value="Receptionist">Receptionist</option>
                 </select>
 
                 <input

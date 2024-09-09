@@ -1,1 +1,1 @@
-export const route = "localhost:8142"
+export const route = "http://localhost:8142"

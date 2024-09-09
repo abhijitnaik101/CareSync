@@ -1,14 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
-import mapboxgl, { Marker } from 'mapbox-gl';
+import mapboxgl from 'mapbox-gl';
 import { Geocoder } from "@mapbox/search-js-react";
 import SearchBox from './Searchbox';
-<<<<<<< HEAD
-import { NavigationControl } from 'react-map-gl';
-
-
-
-=======
->>>>>>> f3dbcd1e6ac039568c3d642f95cb2404a22559a7
 
 // Mapbox access token
 mapboxgl.accessToken = 'pk.eyJ1IjoiYWJoaWppdG5haWsiLCJhIjoiY2ptOXpvbzJpMDNxYTN2bXZwZm9ibWc4MCJ9.hl8pE-4Uf56VpiBBKIcjeQ';
@@ -17,7 +10,7 @@ const MapComponent: React.FC = () => {
   const mapContainer = useRef<HTMLDivElement | null>(null);
   const map = useRef<mapboxgl.Map | null>(null);
 
-  const start: [number, number] = [85.776628, 20.275725];
+  const start: number[] = [85.776628, 20.275725];
   const [endCoords, setEndCoords] = useState<number[] | null>(null); // Initially null
 
   useEffect(() => {
@@ -26,14 +19,20 @@ const MapComponent: React.FC = () => {
     map.current = new mapboxgl.Map({
       container: mapContainer.current!,
       style: 'mapbox://styles/mapbox/streets-v12',
-      center: start,
-      zoom: 15
+      center: start as [number, number],
+      zoom: 12
     });
 
     map.current.addControl(new mapboxgl.NavigationControl());
 
     map.current.on('load', () => {
       addStartPoint();
+
+      // Add click event listener to the map
+      // map.current!.on('click', (e) => {
+      //   const coords: [number, number] = [e.lngLat.lng, e.lngLat.lat];
+      //   setEndCoords(coords); // Update endCoords with clicked point coordinates
+      // });
     });
   }, []);
 
@@ -52,7 +51,7 @@ const MapComponent: React.FC = () => {
         type: 'geojson',
         data: {
           type: 'FeatureCollection',
-          features: [ {
+          features: [{
             type: 'Feature',
             geometry: {
               type: 'Point',
@@ -61,29 +60,14 @@ const MapComponent: React.FC = () => {
             properties: {
               description: 'Start Point'
             }
-
           }]
         }
       },
       paint: {
         'circle-radius': 10,
-        'circle-color': '#4CAF50' // Green
+        'circle-color': '#3887be'
       }
     });
-  
-    // // Create an element to display custom marker
-    // const customMarkerElement = document.createElement('div');
-    // customMarkerElement.className = 'custom-marker'; // You can customize the CSS class
-    // //customMarkerElement.style.backgroundImage = 'url(D:\WebCode\caresync\client\public\vite.svg)'; // Replace with your marker image path
-    // customMarkerElement.style.width = '30px'; // Adjust the size as needed
-    // customMarkerElement.style.height = '30px';
-    // customMarkerElement.style.backgroundColor = '#F44336';
-    // //create an marker
-    // if (map.current) {
-    //   new mapboxgl.Marker(customMarkerElement)
-    //     .setLngLat(start)
-    //     .addTo(map.current);
-    // }
   };
 
   const addEndPoint = (coords: number[]) => {
@@ -112,7 +96,7 @@ const end: GeoJSON.GeoJSON= {
         },
         paint: {
           'circle-radius': 10,
-          'circle-color': '#F44336' // Red
+          'circle-color': '#f30'
         }
       });
     }
@@ -158,7 +142,7 @@ const end: GeoJSON.GeoJSON= {
           'line-cap': 'round'
         },
         paint: {
-          'line-color': '#2196F3', // Blue
+          'line-color': '#1E201E',
           'line-width': 5,
           'line-opacity': 0.75
         }
@@ -166,12 +150,7 @@ const end: GeoJSON.GeoJSON= {
     }
   };
 
-
   return (
-<<<<<<< HEAD
-    <div className="relative h-screen overflow-clip  w-full flex justify-center items-center">
-      
-=======
     <div>
       {/*@ts-ignore*/}
       <Geocoder
@@ -179,11 +158,9 @@ const end: GeoJSON.GeoJSON= {
         map={map.current!}
         mapboxgl={mapboxgl}
       />
->>>>>>> f3dbcd1e6ac039568c3d642f95cb2404a22559a7
       <SearchBox coordsCallback={(coords) => setEndCoords(coords)} />
-      <div ref={mapContainer} style={{ height: '100%', width: '100%' }} />
-
-
+      <div ref={mapContainer} className='w-full h-screen' />
+      <div className='h-24 w-full bg-red-400'>End-coord: {endCoords?.join(', ')}</div>
     </div>
   );
 };
