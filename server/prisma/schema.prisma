@@ -33,6 +33,7 @@ model hospital {
   receptionistPass String
   inventoryPass String
   coordinates Decimal[]      @db.Decimal(9, 6)
+  departments department[]
   admin       admin[]
   doctors     doctor[]
   patients    patient[]
@@ -42,6 +43,14 @@ model hospital {
   inventory   inventory[]
   queues      queue[]
   ward        ward[]
+}
+
+model department {
+  id          Int            @id @default(autoincrement())
+  name        String
+  hospitalId  Int
+  hospital    hospital       @relation(fields: [hospitalId], references: [id])
+  doctors     doctor[]
 }
 
 model admin {
@@ -58,7 +67,8 @@ model doctor {
   name        String
   email       String         @unique
   password    String
-  department  String
+  departmentId Int
+  department   department             @relation(fields: [departmentId], references: [id])
   specialty   String
   descripton  String?
   workinghrs  String?
