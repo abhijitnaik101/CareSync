@@ -1,11 +1,8 @@
 import React, { useRef, useEffect, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import { Geocoder } from "@mapbox/search-js-react";
-<<<<<<< HEAD
 import SearchBox from '../../components/Patient/Searchbox';
-=======
-import SearchBox from './Searchbox';
->>>>>>> 425077623c052231e4eb549bab0bc080fe9b8697
+
 
 // Mapbox access token
 mapboxgl.accessToken = 'pk.eyJ1IjoiYWJoaWppdG5haWsiLCJhIjoiY2ptOXpvbzJpMDNxYTN2bXZwZm9ibWc4MCJ9.hl8pE-4Uf56VpiBBKIcjeQ';
@@ -72,7 +69,6 @@ const MapComponent: React.FC = () => {
         'circle-color': '#3887be'
       }
     });
-<<<<<<< HEAD
   
     // // Create an element to display custom marker
     // const customMarkerElement = document.createElement('div');
@@ -88,8 +84,6 @@ const MapComponent: React.FC = () => {
     //     .addTo(map.current);
     // }
     
-=======
->>>>>>> 425077623c052231e4eb549bab0bc080fe9b8697
   };
 
   const addEndPoint = (coords: number[]) => {
@@ -173,23 +167,10 @@ const end: GeoJSON.GeoJSON= {
   };
 
   return (
-<<<<<<< HEAD
 
     <div className="relative h-screen overflow-clip  w-full flex justify-center items-center">
       <SearchBox coordsCallback={(coords) => setEndCoords(coords)} />
       <div ref={mapContainer} style={{ height: '100%', width: '100%' }} />
-=======
-    <div>
-      {/*@ts-ignore*/}
-      <Geocoder
-        accessToken={mapboxgl.accessToken}
-        map={map.current!}
-        mapboxgl={mapboxgl}
-      />
-      <SearchBox coordsCallback={(coords) => setEndCoords(coords)} />
-      <div ref={mapContainer} className='w-full h-screen' />
-      <div className='h-24 w-full bg-red-400'>End-coord: {endCoords?.join(', ')}</div>
->>>>>>> 425077623c052231e4eb549bab0bc080fe9b8697
     </div>
   );
 };

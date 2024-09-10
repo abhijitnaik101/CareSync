@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 interface MedicineDetailProps {
   medicineName: string;
@@ -21,75 +21,201 @@ const MedicineDetail: React.FC<MedicineDetailProps> = ({
   type,
   description,
 }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedDetails, setEditedDetails] = useState({
+    medicineName,
+    inStock,
+    expDate,
+    mfgDate,
+    price,
+    category,
+    type,
+    description,
+  });
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setEditedDetails({
+      ...editedDetails,
+      [e.target.name]: e.target.value,
+    });
+  };
+
   return (
-    <div className="relative flex flex-col min-h-screen">
-      <div className="flex flex-col md:flex-row w-full max-w-[707px] h-full max-h-[608px] mx-auto bg-white rounded-lg shadow-lg p-10 box-border mt-8">
-        <div className="px-5">
-          <div className="flex-shrink-0 justify-between mb-6 md:mb-0 pb-[20px]">
+    <div className="relative flex items-center justify-center h-max rounded-md bg-gray-100">
+      <div className="w-full max-w-3xl bg-white shadow-lg rounded-lg p-8">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-2xl font-semibold text-gray-800">
+            {isEditing ? "Edit Medicine Details" : "Medicine Details"}
+          </h1>
+          <button
+            onClick={() => setIsEditing(!isEditing)}
+            className="bg-indigo-600 text-white px-4 py-2 rounded-md shadow hover:bg-indigo-700 transition-colors"
+          >
+            {isEditing ? "Save" : "Edit"}
+          </button>
+        </div>
+
+        <div className="flex flex-col md:flex-row gap-8">
+          {/* Image and Actions */}
+          <div className="w-full md:w-1/3 flex flex-col items-center">
             <img
-              className="w-32 h-32 md:w-48 md:h-48 mx-auto md:mx-0"
+              className="w-48 h-48 rounded-lg mb-4 object-cover"
               src="https://via.placeholder.com/150"
               alt="Medicine"
             />
-          </div>
-          <button className="border-2 border-black rounded-[5px] px-[35px] bg-gray-200 ">
-            Edit
-          </button>
-        </div>
-        <div className="px-5">
-          <h2 className="text-3xl font-bold mb-2">{medicineName}</h2>
-          <div className="flex flex-col py-[10px]">
-            <div className="">In Stock: </div>
-            <div className="flex justify-between px-[30px]">
-              <div className="border-[2px] rounded-md px-[30px] py-[5px] bg-gray-100">
-                {inStock}
-              </div>
-              <button className="border-[2px] px-[30px] py-[5px] rounded-md bg-gray-100">
-                Order
-              </button>
-            </div>
+            <button className="w-full bg-red-500 text-white py-2 rounded-md shadow hover:bg-red-600 transition-colors">
+              Order More
+            </button>
           </div>
 
-          <div className="flex flex-row justify-between p-[5px] py-[20px]">
-            <div className="pr-[20px]">
-              <p className="">Exp. Date: </p>
-              <div className="border-[2px] px-[30px] py-[5px] rounded-md bg-gray-100">
-                {expDate}
+          {/* Medicine Details */}
+          <div className="w-full md:w-2/3 space-y-6">
+            <div className="grid grid-cols-2 gap-4">
+              {/* Medicine Name */}
+              <div className="col-span-2">
+                <label className="block text-gray-600 font-medium mb-1">
+                  Medicine Name
+                </label>
+                {isEditing ? (
+                  <input
+                    type="text"
+                    name="medicineName"
+                    value={editedDetails.medicineName}
+                    onChange={handleInputChange}
+                    className="w-full border rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                  />
+                ) : (
+                  <p className="text-gray-800 font-semibold">{medicineName}</p>
+                )}
+              </div>
+
+              {/* In Stock */}
+              <div>
+                <label className="block text-gray-600 font-medium mb-1">
+                  In Stock
+                </label>
+                {isEditing ? (
+                  <input
+                    type="number"
+                    name="inStock"
+                    value={editedDetails.inStock}
+                    onChange={handleInputChange}
+                    className="w-full border rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                  />
+                ) : (
+                  <p className="text-gray-800">{inStock}</p>
+                )}
+              </div>
+
+              {/* Price */}
+              <div>
+                <label className="block text-gray-600 font-medium mb-1">
+                  Price (₹)
+                </label>
+                {isEditing ? (
+                  <input
+                    type="number"
+                    name="price"
+                    value={editedDetails.price}
+                    onChange={handleInputChange}
+                    className="w-full border rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                  />
+                ) : (
+                  <p className="text-gray-800">₹{price}</p>
+                )}
+              </div>
+
+              {/* Expiry Date */}
+              <div>
+                <label className="block text-gray-600 font-medium mb-1">
+                  Expiry Date
+                </label>
+                {isEditing ? (
+                  <input
+                    type="date"
+                    name="expDate"
+                    value={editedDetails.expDate}
+                    onChange={handleInputChange}
+                    className="w-full border rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                  />
+                ) : (
+                  <p className="text-gray-800">{expDate}</p>
+                )}
+              </div>
+
+              {/* Manufacturing Date */}
+              <div>
+                <label className="block text-gray-600 font-medium mb-1">
+                  Manufacturing Date
+                </label>
+                {isEditing ? (
+                  <input
+                    type="date"
+                    name="mfgDate"
+                    value={editedDetails.mfgDate}
+                    onChange={handleInputChange}
+                    className="w-full border rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                  />
+                ) : (
+                  <p className="text-gray-800">{mfgDate}</p>
+                )}
+              </div>
+
+              {/* Category */}
+              <div>
+                <label className="block text-gray-600 font-medium mb-1">
+                  Category
+                </label>
+                {isEditing ? (
+                  <input
+                    type="text"
+                    name="category"
+                    value={editedDetails.category}
+                    onChange={handleInputChange}
+                    className="w-full border rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                  />
+                ) : (
+                  <p className="text-gray-800">{category}</p>
+                )}
+              </div>
+
+              {/* Type */}
+              <div>
+                <label className="block text-gray-600 font-medium mb-1">
+                  Type
+                </label>
+                {isEditing ? (
+                  <input
+                    type="text"
+                    name="type"
+                    value={editedDetails.type}
+                    onChange={handleInputChange}
+                    className="w-full border rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                  />
+                ) : (
+                  <p className="text-gray-800">{type}</p>
+                )}
               </div>
             </div>
-            <div className="pl-[20px]">
-              <p className="">Mfg. Date: </p>
-              <div className="border-[2px] px-[30px] py-[5px] rounded-md bg-gray-100">
-                {mfgDate}
-              </div>
-            </div>
-          </div>
 
-          <div className="py-[20px]">
-            <p className="text-gray-500">Price: ₹</p>
-            <div className="border-[2px] w-20 px-[30px] py-[5px] rounded-md bg-gray-100">
-              {price}
-            </div>
-          </div>
-
-          <div className="flex justify-between mt-2">
+            {/* Description */}
             <div>
-              <p className="text-gray-500">Category: </p>
-              <div className="border-[2px] px-[30px] py-[5px] rounded-md bg-gray-100">
-                {category}
-              </div>
-            </div>
-            <div>
-              <p className="text-gray-500">Type: </p>
-              <div className="border-[2px] px-[30px] py-[5px] rounded-md bg-gray-100">
-                {type}
-              </div>
-            </div>
-          </div>
-          <div className="py-[20px]">
-            <p>Description</p>
-            <div className="border-[2px] px-[30px] py-[5px] rounded-md h-20 bg-gray-100">
-              {description}
+              <label className="block text-gray-600 font-medium mb-1">
+                Description
+              </label>
+              {isEditing ? (
+                <textarea
+                  name="description"
+                  value={editedDetails.description}
+                  onChange={handleInputChange}
+                  className="w-full border rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-600 h-24"
+                />
+              ) : (
+                <p className="text-gray-800">{description}</p>
+              )}
             </div>
           </div>
         </div>

@@ -257,7 +257,9 @@ const Inventory = () => {
           </table>
         )}
         {selectedMedicine && (
-          <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
+          <div
+            className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center"
+          >
             <MedicineDetail
               medicineName={selectedMedicine.name}
               inStock={selectedMedicine.quantity}
