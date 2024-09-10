@@ -3,6 +3,11 @@ import { io } from "..";
 io.on("connection", (socket : any) => {
   console.log("A user connected:", socket.id);
 
+  //send notification to receptionist
+  socket.on('book-appointment', (data : any) => {
+    socket.emit('book-appointment', data);
+  })
+
   // **Queue Management**: Handle patient queue system
   socket.on('queue-update', (data : any) => {
     console.log('Queue Updated:', data);

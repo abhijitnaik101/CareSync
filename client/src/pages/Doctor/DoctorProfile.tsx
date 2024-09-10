@@ -46,15 +46,13 @@ const DoctorProfile: React.FC = () => {
   return (
     <>
       <div className="bg-blue-500 h-[50px] p-6 mx-auto"></div>
-      <div className="flex flex-col md:flex-row justify-between p-4 px-[50px] mx-auto bg-gray-200 m-[4px] rounded-[10px]">
-        <button className="border-2 border-black rounded-[5px] bg-blue-500 mb-2 md:mb-0">
+      <div className="flex flex-col justify-start md:flex-row p-2 mx-auto bg-gray-100 m-4 rounded-md">
+        <button className="py-1 px-6 mx-2 border-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white">
           Profile
         </button>
-        <button className="border-2 border-black rounded-[5px] px-[35px] bg-white mb-2 md:mb-0">
-          Notifications
-        </button>
-        <button className="border-2 border-black rounded-[5px] px-[35px] bg-white">
-          Schedule
+      
+        <button className="py-1 px-6 mx-2 border-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white">
+          Settings
         </button>
       </div>
       <div className="flex flex-col md:flex-row bg-white shadow-lg rounded-lg p-6 mx-auto border mt-4">

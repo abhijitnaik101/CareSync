@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { FaSearch, FaMapMarkerAlt } from 'react-icons/fa';
 import { doctorsDB } from '../../DB/Doctors';
-import HospitalsComponent from './HospitalModal';
+import HospitalsComponent from './HospitalComponent';
 import axios from 'axios';
 import { route } from '../../../backendroute';
 
@@ -45,13 +45,34 @@ const SearchBox: React.FC<{ coordsCallback: (coords: number[] | null) => void }>
 
   async function fetchHospitals() {
     const response = await axios.get(route + '/hospitals');
+    console.log("Response", response);
     if (response.status === 500 || !response) {
       console.error('Failed to fetch hospitals');
       return;
     }
-
+  
     setHospitals(response.data);
   }
+  //functions to fetch hospitals data
+  useEffect(() => {
+    fetchHospitals();
+  }, [])
+
+  //Function to fetch doctors
+  async function fetchDoctors() {
+    // const response = await axios.get(route + '/hospitals');
+    // console.log("Response", response);
+    // if (response.status === 500 || !response) {
+    //   console.error('Failed to fetch hospitals');
+    //   return;
+    // }
+  
+    //setDoctors(response.data);
+  }
+  //functions to fetch hospitals data
+  // useEffect(() => {
+  //   fetchHospitals();
+  // }, [])
 
   useEffect(() => {
     coordsCallback(selectedCoordinates);
@@ -77,10 +98,7 @@ const SearchBox: React.FC<{ coordsCallback: (coords: number[] | null) => void }>
     setSuggestions([]);
   };
 
-  //functions to fetch hospitals data
-  useEffect(() => {
-    fetchHospitals();
-  }, [])
+  
 
   return (
     <div>

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { socket } from "../../socket";
 
 const HospitalsComponent = ({ hospitals, doctors, searchTerm }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -22,22 +23,42 @@ const HospitalsComponent = ({ hospitals, doctors, searchTerm }) => {
     setIsModalOpen(true); // Open modal when "Book" button is clicked
   };
 
+  // const handleSubmit = () => {
+  //   // Make the fetch request to book the appointment
+  //   fetch('/bookappointment', {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: JSON.stringify(appointmentDetails),
+  //   })
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       console.log(data);
+  //       setIsModalOpen(false); // Close modal after successful submission
+  //     })
+  //     .catch((error) => console.error(error));
+  // };
+
+  // useEffect(() => {
+  //   // **Queue Management**: Listen for queue updates
+  //   socket.on('queue-update', (data) => {
+  //     setQueue(data);
+  //   });
+
+    
+  //   // Clean up when component unmounts
+  //   return () => {
+  //     socket.off('queue-update');
+  //   };
+  // }, []);
+
+  //socket to send notification to receptionist
   const handleSubmit = () => {
-    // Make the fetch request to book the appointment
-    fetch('/bookappointment', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(appointmentDetails),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-        setIsModalOpen(false); // Close modal after successful submission
-      })
-      .catch((error) => console.error(error));
-  };
+    socket.emit('book-appointment', appointmentDetails);
+  }
+  
+
 
   return (
     <div>

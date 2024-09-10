@@ -1,98 +1,180 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { io } from 'socket.io-client';
+import { FaBell } from 'react-icons/fa';
 
-const DoctorNotification: React.FC = () => {
-  // State to manage which notification to show
-  const [activeNotification, setActiveNotification] = useState<string>('appointment');
+// Establish socket connection
+const socket = io('http://localhost:5000'); // Replace with your backend URL
+
+const DoctorNotification = () => {
+  // Initial dummy notifications
+  const initialNotifications = {
+    appointment: [
+      {
+        title: 'Upcoming Appointment',
+        message: 'You have an appointment with John Doe at 3:00 PM today.',
+      },
+      {
+        title: 'Rescheduled Appointment',
+        message: 'The appointment with Sarah Smith has been rescheduled to 2:30 PM tomorrow.',
+      },
+    ],
+    test: [
+      {
+        title: 'New Lab Test Results',
+        message: 'Lab results for patient Emily Davis are now available.',
+      },
+    ],
+    administrative: [
+      {
+        title: 'Prescription Request',
+        message: 'Patient Emma Thompson has requested a refill for their prescription.',
+      },
+    ],
+    reminder: [
+      {
+        title: 'Prescription Renewal Reminder',
+        message: 'Reminder: The prescription for patient Mark Anderson expires in 5 days.',
+      },
+    ],
+  };
+
+  // Notifications state: storing categorized notifications
+  const [notifications, setNotifications] = useState(initialNotifications);
+
+  // State to track active notification category
+  const [activeCategory, setActiveCategory] = useState('appointment');
+
+  // State to track unread notifications
+  const [unreadNotifications, setUnreadNotifications] = useState({
+    appointment: initialNotifications.appointment.length,
+    test: initialNotifications.test.length,
+    administrative: initialNotifications.administrative.length,
+    reminder: initialNotifications.reminder.length,
+  });
+
+  useEffect(() => {
+    // Listen for incoming notifications via Socket.IO
+    socket.on('new-notification', (notification) => {
+      const { type } = notification;
+
+      // Add the new notification to the correct category
+      setNotifications((prev) => ({
+        ...prev,
+        [type]: [notification, ...prev[type]],
+      }));
+
+      // Increment unread notifications count for that category
+      setUnreadNotifications((prev) => ({
+        ...prev,
+        [type]: prev[type] + 1,
+      }));
+    });
+
+    return () => {
+      socket.off('new-notification');
+    };
+  }, []);
+
+  // Mark notifications as read for the active category
+  const markAsRead = (category) => {
+    setUnreadNotifications((prev) => ({
+      ...prev,
+      [category]: 0,
+    }));
+  };
+
+  // Render notifications based on the active category
+  const renderNotifications = (category) => {
+    return notifications[category].map((notification, index) => (
+      <div key={index} className="bg-white shadow rounded-lg p-4 mb-4">
+        <h3 className="text-lg font-bold">{notification.title}</h3>
+        <p className="text-gray-600">{notification.message}</p>
+      </div>
+    ));
+  };
 
   return (
-    <div className="container mx-auto p-4 ">
-      <div className="bg-white shadow-lg rounded-lg p-6 mb-6">
-        <div className="flex items-center justify-start bg-slate-200 mb-4 p-2 rounded-md ">
-          <button
-            className="mr-2 bg-blue-500 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg shadow-md"
-            onClick={() => setActiveNotification('appointment')}
-          >
-            Appointment
-          </button>
-          <button
-            className="mr-2 bg-blue-500 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg shadow-md"
-            onClick={() => setActiveNotification('test')}
-          >
-            Tests
-          </button>
-          <button
-            className="mr-2 bg-blue-500 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg shadow-md"
-            onClick={() => setActiveNotification('administrative')}
-          >
-            Administrative
-          </button>
-          <button
-            className="mr-2 bg-blue-500 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg shadow-md"
-            onClick={() => setActiveNotification('reminder')}
-          >
-            Reminder
-          </button>
-        </div>
-        <div className="grid grid-cols-1 gap-4">
-          {/* Conditional rendering based on activeNotification state */}
-          {activeNotification === 'appointment' && (
-            <div className="bg-red-300 rounded-lg p-4 shadow-md">
-              <h3 className="text-lg font-bold">Upcoming Appointments</h3>
-              <p className="text-gray-700">
-                You have 3 upcoming appointments scheduled for today.
-              </p>
-            </div>
+    <div className="container mx-auto p-6">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-semibold">Doctor Notifications</h1>
+        <FaBell className="text-3xl text-yellow-500" />
+      </div>
+
+      {/* Notification Tabs */}
+      <div className="flex mb-4 space-x-4">
+        <button
+          className={`px-4 py-2 rounded-lg shadow-md ${
+            activeCategory === 'appointment' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'
+          }`}
+          onClick={() => {
+            setActiveCategory('appointment');
+            markAsRead('appointment');
+          }}
+        >
+          Appointments
+          {unreadNotifications.appointment > 0 && (
+            <span className="ml-2 bg-red-500 text-white rounded-full px-2 text-xs">
+              {unreadNotifications.appointment}
+            </span>
           )}
-          {activeNotification === 'test' && (
-            <div className="bg-gray-100 rounded-lg p-4 shadow-md">
-              <h3 className="text-lg font-bold">Test Results Available</h3>
-              <p className="text-gray-700">
-                New lab results for patient Emily Davis are now available.
-              </p>
-            </div>
+        </button>
+
+        <button
+          className={`px-4 py-2 rounded-lg shadow-md ${
+            activeCategory === 'test' ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-800'
+          }`}
+          onClick={() => {
+            setActiveCategory('test');
+            markAsRead('test');
+          }}
+        >
+          Tests
+          {unreadNotifications.test > 0 && (
+            <span className="ml-2 bg-red-500 text-white rounded-full px-2 text-xs">
+              {unreadNotifications.test}
+            </span>
           )}
-          {activeNotification === 'administrative' && (
-            <div className="bg-gray-100 rounded-lg p-4 shadow-md">
-              <h3 className="text-lg font-bold">New Prescription Request</h3>
-              <p className="text-gray-700">
-                Patient Emma Thompson has requested a refill for their prescription.
-              </p>
-            </div>
+        </button>
+
+        <button
+          className={`px-4 py-2 rounded-lg shadow-md ${
+            activeCategory === 'administrative' ? 'bg-purple-500 text-white' : 'bg-gray-200 text-gray-800'
+          }`}
+          onClick={() => {
+            setActiveCategory('administrative');
+            markAsRead('administrative');
+          }}
+        >
+          Administrative
+          {unreadNotifications.administrative > 0 && (
+            <span className="ml-2 bg-red-500 text-white rounded-full px-2 text-xs">
+              {unreadNotifications.administrative}
+            </span>
           )}
-          {activeNotification === 'reminder' && (
-            <div className="bg-yellow-100 rounded-lg p-4 shadow-md">
-              <h3 className="text-lg font-bold">Prescription Renewal Reminder</h3>
-              <p className="text-gray-700">
-                Reminder: The prescription for patient Mark Anderson expires in 5 days.
-              </p>
-            </div>
+        </button>
+
+        <button
+          className={`px-4 py-2 rounded-lg shadow-md ${
+            activeCategory === 'reminder' ? 'bg-yellow-500 text-white' : 'bg-gray-200 text-gray-800'
+          }`}
+          onClick={() => {
+            setActiveCategory('reminder');
+            markAsRead('reminder');
+          }}
+        >
+          Reminders
+          {unreadNotifications.reminder > 0 && (
+            <span className="ml-2 bg-red-500 text-white rounded-full px-2 text-xs">
+              {unreadNotifications.reminder}
+            </span>
           )}
-          {/* Additional dummy notifications */}
-          {activeNotification === 'emergency' && (
-            <div className="bg-red-100 rounded-lg p-4 shadow-md">
-              <h3 className="text-lg font-bold">Emergency Case</h3>
-              <p className="text-gray-700">
-                URGENT: Emergency case in the ER. Your immediate presence is required.
-              </p>
-            </div>
-          )}
-          {activeNotification === 'rescheduled' && (
-            <div className="bg-gray-100 rounded-lg p-4 shadow-md">
-              <h3 className="text-lg font-bold">Rescheduled Appointment</h3>
-              <p className="text-gray-700">
-                The appointment with Michael Brown has been rescheduled to September 2nd at 11:00 AM.
-              </p>
-            </div>
-          )}
-          {activeNotification === 'newAppointment' && (
-            <div className="bg-gray-100 rounded-lg p-4 shadow-md">
-              <h3 className="text-lg font-bold">New Appointment Booked</h3>
-              <p className="text-gray-700">
-                You have a new appointment with John Doe at 3:00 PM on September 1st.
-              </p>
-            </div>
-          )}
-        </div>
+        </button>
+      </div>
+
+      {/* Display Notifications based on the active category */}
+      <div className="grid grid-cols-1 gap-4">
+        {renderNotifications(activeCategory)}
       </div>
     </div>
   );

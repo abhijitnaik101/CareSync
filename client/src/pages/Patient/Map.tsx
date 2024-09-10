@@ -1,14 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import mapboxgl, { Marker } from 'mapbox-gl';
 import { Geocoder } from "@mapbox/search-js-react";
-import SearchBox from './Searchbox';
-<<<<<<< HEAD
-import { NavigationControl } from 'react-map-gl';
-
-
-
-=======
->>>>>>> f3dbcd1e6ac039568c3d642f95cb2404a22559a7
+import SearchBox from '../../components/Patient/Searchbox';
 
 // Mapbox access token
 mapboxgl.accessToken = 'pk.eyJ1IjoiYWJoaWppdG5haWsiLCJhIjoiY2ptOXpvbzJpMDNxYTN2bXZwZm9ibWc4MCJ9.hl8pE-4Uf56VpiBBKIcjeQ';
@@ -84,6 +77,7 @@ const MapComponent: React.FC = () => {
     //     .setLngLat(start)
     //     .addTo(map.current);
     // }
+    
   };
 
   const addEndPoint = (coords: number[]) => {
@@ -168,22 +162,10 @@ const end: GeoJSON.GeoJSON= {
 
 
   return (
-<<<<<<< HEAD
+
     <div className="relative h-screen overflow-clip  w-full flex justify-center items-center">
-      
-=======
-    <div>
-      {/*@ts-ignore*/}
-      <Geocoder
-        accessToken={mapboxgl.accessToken}
-        map={map.current!}
-        mapboxgl={mapboxgl}
-      />
->>>>>>> f3dbcd1e6ac039568c3d642f95cb2404a22559a7
       <SearchBox coordsCallback={(coords) => setEndCoords(coords)} />
       <div ref={mapContainer} style={{ height: '100%', width: '100%' }} />
-
-
     </div>
   );
 };

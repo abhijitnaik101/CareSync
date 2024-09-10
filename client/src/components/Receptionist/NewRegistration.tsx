@@ -1,5 +1,8 @@
 import React, { useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { FaTimes } from 'react-icons/fa';
+import axios from "axios";
+import { route } from "../../../backendroute";
 
 interface NewRegistrationProps {
   onNewRegistration: (formData: {
@@ -13,7 +16,7 @@ interface NewRegistrationProps {
   }) => void;
 }
 
-const NewRegistration: React.FC<NewRegistrationProps> = ({ onNewRegistration }) => {
+const NewRegistration: React.FC<NewRegistrationProps> = ({ onNewRegistration,  closeModal }) => {
   const nameRef = useRef<HTMLInputElement>(null);
   const ageRef = useRef<HTMLInputElement>(null);
   const genderRef = useRef<HTMLSelectElement>(null);
@@ -43,67 +46,131 @@ const NewRegistration: React.FC<NewRegistrationProps> = ({ onNewRegistration }) 
     navigate("/receptionist/dashboard");
   };
 
+  const bookAppointment = async () => {
+    const requestData = {
+      name: "John Doe",
+      age: 35,
+      gender: "male",
+      appointType: "OPD",
+      patientId: 123,
+      doctorId: 1,
+      hospitalId: 456,
+      appointmentDate: "2024-09-20T10:00:00"
+    };
+  
+    try {
+      const response = await axios.post(route + '/bookappointment', requestData);
+      console.log(response.data);
+    } catch (error) {
+      console.error('Error booking appointment:', error);
+    }
+  };
+  
+  bookAppointment();
+
   return (
-    <div className="w-full max-w-[707px] h-full max-h-[608px] mx-auto bg-white rounded-lg shadow-lg p-5 box-border">
+    <div className="w-full max-w-[700px] h-max max-h-[600px] mx-auto bg-white rounded-xl shadow-2xl p-6 box-border relative">
+      {/* Close Button */}
       <div className="flex justify-end">
         <button
-          className="bg-transparent border-none text-2xl cursor-pointer"
-          onClick={() => navigate("/receptionist/dashboard")}
+          className="bg-transparent border-none text-gray-500 text-2xl cursor-pointer hover:text-gray-900 transition-all"
+          onClick={() => closeModal(false)}
+          aria-label="Close Modal"
         >
-          &#x2715;
+         <FaTimes />
         </button>
       </div>
-      <form className="mt-2" onSubmit={handleSubmit}>
-        <div className="mb-4 flex flex-col">
-          <label>Name</label>
-          <input type="text" className="p-2 rounded-md border border-gray-300 text-base w-full box-border" ref={nameRef} />
+
+      {/* Modal Content */}
+      <form className="mt-4 space-y-6" onSubmit={handleSubmit}>
+        <div className="flex flex-col">
+          <label className="font-semibold text-gray-700">Name</label>
+          <input
+            type="text"
+            className="p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none text-base w-full"
+            ref={nameRef}
+            placeholder="Enter patient's name"
+          />
         </div>
-        <div className="flex justify-between">
-          <div className="mb-4 flex flex-col">
-            <label>Age</label>
-            <input type="number" className="p-2 rounded-md border border-gray-300 text-base w-full box-border" ref={ageRef} />
+
+        <div className="flex space-x-4">
+          <div className="flex-1 flex flex-col">
+            <label className="font-semibold text-gray-700">Age</label>
+            <input
+              type="number"
+              className="p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none text-base"
+              ref={ageRef}
+              placeholder="Enter age"
+            />
           </div>
-          <div className="mb-4 flex flex-col">
-            <label>Gender</label>
-            <select className="p-2 rounded-md border border-gray-300 text-base w-full box-border" ref={genderRef}>
+          <div className="flex-1 flex flex-col">
+            <label className="font-semibold text-gray-700">Gender</label>
+            <select
+              className="p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none text-base"
+              ref={genderRef}
+            >
               <option value="other">Other</option>
               <option value="male">Male</option>
               <option value="female">Female</option>
             </select>
           </div>
         </div>
-        <div className="flex justify-between">
-          <div className="mb-4 flex flex-col">
-            <label>Department</label>
-            <select className="p-2 rounded-md border border-gray-300 text-base w-full box-border" ref={departmentRef}>
+
+        <div className="flex space-x-4">
+          <div className="flex-1 flex flex-col">
+            <label className="font-semibold text-gray-700">Department</label>
+            <select
+              className="p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none text-base"
+              ref={departmentRef}
+            >
               <option value="ophthalmologist">Ophthalmologist</option>
               <option value="cardiology">Cardiology</option>
               <option value="neurology">Neurology</option>
             </select>
           </div>
-          <div className="mb-4 flex flex-col">
-            <label>Visit Date</label>
-            <input type="date" className="p-2 rounded-md border border-gray-300 text-base w-full box-border" ref={visitDateRef} />
+          <div className="flex-1 flex flex-col">
+            <label className="font-semibold text-gray-700">Visit Date</label>
+            <input
+              type="date"
+              className="p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none text-base"
+              ref={visitDateRef}
+            />
           </div>
         </div>
-        <div className="flex justify-between">
-          <div className="mb-4 flex flex-col">
-            <label>Contact</label>
-            <input type="text" className="p-2 rounded-md border border-gray-300 text-base w-full box-border" ref={contactRef} />
+
+        <div className="flex space-x-4">
+          <div className="flex-1 flex flex-col">
+            <label className="font-semibold text-gray-700">Contact</label>
+            <input
+              type="text"
+              className="p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none text-base"
+              ref={contactRef}
+              placeholder="Enter contact number"
+            />
           </div>
-          <div className="mb-4 flex flex-col">
-            <label>National ID</label>
-            <input type="text" className="p-2 rounded-md border border-gray-300 text-base w-full box-border" ref={nationalIdRef} />
+          <div className="flex-1 flex flex-col">
+            <label className="font-semibold text-gray-700">National ID</label>
+            <input
+              type="text"
+              className="p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none text-base"
+              ref={nationalIdRef}
+              placeholder="Enter national ID"
+            />
           </div>
         </div>
-        <button
-          type="submit"
-          className="py-2 px-4 bg-blue-600 text-white rounded-md cursor-pointer text-base hover:bg-blue-800"
-        >
-          Register
-        </button>
+
+        <div className="flex justify-center">
+          <button
+            onClick={bookAppointment}
+            type="submit"
+            className="py-3 px-6 bg-blue-600 text-white rounded-lg text-lg font-semibold hover:bg-blue-700 focus:ring-2 focus:ring-blue-300 transition-all"
+          >
+            Register
+          </button>
+        </div>
       </form>
     </div>
+
   );
 };
 
