@@ -62,7 +62,7 @@ export const registerUser = async (req: Request, res: Response) => {
                 user = await prisma.doctor.create({
                     data: {
                         name, email, password: hashedPassword!,
-                        department: 'General',
+                        departmentId: req.body.departmentId,
                         specialty: req.body.speciality || "General",
                         hospitalId: hospitalPass.id,
                         workingdays: Number(req.body.workingdays)

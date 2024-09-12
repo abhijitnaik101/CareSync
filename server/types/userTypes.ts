@@ -7,6 +7,7 @@ export const DocRequest = z.object({
     role: z.literal("Doctor"),
     specialty: z.string().optional(),
     hospitalName: z.string(),
+    departmentId: z.number(),
     hospitalDocpass: z.string(),
     description: z.string().optional(),
     workingdays: z.number()

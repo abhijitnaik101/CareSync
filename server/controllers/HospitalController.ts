@@ -44,8 +44,9 @@ export const getHospitals = async (req: Request, res: Response) => {
         id: true, 
         name: true,
         coordinates: true,
-        services: true
-      },
+        services: true,
+        departments: true
+      }
     });
     
     res.json(hospitals); // Send the list of hospitals
