@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { socket } from "../../socket";
 
-const HospitalsComponent = ({ hospitals, doctors, searchTerm }) => {
+const SideBarHospital = ({ hospitals, doctors, searchTerm }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [appointmentDetails, setAppointmentDetails] = useState({
     name: '',
@@ -56,6 +56,8 @@ const HospitalsComponent = ({ hospitals, doctors, searchTerm }) => {
   //socket to send notification to receptionist
   const handleSubmit = () => {
     socket.emit('book-appointment', appointmentDetails);
+    console.log("appointemnt details sent to receptionist: ", appointmentDetails);
+    setIsModalOpen(false);
   }
   
 
@@ -95,7 +97,7 @@ const HospitalsComponent = ({ hospitals, doctors, searchTerm }) => {
 
       
     </div>
-        {/* Modal for Booking Appointment */}
+      {/* Modal for Booking Appointment */}
       {isModalOpen && (
         <div className="fixed top-0 left-0 inset-0 w-full bg-black bg-opacity-50 flex justify-center items-center">
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
@@ -111,7 +113,7 @@ const HospitalsComponent = ({ hospitals, doctors, searchTerm }) => {
                   onChange={(e) => setAppointmentDetails({ ...appointmentDetails, name: e.target.value })}
                 />
               </div>
-
+              
               <div>
                 <label className="block text-gray-700 font-medium">Age</label>
                 <input
@@ -180,4 +182,4 @@ const HospitalsComponent = ({ hospitals, doctors, searchTerm }) => {
   );
 };
 
-export default HospitalsComponent;
+export default SideBarHospital;

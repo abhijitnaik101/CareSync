@@ -1,6 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
-import { Geocoder } from "@mapbox/search-js-react";
 import SearchBox from '../../components/Patient/Searchbox';
 
 

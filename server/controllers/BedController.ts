@@ -90,7 +90,7 @@ export const assignTicketToWard = async (req: Request, res: Response) => {
  * @param res The Express response object for sending the ward information.
  */
 export const getWardInformation = async (req: Request, res: Response) => {
-  if (req.user.role !== "Receptionist" && req.user.role !== "Admin") {
+  if (req.user && req.user.role !== "Receptionist" && req.user.role !== "Admin") {
     return res.status(403).json({ message: "Forbidden" });
   }
 

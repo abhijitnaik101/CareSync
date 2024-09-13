@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { verifyToken } from '../utils/auth';
+import { CustomJwtPayload } from './jwt';
 
 export const authenticate = (req: Request, res: Response, next: NextFunction) => {
   const token = req.headers.authorization?.split(' ')[1];
@@ -8,7 +9,7 @@ export const authenticate = (req: Request, res: Response, next: NextFunction) =>
   }
 
   try {
-    const decoded = verifyToken(token);
+    const decoded = verifyToken(token) as CustomJwtPayload;
     req.user = decoded;
     next();
   } catch (error) {
@@ -17,14 +18,14 @@ export const authenticate = (req: Request, res: Response, next: NextFunction) =>
 };
 
 export const authorizeReceptionist =  (req: Request, res: Response, next: NextFunction) => {
-    if (req.user.role != "Receptionist") {
+    if (req.user && req.user.role != "Receptionist") {
       return res.status(403).json({ message: 'Forbidden' });
     }
     next();
 };
 
 export const authorizeAdmin =  (req: Request, res: Response, next: NextFunction) => {
-  if (req.user.role != "Admin") {
+  if (req.user && req.user.role != "Admin") {
     return res.status(403).json({ message: 'Forbidden' });
   }
   next();

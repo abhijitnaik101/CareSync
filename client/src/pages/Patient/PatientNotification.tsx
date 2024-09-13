@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { socket } from "../../socket";
 
 // Define the options for the time period dropdown
 const timePeriodOptions = [
@@ -29,14 +30,6 @@ const appointmentsData = [
     status: "Pending",
     scheduledOn: "2024-11-21T14:00:00",
   },
-  {
-    id: 3,
-    doctor: "Dr Jane Smith",
-    hospital: "General Hospital",
-    department: "Orthopedics",
-    status: "Confirmed",
-    scheduledOn: "2024-11-22T09:00:00",
-  },
 ];
 
 const PatientNotification: React.FC = () => {
@@ -47,6 +40,19 @@ const PatientNotification: React.FC = () => {
     number | null
   >(null);
   const [newScheduledDate, setNewScheduledDate] = useState<string>("");
+
+
+  useEffect(() => {
+    socket.on('UserTicket', (data: any) => {
+      setAppointments((prevAppointments) => {
+        return [data, ...prevAppointments];
+      });
+    })
+
+    return () => {
+      socket.off('UserTicket');
+    }
+  })
 
   // Function to filter appointments based on search query and time period
   const filterAppointments = () => {

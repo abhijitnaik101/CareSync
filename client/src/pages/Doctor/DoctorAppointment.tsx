@@ -3,6 +3,7 @@ import { FaUsers, FaCalendarAlt, FaCheck, FaTrash, FaSyncAlt, FaInfoCircle } fro
 import io from "socket.io-client";
 import PatientModal from "./PatientModal";
 import PatientTable from "./PatientTable";
+import { socket } from "../../socket";
 
 // Interface for Patient data
 interface Patient {
@@ -14,8 +15,6 @@ interface Patient {
   status: "pending" | "checked";
 }
 
-// Initialize Socket.IO client
-const socket = io("http://localhost:5000"); // Replace with your backend URL
 
 const initialPatients : Patient[] = [
   {

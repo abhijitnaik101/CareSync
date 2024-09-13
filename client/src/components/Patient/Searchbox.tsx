@@ -2,15 +2,21 @@
 import React, { useEffect, useState } from 'react';
 import { FaSearch, FaMapMarkerAlt } from 'react-icons/fa';
 import { doctorsDB } from '../../DB/Doctors';
-import HospitalsComponent from './HospitalComponent';
 import axios from 'axios';
 import { route } from '../../../backendroute';
+import { bhubaneswarHospitals } from '../../DB/HospitalLocations';
+import SideBarHospital from './SideBarHospital';
 
 interface Hospital {
-  id: number;
+  hospital_id: number;
   name: string;
-  coordinates: number[];
-  services: string[];
+  coordinates: [number, number];
+  departments: Department[];
+}
+
+interface Department {
+  department: string;
+  doctors: number[];
 }
 
 interface Doctor {
@@ -29,7 +35,7 @@ const SearchBox: React.FC<{ coordsCallback: (coords: number[] | null) => void }>
   const [searchTerm, setSearchTerm] = useState('');
   const [suggestions, setSuggestions] = useState<Hospital[]>([]);
   const [selectedCoordinates, setSelectedCoordinates] = useState<number[] | null>(null);
-  const [hospitals, setHospitals] = useState<Hospital[]>([]);
+  const [hospitals, setHospitals] = useState<Hospital[]>(bhubaneswarHospitals);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [appointmentDetails, setAppointmentDetails] = useState({
@@ -55,24 +61,10 @@ const SearchBox: React.FC<{ coordsCallback: (coords: number[] | null) => void }>
   }
   //functions to fetch hospitals data
   useEffect(() => {
-    fetchHospitals();
+    //fetchHospitals();
   }, [])
 
-  //Function to fetch doctors
-  async function fetchDoctors() {
-    // const response = await axios.get(route + '/hospitals');
-    // console.log("Response", response);
-    // if (response.status === 500 || !response) {
-    //   console.error('Failed to fetch hospitals');
-    //   return;
-    // }
-  
-    //setDoctors(response.data);
-  }
-  //functions to fetch hospitals data
-  // useEffect(() => {
-  //   fetchHospitals();
-  // }, [])
+
 
   useEffect(() => {
     coordsCallback(selectedCoordinates);
@@ -129,7 +121,7 @@ const SearchBox: React.FC<{ coordsCallback: (coords: number[] | null) => void }>
       )}
     </div>
     {selectedCoordinates && (
-        <HospitalsComponent hospitals={hospitals} doctors={doctors} searchTerm={searchTerm}/>
+        <SideBarHospital hospitals={hospitals} doctors={doctors} searchTerm={searchTerm}/>
       )}
     </div>
   );

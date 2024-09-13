@@ -1,4 +1,7 @@
-import io from 'socket.io-client';
+import { io, Socket } from 'socket.io-client';
 
-// Connect to the backend server
-export const socket = io('http://localhost:3000');
+// Connect to the server
+export const socket: Socket = io('http://localhost:3000', {
+    transports: ['websocket'],
+    reconnection: true,
+});

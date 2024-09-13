@@ -38,11 +38,14 @@ const server = http.createServer(app);
 export const io = new Server(server, {
     cors: {
         origin: END_POINT,
-        methods: ["GET", "POST"]
     }
 })
 
-app.listen(PORT, () => {
+app.get('/', (req, res) => {
+  res.status(200).send(`server is up and running on port ${PORT}`);
+})
+
+server.listen(PORT, () => {
   prisma.$connect();
   console.log(`Server running on port ${PORT}`);
 });
