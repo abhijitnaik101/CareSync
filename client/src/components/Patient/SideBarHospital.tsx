@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { socket } from "../../socket";
 
 const SideBarHospital = ({ hospitals, doctors, searchTerm }) => {
@@ -14,10 +14,11 @@ const SideBarHospital = ({ hospitals, doctors, searchTerm }) => {
     appointmentDate: '',
   });
 
-  const handleBookAppointment = (doctorId: any, hospitalId: any) => {
+  const handleBookAppointment = (doctorId: any, doctorName: any, hospitalId: any) => {
     setAppointmentDetails((prevDetails) => ({
       ...prevDetails,
       doctorId,
+      doctorName,
       hospitalId,
     }));
     setIsModalOpen(true); // Open modal when "Book" button is clicked
@@ -54,10 +55,26 @@ const SideBarHospital = ({ hospitals, doctors, searchTerm }) => {
   // }, []);
 
   //socket to send notification to receptionist
+  
+  
   const handleSubmit = () => {
+    // const patientData = {
+    //   id: 12345,
+    //   name: "John Doe",
+    //   age: 30,
+    //   gender: "Male",
+    //   appointType: "General Checkup",
+    //   appointmentDate: "2023-02-20T14:00:00",
+    //   doctorName: "Dr. Jane Smith",
+    //   hospitalId: 1,
+    //   doctorId: 101
+    // };
+    console.log("appointment details sent to receptionist: ", appointmentDetails);
     socket.emit('book-appointment', appointmentDetails);
-    console.log("appointemnt details sent to receptionist: ", appointmentDetails);
+    
     setIsModalOpen(false);
+
+    
   }
   
 
@@ -82,7 +99,7 @@ const SideBarHospital = ({ hospitals, doctors, searchTerm }) => {
                       </div>
                       <button
                         className="bg-green-500 text-white px-6 py-2 rounded-md font-semibold hover:bg-green-600 transition duration-300"
-                        onClick={() => handleBookAppointment(doctorId, hospitals.find((hospital: { name: any; }) => hospital.name === searchTerm)?.id)}
+                        onClick={() => handleBookAppointment(doctorId, doctor.name, hospitals.find((hospital: { name: any; }) => hospital.name === searchTerm)?.id)}
                       >
                         Book
                       </button>
@@ -177,6 +194,7 @@ const SideBarHospital = ({ hospitals, doctors, searchTerm }) => {
             </div>
           </div>
         </div>
+
       )}
     </div>
   );

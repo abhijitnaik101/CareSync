@@ -17,54 +17,33 @@ interface Patient {
 }
 
 interface ReceptionistAppointmentApprovalProps {
+  setPatientRequests: React.Dispatch<React.SetStateAction<Patient[]>>;
   handleModal: (isOpen: boolean) => void; // Function to handle modal state
+  patientRequests: Patient[]; // Add this line
 }
 
-export default function ReceptionistAppointmentApproval({
-  handleModal,
-}: ReceptionistAppointmentApprovalProps) {
+const ReceptionistAppointmentApproval = ({ handleModal, patientRequests, setPatientRequests }: ReceptionistAppointmentApprovalProps) => {
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
-  const [patientRequests, setPatientRequests] = useState<Patient[]>([
-    {
-      id: 1,
-      name: "John Doe",
-      age: 30,
-      gender: "Male",
-      appointType: "OPD",
-      doctorId: 1,
-      appointmentDate: "2024-09-10",
-      doctorName: "Dr. Jane Smith",
-      hospitalId: 456,
-    },
-    {
-      id: 2,
-      name: "Alice Johnson",
-      age: 45,
-      gender: "Female",
-      appointType: "Inpatient",
-      doctorId: 1,
-      appointmentDate: "2024-09-11",
-      doctorName: "Dr. David Lee",
-      hospitalId: 456,
-    },
-  ]);
+  // useEffect(() => {
+  //   socket.on("patient-request", (data: any) => {
+  //     console.log("Received patient request:", data);
+  //     setPatientRequests((prevRequests) => [...prevRequests, data]);
+  //   });
+  //   return () => {
+  //     socket.off("patient-request");
+  //   };
+  // }, []);
 
-  useEffect(() => {
-    socket.on("book-appointment", (data: Patient) => {
-      setPatientRequests((prevRequests) => [...prevRequests, data]);
-    });
-    return () => {
-      socket.off("queue-update");
-    };
-  }, []);
-
-  const handleApprove = async (patientId: number) => {
-    const patients = patientRequests.filter((patient) => patient.id === patientId);
+  const handleApprove = async (patient: Patient) => {
+    const patients = patientRequests.filter((p) => p === patient);
+    
     if (patients.length) {
       try {
         //insert the patient details in ticket database
         const response = await axios.post(route + "/bookappointment", patients[0]);
-        console.log(response.data);
+        ///insert the ticket details in queue database
+
+        setPatientRequests(patientRequests.filter((p) => p !== patient));
         //send ticket to user
         socket.emit("sendTicketToUser", response.data);
       } catch (error) {
@@ -74,8 +53,9 @@ export default function ReceptionistAppointmentApproval({
     handleModal(false); // Close the modal after approval
   };
 
-  const handleReject = (patientId: number) => {
-    console.log("Rejected patient with ID:", patientId);
+  const handleReject = (patient: Patient) => {
+    console.log("Rejected patient with ID:", patient);
+    setPatientRequests(patientRequests.filter((p) => p !== patient));
     handleModal(false); // Close the modal after rejection
   };
 
@@ -94,33 +74,35 @@ export default function ReceptionistAppointmentApproval({
         </button>
 
         {/* Table to display patient requests */}
-        <table className="min-w-full bg-white border rounded-lg shadow-sm">
-          <thead>
-            <tr className="bg-gray-100 border-b">
-              <th className="py-2 px-4 text-left font-semibold text-gray-700">Patient Name</th>
-              <th className="py-2 px-4 text-left font-semibold text-gray-700">Appointment Type</th>
-              <th className="py-2 px-4 text-left font-semibold text-gray-700">Appointment Date</th>
-              <th className="py-2 px-4 text-center font-semibold text-gray-700">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {patientRequests.map((patient) => (
-              <tr key={patient.id} className="border-b">
-                <td className="py-3 px-4">{patient.name}</td>
-                <td className="py-3 px-4">{patient.appointType}</td>
-                <td className="py-3 px-4">{patient.appointmentDate}</td>
-                <td className="py-3 px-4 text-center">
-                  <button
-                    onClick={() => setSelectedPatient(patient)}
-                    className="bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-600 transition duration-300"
-                  >
-                    Details
-                  </button>
-                </td>
+        <div className="h-52 overflow-y-scroll">
+          <table className="min-w-full bg-white border rounded-lg shadow-sm ">
+            <thead>
+              <tr className="bg-gray-100 border-b">
+                <th className="py-2 px-4 text-left font-semibold text-gray-700">Patient Name</th>
+                <th className="py-2 px-4 text-left font-semibold text-gray-700">Appointment Type</th>
+                <th className="py-2 px-4 text-left font-semibold text-gray-700">Appointment Date</th>
+                <th className="py-2 px-4 text-center font-semibold text-gray-700">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody >
+              {patientRequests.map((patient) => (
+                <tr key={patient.id} className="border-b">
+                  <td className="py-3 px-4">{patient.name}</td>
+                  <td className="py-3 px-4">{patient.appointType}</td>
+                  <td className="py-3 px-4">{patient.appointmentDate}</td>
+                  <td className="py-3 px-4 text-center">
+                    <button
+                      onClick={() => setSelectedPatient(patient)}
+                      className="bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-600 transition duration-300"
+                    >
+                      Details
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
         {/* If a patient is selected, show their details */}
         {selectedPatient && (
@@ -150,13 +132,13 @@ export default function ReceptionistAppointmentApproval({
             {/* Approve and Reject buttons */}
             <div className="flex justify-end space-x-4 mt-6">
               <button
-                onClick={() => handleReject(selectedPatient.id)}
+                onClick={() => handleReject(selectedPatient)}
                 className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition duration-300"
               >
                 Reject
               </button>
               <button
-                onClick={() => handleApprove(selectedPatient.id)}
+                onClick={() => handleApprove(selectedPatient)}
                 className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition duration-300"
               >
                 Approve
@@ -168,3 +150,5 @@ export default function ReceptionistAppointmentApproval({
     </div>
   );
 }
+
+export default ReceptionistAppointmentApproval;

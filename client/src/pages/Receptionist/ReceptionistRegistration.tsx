@@ -5,6 +5,9 @@ import ReceptionistRegistrationStatus from "./Status";
 import ReceptionistGenderAgeDistribution from "./Distribution";
 import ReceptionistTotalRegistration from "./TotalRegistration";
 import ReceptionistAppointmentApproval from "./AppointmentApproval";
+import { socket } from "../../socket";
+import axios from "axios";
+import { route } from "../../../backendroute";
 
 interface RegistrationProps {
     name: string;
@@ -16,8 +19,17 @@ interface RegistrationProps {
     contact: string;
     visit: string;
 }[];
-
-
+interface Patient {
+  id: number;
+  name: string;
+  age: number;
+  gender: string;
+  appointType: string;
+  appointmentDate: string;
+  doctorName: string;
+  hospitalId: number;
+  doctorId: number;
+}
 
 const dummyTickets: any = [
   {
@@ -52,6 +64,8 @@ const dummyTickets: any = [
   },
 ]
 
+
+
 const ReceptionistRegistration: React.FC<RegistrationProps> = ({ registrations: initialRegistrations }) => {
 
 
@@ -59,6 +73,19 @@ const ReceptionistRegistration: React.FC<RegistrationProps> = ({ registrations: 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [apiResponse, setApiResponse] = useState(null); // To store API response
   const [approveModalOpen, setApproveModalOpen] = useState(false);
+  const [patientRequests, setPatientRequests] = useState<Patient[]>([
+    {
+      id: 1,
+      name: "John Doe",
+      age: 30,
+      gender: "Male",
+      appointType: "OPD",
+      doctorId: 1,
+      appointmentDate: "2024-09-10",
+      doctorName: "Dr. Jane Smith",
+      hospitalId: 456,
+    }
+  ]);
 
   const handleNewRegistrationClick = () => {
     setIsModalOpen(true); // Open the modal
@@ -111,25 +138,40 @@ const ReceptionistRegistration: React.FC<RegistrationProps> = ({ registrations: 
     }
   };
 
-  // async function fetchHospitals() {
-  //   const response = await axios.get(route + '/hospitals');
+  // async function fetchTickets() {
+  //   const response = await axios.get(route + '/appointments');
   //   console.log("Response", response);
   //   if (response.status === 500 || !response) {
   //     console.error('Failed to fetch hospitals');
   //     return;
   //   }
 
-  //   setHospitals(response.data);
+  //   setRegistrations(response.data)
   // }
   // //functions to fetch hospitals data
   // useEffect(() => {
-  //   fetchHospitals();
+  //   fetchTickets();
   // }, [])
+
+  useEffect(()=> {
+    socket.on("patient-request", (data: any) => {
+      console.log("Received patient request:", data);
+      setPatientRequests((prevRequests) => [...prevRequests, data]);
+    });
+
+    socket.on('fetch-ticket', ()=>{
+      //fetchTickets();
+    })
+
+    return () => {
+      socket.off("patient-request");
+    }
+  })
 
   return (
     <div className="relative w-full">
       {approveModalOpen &&
-        <ReceptionistAppointmentApproval handleModal={(value: boolean)=>setApproveModalOpen(value)}/>
+        <ReceptionistAppointmentApproval patientRequests={patientRequests} setPatientRequests={(value: any)=>setPatientRequests(value)} handleModal={(value: boolean)=>setApproveModalOpen(value)}/>
       }
 
       <div className="min-h-screen w-full bg-gray-100 p-6">

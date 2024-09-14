@@ -1,72 +1,70 @@
-import React, { useRef } from "react";
+import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaTimes } from 'react-icons/fa';
+import { FaTimes } from "react-icons/fa";
 import axios from "axios";
 import { route } from "../../../backendroute";
+import { socket } from "../../socket";
 
-interface NewRegistrationProps {
-  onNewRegistration: (formData: {
-    name: string;
-    age: string;
-    gender: string;
-    department: string;
-    visitDate: string;
-    contact: string;
-    nationalId: string;
-  }) => void;
+interface AppointmentDetails {
+  id: number;
+  name: string;
+  age: number;
+  gender: string;
+  appointType: string;
+  appointmentDate: string;
+  doctorName: string;
+  hospitalId: number;
+  doctorId: number;
 }
 
-const NewRegistration: React.FC<NewRegistrationProps> = ({ onNewRegistration,  closeModal }) => {
-  const nameRef = useRef<HTMLInputElement>(null);
-  const ageRef = useRef<HTMLInputElement>(null);
-  const genderRef = useRef<HTMLSelectElement>(null);
-  const departmentRef = useRef<HTMLSelectElement>(null);
-  const visitDateRef = useRef<HTMLInputElement>(null);
-  const contactRef = useRef<HTMLInputElement>(null);
-  const nationalIdRef = useRef<HTMLInputElement>(null);
+interface NewRegistrationProps {
+  closeModal: (isOpen: boolean) => void;
+}
 
+const NewRegistration: React.FC<NewRegistrationProps> = ({ closeModal }) => {
   const navigate = useNavigate();
 
-  const handleSubmit = (event: React.FormEvent) => {
+  // State to hold the appointment details
+  const [appointmentDetails, setAppointmentDetails] = useState<AppointmentDetails>({
+    id: 0,
+    name: "",
+    age: 0,
+    gender: "other",
+    appointType: "OPD",
+    appointmentDate: "",
+    doctorName: "",
+    hospitalId: 0,
+    doctorId: 0,
+  });
+
+  // Handle input change
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setAppointmentDetails((prevDetails) => ({
+      ...prevDetails,
+      [name]: value,
+    }));
+  };
+
+  // Handle form submission
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    const formData = {
-      name: nameRef.current?.value || "",
-      age: ageRef.current?.value || "",
-      gender: genderRef.current?.value || "other",
-      department: departmentRef.current?.value || "ophthalmologist",
-      visitDate: visitDateRef.current?.value || "",
-      contact: contactRef.current?.value || "",
-      nationalId: nationalIdRef.current?.value || "",
-    };
-
-    console.log("Form Data Submitted:", formData);
-    onNewRegistration(formData);
-
-    navigate("/receptionist/dashboard");
-  };
-
-  const bookAppointment = async () => {
-    const requestData = {
-      name: "John Doe",
-      age: 35,
-      gender: "male",
-      appointType: "OPD",
-      patientId: 123,
-      doctorId: 1,
-      hospitalId: 456,
-      appointmentDate: "2024-09-20T10:00:00"
-    };
-  
     try {
-      const response = await axios.post(route + '/bookappointment', requestData);
-      console.log(response.data);
+      // POST request to submit appointment details
+      const response = await axios.post(route + "/bookappointment", appointmentDetails);
+      console.log("Appointment booked:", response.data);
+      socket.emit('doctorFetchQueue');
+      
+      // Navigate to dashboard or any other page after successful booking
+      navigate("/receptionist/dashboard");
+      
+      // Close modal after submission
+      closeModal(false);
     } catch (error) {
-      console.error('Error booking appointment:', error);
+      console.error("Error booking appointment:", error);
     }
   };
-  
-  bookAppointment();
 
   return (
     <div className="w-full max-w-[700px] h-max max-h-[600px] mx-auto bg-white rounded-xl shadow-2xl p-6 box-border relative">
@@ -77,18 +75,32 @@ const NewRegistration: React.FC<NewRegistrationProps> = ({ onNewRegistration,  c
           onClick={() => closeModal(false)}
           aria-label="Close Modal"
         >
-         <FaTimes />
+          <FaTimes />
         </button>
       </div>
 
       {/* Modal Content */}
       <form className="mt-4 space-y-6" onSubmit={handleSubmit}>
+        {/* <div className="flex flex-col">
+          <label className="font-semibold text-gray-700">Patient ID</label>
+          <input
+            type="number"
+            name="id"
+            className="p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none text-base w-full"
+            value={appointmentDetails.id}
+            onChange={handleInputChange}
+            placeholder="Enter patient ID"
+          />
+        </div> */}
+
         <div className="flex flex-col">
           <label className="font-semibold text-gray-700">Name</label>
           <input
             type="text"
+            name="name"
             className="p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none text-base w-full"
-            ref={nameRef}
+            value={appointmentDetails.name}
+            onChange={handleInputChange}
             placeholder="Enter patient's name"
           />
         </div>
@@ -98,79 +110,104 @@ const NewRegistration: React.FC<NewRegistrationProps> = ({ onNewRegistration,  c
             <label className="font-semibold text-gray-700">Age</label>
             <input
               type="number"
+              name="age"
               className="p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none text-base"
-              ref={ageRef}
+              value={appointmentDetails.age}
+              onChange={handleInputChange}
               placeholder="Enter age"
             />
           </div>
+
           <div className="flex-1 flex flex-col">
             <label className="font-semibold text-gray-700">Gender</label>
             <select
+              name="gender"
               className="p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none text-base"
-              ref={genderRef}
+              value={appointmentDetails.gender}
+              onChange={handleInputChange}
             >
-              <option value="other">Other</option>
               <option value="male">Male</option>
               <option value="female">Female</option>
+              <option value="other">Other</option>
             </select>
           </div>
         </div>
 
         <div className="flex space-x-4">
           <div className="flex-1 flex flex-col">
-            <label className="font-semibold text-gray-700">Department</label>
-            <select
+            <label className="font-semibold text-gray-700">Appointment Type</label>
+            <input
+              type="text"
+              name="appointType"
               className="p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none text-base"
-              ref={departmentRef}
-            >
-              <option value="ophthalmologist">Ophthalmologist</option>
-              <option value="cardiology">Cardiology</option>
-              <option value="neurology">Neurology</option>
-            </select>
+              value={appointmentDetails.appointType}
+              onChange={handleInputChange}
+              placeholder="Enter appointment type"
+            />
           </div>
+
           <div className="flex-1 flex flex-col">
-            <label className="font-semibold text-gray-700">Visit Date</label>
+            <label className="font-semibold text-gray-700">Appointment Date</label>
             <input
               type="date"
+              name="appointmentDate"
               className="p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none text-base"
-              ref={visitDateRef}
+              value={appointmentDetails.appointmentDate}
+              onChange={handleInputChange}
             />
           </div>
         </div>
 
         <div className="flex space-x-4">
           <div className="flex-1 flex flex-col">
-            <label className="font-semibold text-gray-700">Contact</label>
+            <label className="font-semibold text-gray-700">Doctor Name</label>
             <input
               type="text"
+              name="doctorName"
               className="p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none text-base"
-              ref={contactRef}
-              placeholder="Enter contact number"
+              value={appointmentDetails.doctorName}
+              onChange={handleInputChange}
+              placeholder="Enter doctor's name"
             />
           </div>
+
+          {/* <div className="flex-1 flex flex-col">
+            <label className="font-semibold text-gray-700">Hospital ID</label>
+            <input
+              type="number"
+              name="hospitalId"
+              className="p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none text-base"
+              value={appointmentDetails.hospitalId}
+              onChange={handleInputChange}
+              placeholder="Enter hospital ID"
+            />
+          </div>
+        </div> */}
+
+        {/* <div className="flex space-x-4">
           <div className="flex-1 flex flex-col">
-            <label className="font-semibold text-gray-700">National ID</label>
+            <label className="font-semibold text-gray-700">Doctor ID</label>
             <input
-              type="text"
+              type="number"
+              name="doctorId"
               className="p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none text-base"
-              ref={nationalIdRef}
-              placeholder="Enter national ID"
+              value={appointmentDetails.doctorId}
+              onChange={handleInputChange}
+              placeholder="Enter doctor ID"
             />
-          </div>
-        </div>
+          </div>*/}
+        </div> 
 
         <div className="flex justify-center">
           <button
-            onClick={bookAppointment}
             type="submit"
             className="py-3 px-6 bg-blue-600 text-white rounded-lg text-lg font-semibold hover:bg-blue-700 focus:ring-2 focus:ring-blue-300 transition-all"
           >
-            Register
+            Register Appointment
           </button>
         </div>
       </form>
     </div>
-
   );
 };
 
