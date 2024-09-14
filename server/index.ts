@@ -14,6 +14,7 @@ import { bedManage } from './routes/bedManageRoutes';
 import { mlRouter } from './routes/mlRoutes';
 import inventoryRouter from './routes/inventoryRoutes';
 import { hospitalRoute } from './routes/HospitalRoutes';
+import { initializeSocket } from './socket';
 
 // Load environment variables
 dotenv.config();
@@ -42,44 +43,14 @@ export const server = http.createServer(app);
 
 
 // Socket.io setup
-export const io = new Server(server, {
+const io = new Server(server, {
     cors: {
         origin: END_POINT,
         methods: ['GET', 'POST'],
     }
 });
-io.on('connection', (socket) => {
-    console.log(`New connection: ${socket.id}`);
 
-    socket.on('book-appointment', (data) => {
-        console.log("book appointment data recieved from patient", data);
-        io.emit('patient-request', data);
-    });
-
-    socket.on('sendTicketToUser', (data) => {
-        console.log("book appointment data recieved from receptionist", data);
-        io.emit('fetch-ticket');
-        io.emit('UserTicket', data);
-    })
-
-    socket.on('reject-patient-request', (patient)=> {
-        io.emit('reject-patient-request', patient);
-    })
-
-    socket.on('doctorFetchQueue', ()=> {
-       io.emit('doctorFetchQueue');
-    });
-
-    socket.on('disconnect', () => {
-        console.log(`Client disconnected: ${socket.id}`);
-    });
-
-    // Example event listener
-    socket.on('message', (message: string) => {
-        console.log(`Message received: ${message}`);
-        io.emit('message', message); // Broadcast the message to all clients
-    });
-});
+initializeSocket(io);
 
 // Basic route
 app.get('/', (req: Request, res: Response) => {

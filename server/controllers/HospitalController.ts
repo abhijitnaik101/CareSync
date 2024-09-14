@@ -54,3 +54,48 @@ export const getHospitals = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const getDoctors = async (req: Request, res: Response) => {
+  const { hospitalId, departmentId } = req.query;
+
+  if (!hospitalId ||!departmentId) {
+    return res.status(400).json({ message: "Missing hospital ID or department ID in query" });
+  }
+
+  try {
+    const depdoctors = await prisma.department.findUnique({
+      where: {
+        hospitalId: Number(hospitalId),
+        id: Number(departmentId),
+      },
+      select: { doctors: {
+        select: { id: true, name: true, specialty: true, workingdays: true, workinghrs: true,
+          averageTreatmentTime: true
+         } },
+         name: true
+      }
+    });
+
+    res.json(depdoctors);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const getDepartments = async (req: Request, res: Response) => {
+  const { hospitalId } = req.query;
+
+  if (!hospitalId) {
+    return res.status(400).json({ message: "Missing hospital ID in query" });
+  }
+
+  try {
+    const departments = await prisma.department.findMany({
+      where: { hospitalId: Number(hospitalId) }
+    });
+
+    res.json(departments);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
