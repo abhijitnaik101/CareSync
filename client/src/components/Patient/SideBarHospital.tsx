@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { socket } from "../../socket";
+import { useRecoilState } from 'recoil';
+import patientState from '../../recoil/atoms/patientAtom';
 
 const SideBarHospital = ({ hospitals, doctors, searchTerm }) => {
+  const [patient, setPatient] = useRecoilState(patientState);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [appointmentDetails, setAppointmentDetails] = useState({
     name: '',

@@ -62,6 +62,10 @@ io.on('connection', (socket) => {
         io.emit('UserTicket', data);
     })
 
+    socket.on('reject-patient-request', (patient)=> {
+        io.emit('reject-patient-request', patient);
+    })
+
     socket.on('doctorFetchQueue', ()=> {
        io.emit('doctorFetchQueue');
     });

@@ -7,21 +7,24 @@ import DoctorLayout from './layouts/DoctorLayout';
 import InventoryManagerLayout from './layouts/InventoryManagerLayout';
 import ReceptionistLayout from './layouts/ReceptionistLayout';
 import Register from './layouts/Register';
+import { RecoilRoot } from 'recoil';
 
 const App = () => {
     return (
-        <BrowserRouter>
-            <Routes>
-                <Route path="/" element={<Landing />} />
-                <Route path="/login" element={<Login />} />
-                <Route path='/register' element={<Register />} />
-                <Route path="/admin/*" element={<AdminLayout />} />
-                <Route path="/patient/*" element={<PatientLayout />} />
-                <Route path="/doctor/*" element={<DoctorLayout />} />
-                <Route path="/inventory-manager/*" element={<InventoryManagerLayout />} />
-                <Route path="/receptionist/*" element={<ReceptionistLayout />} />
-            </Routes>
-        </BrowserRouter>
+        <RecoilRoot>
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/" element={<Landing />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path='/register' element={<Register />} />
+                    <Route path="/admin/*" element={<AdminLayout />} />
+                    <Route path="/patient/*" element={<PatientLayout />} />
+                    <Route path="/doctor/*" element={<DoctorLayout />} />
+                    <Route path="/inventory-manager/*" element={<InventoryManagerLayout />} />
+                    <Route path="/receptionist/*" element={<ReceptionistLayout />} />
+                </Routes>
+            </BrowserRouter>
+        </RecoilRoot>
     );
 };
 

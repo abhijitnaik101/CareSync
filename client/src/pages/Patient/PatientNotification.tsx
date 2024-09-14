@@ -49,6 +49,10 @@ const PatientNotification: React.FC = () => {
       });
     })
 
+    socket.on('reject-patient-request', (patient: any) => {
+      //
+    })
+
     return () => {
       socket.off('UserTicket');
     }

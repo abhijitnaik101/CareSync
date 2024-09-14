@@ -63,9 +63,15 @@ const initialPatients : Patient[] = [
 
 const DoctorsAppointment: React.FC = () => {
   const [patientQueue, setpatientQueue] = useState<Patient[]>(initialPatients);
-  const [checkedPatients, setCheckedPatients] = useState<Patient[]>([]);
+  const [pendingPatient, setPendingPatient] = useState<Patient[]>([]);
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  //initial fetch of queue
+  useEffect(() => {
+    //fetchQueue();
+    //fetchPendingPatients();
+  }, []);
 
 
   useState(() => {
@@ -85,29 +91,39 @@ const DoctorsAppointment: React.FC = () => {
   //   }
   // }
 
+  // async function fetchPendingPatients()() {
+  //   try{
+  //     const response = await axios.get(route + '/some-route');
+  //     setPendingPatient(response.data);
+  //   }
+  //   catch(error){
+  //     console.error(error);
+  //   }
+  // }
+
 
   // Handle marking patient as done
   const handleDone = (id: number) => {
     const patient = patientQueue.find((p) => p.id === id);
     if (patient) {
-      setCheckedPatients([...checkedPatients, patient]);
+      setPendingPatient([...pendingPatient, patient]);
       setpatientQueue(patientQueue.filter((p) => p.id !== id));
     }
   };
 
   // Handle marking patient as pending (move to pending list)
   const handlePending = (id: number) => {
-    const patient = checkedPatients.find((p) => p.id === id);
+    const patient = pendingPatient.find((p) => p.id === id);
     if (patient) {
       setpatientQueue([...patientQueue, { ...patient, status: "pending" }]);
-      setCheckedPatients(checkedPatients.filter((p) => p.id !== id));
+      setPendingPatient(pendingPatient.filter((p) => p.id !== id));
     }
   };
 
   // Handle deleting patient
   const handleDelete = (id: number) => {
     setpatientQueue(patientQueue.filter((p) => p.id !== id));
-    setCheckedPatients(checkedPatients.filter((p) => p.id !== id));
+    setPendingPatient(pendingPatient.filter((p) => p.id !== id));
   };
 
   // Handle opening modal
@@ -155,7 +171,7 @@ const DoctorsAppointment: React.FC = () => {
         <div className="bg-white p-6 rounded-lg shadow-lg flex items-center justify-between">
           <div>
             <p className="text-gray-500">Checked Patients</p>
-            <p className="text-3xl font-bold text-green-600">{checkedPatients.length}</p>
+            <p className="text-3xl font-bold text-green-600">{pendingPatient.length}</p>
           </div>
           <FaCheck className="text-green-600 text-3xl" />
         </div>
@@ -179,7 +195,7 @@ const DoctorsAppointment: React.FC = () => {
       <PatientTable
         title="Checked Patients"
         headerColor="red"
-        patients={checkedPatients}
+        patients={pendingPatient}
         onDelete={handleDelete}
         onPending={handlePending}
         onDetails={openModal}

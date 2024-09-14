@@ -1,165 +1,288 @@
-import React, { useState, useEffect } from 'react';
-
-interface ProfileDetails {
+import React, { useState } from 'react';
+import { FaCalendarAlt, FaEnvelope, FaHeartbeat, FaLock, FaPhone, FaUser, FaEdit, FaPhoneAlt, FaTint, FaUserCircle } from 'react-icons/fa';
+import { useRecoilState } from 'recoil';
+import patientState from '../../recoil/atoms/patientAtom';
+// Interface for Patient Profile
+interface Patient {
   name: string;
   email: string;
-  phone: string;
-  address: string;
-  profileImage: string;
+  age: number;
+  bloodtype?: string;
+  contact: string;
+  password: string;
+  profilePicture?: string;
 }
 
-const defaultProfile: ProfileDetails = {
+// Dummy initial patient data
+const initialPatientData: Patient = {
   name: 'John Doe',
   email: 'john.doe@example.com',
-  phone: '+1 234 567 8901',
-  address: '1234 Elm Street, Springfield, USA',
-  profileImage: 'https://via.placeholder.com/150'
+  age: 35,
+  bloodtype: 'O+',
+  contact: '123-456-7890',
+  password: 'password123',
+  profilePicture: '', // Will be updated after upload
 };
 
-const PatientProfile: React.FC = () => {
-  const [details, setDetails] = useState<ProfileDetails>(defaultProfile);
+// PatientForm Component
+const PatientForm: React.FC = () => {
+  //const [patient, setPatient] = useState<Patient>(initialPatientData);
+  const [patient, setPatient] = useRecoilState<Patient>(patientState);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [file, setFile] = useState<File | null>(null);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
 
-  useEffect(() => {
-    // Load profile details from sessionStorage if available
-    const storedDetails = sessionStorage.getItem('profileDetails');
-    if (storedDetails) {
-      setDetails(JSON.parse(storedDetails));
-    }
-  }, []);
-
-  useEffect(() => {
-    // Save profile details to sessionStorage whenever they change
-    sessionStorage.setItem('profileDetails', JSON.stringify(details));
-  }, [details]);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Function to handle form input changes
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setDetails({ ...details, [name]: value });
+    setPatient((prevState: any) => ({
+      ...prevState,
+      [name]: value,
+    }));
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setFile(file);
-      setDetails({ ...details, profileImage: URL.createObjectURL(file) });
+  // Function to handle image upload
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+
+      reader.onload = (event) => {
+        setProfileImage(event.target?.result as string);
+      };
+
+      reader.readAsDataURL(file);
     }
   };
 
-  const handleSave = () => {
-    setIsEditing(false);
+  // Function to handle form submission
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+  
+    // Basic validation
+    if (!patient.name || !patient.email || !patient.age || !patient.contact || !patient.password) {
+      setErrorMessage('Please fill in all required fields.');
+      return;
+    }
+  
+    setPatient({
+      ...patient,
+      name: patient.name,
+      email: patient.email,
+      age: patient.age,
+      bloodtype: patient.bloodtype,
+      contact: patient.contact,
+      password: patient.password,
+      profilePicture: patient.profilePicture,
+    });
+  
+    setErrorMessage(null);
+    setIsEditing(false); // Stop editing on submit
+    console.log('Patient Data Submitted:', patient);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Gradient Banner */}
-      <div className="bg-gradient-to-r from-indigo-500 to-purple-600 h-48 flex items-center justify-center">
-        <h1 className="text-white text-4xl font-extrabold">Patient Profile</h1>
+    <div className=" p-10 bg-white rounded-lg">
+      <h2 className="text-3xl font-semibold text-gray-800 mb-8 text-center">Patient Profile</h2>
+
+      {/* Profile Picture */}
+      <div className="flex justify-center mb-6">
+        <div className="relative">
+          <img
+            src={profileImage || "https://via.placeholder.com/150"} // Default or uploaded profile picture
+            alt="Profile"
+            className="rounded-full h-32 w-32 object-cover"
+          />
+          <label htmlFor="profilePictureUpload" className="absolute bottom-0 right-0 bg-gray-200 rounded-full p-2 cursor-pointer">
+            <FaEdit className="text-gray-600" />
+          </label>
+          <input
+            id="profilePictureUpload"
+            type="file"
+            className="hidden"
+            onChange={handleImageUpload}
+          />
+        </div>
       </div>
 
-      {/* Main Content */}
-      <div className="container mx-auto py-12 px-4">
-        <div className="bg-white rounded-lg shadow-xl overflow-hidden">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-8">
-            {/* Profile Image Section */}
-            <div className="col-span-1 flex justify-center items-center">
-              <div className="relative w-48 h-48">
-                <div className="absolute inset-0 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden border-4 border-white shadow-lg">
-                  {details.profileImage ? (
-                    <img src={details.profileImage} alt="Profile" className="w-full h-full object-cover" />
-                  ) : (
-                    <span className="text-gray-500 text-lg">No Image</span>
-                  )}
-                </div>
-                {isEditing && (
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                    className="absolute bottom-0 right-0 text-sm text-gray-500 file:py-2 file:px-4 file:border file:border-gray-300 file:rounded-md file:text-sm file:font-semibold file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100"
-                  />
-                )}
-              </div>
-            </div>
+      {/* Error Message */}
+      {errorMessage && (
+        <div className="mb-6 p-3 text-red-600 bg-red-100 rounded-md text-center">
+          {errorMessage}
+        </div>
+      )}
 
-            {/* Profile Details Section */}
-            <div className="col-span-2">
-              {isEditing ? (
-                <div className="space-y-6">
-                  <div>
-                    <label className="block text-lg font-medium text-gray-700">Email</label>
-                    <input
-                      type="email"
-                      name="email"
-                      value={details.email}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-lg font-medium text-gray-700">Phone</label>
-                    <input
-                      type="text"
-                      name="phone"
-                      value={details.phone}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-lg font-medium text-gray-700">Address</label>
-                    <input
-                      type="text"
-                      name="address"
-                      value={details.address}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                    />
-                  </div>
-                  <div className="flex space-x-4">
-                    <button
-                      onClick={handleSave}
-                      className="px-4 py-2 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700 transition"
-                    >
-                      Save
-                    </button>
-                    <button
-                      onClick={() => setIsEditing(false)}
-                      className="px-4 py-2 bg-gray-500 text-white rounded-lg shadow-md hover:bg-gray-600 transition"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  <div>
-                    <span className="block text-lg font-medium text-gray-700">Email:</span>
-                    <p className="text-gray-600">{details.email}</p>
-                  </div>
-                  <div>
-                    <span className="block text-lg font-medium text-gray-700">Phone:</span>
-                    <p className="text-gray-600">{details.phone}</p>
-                  </div>
-                  <div>
-                    <span className="block text-lg font-medium text-gray-700">Address:</span>
-                    <p className="text-gray-600">{details.address}</p>
-                  </div>
-                  <button
-                    onClick={() => setIsEditing(true)}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition"
-                  >
-                    Edit
-                  </button>
-                </div>
-              )}
+      {/* Display Patient Details or Form */}
+      {!isEditing ? (
+        <div className="patient-profile px-8 py-6 rounded-lg shadow-md bg-slate-100">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-semibold text-gray-700">Patient Profile</h2>
+          <FaEdit className="text-gray-500 cursor-pointer hover:text-blue-500" onClick={() => setIsEditing(true)} />
+        </div>
+      
+        <div className="grid grid-cols-2 gap-4">
+          <div className="flex items-center">
+            <FaUserCircle className="text-indigo-500 mr-4 text-2xl" />
+            <div>
+              <h3 className="text-lg font-medium text-gray-700">Name:</h3>
+              <p className="text-gray-600">{patient.name}</p>
+            </div>
+          </div>
+          <div className="flex items-center">
+            <FaEnvelope className="text-pink-500 mr-4 text-2xl" />
+            <div>
+              <h3 className="text-lg font-medium text-gray-700">Email:</h3>
+              <p className="text-gray-600">{patient.email}</p>
+            </div>
+          </div>
+          <div className="flex items-center">
+            <FaCalendarAlt className="text-green-500 mr-4 text-2xl" />
+            <div>
+              <h3 className="text-lg font-medium text-gray-700">Age:</h3>
+              <p className="text-gray-600">{patient.age}</p>
+            </div>
+          </div>
+          <div className="flex items-center">
+            <FaTint className="text-rose-500 mr-4 text-2xl" />
+            <div>
+              <h3 className="text-lg font-medium text-gray-700">Blood Type:</h3>
+              <p className="text-gray-600">{patient.bloodtype || 'Not specified'}</p>
+            </div>
+          </div>
+          <div className="flex items-center">
+            <FaPhoneAlt className="text-blue-500 mr-4 text-2xl"/>
+            <div>
+              <h3 className="text-lg font-medium text-gray-700">Contact:</h3>
+              <p className="text-gray-600">{patient.contact}</p>
             </div>
           </div>
         </div>
       </div>
+      ) : (
+        <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-8">
+          {/* Left Column */}
+          <div className="space-y-6">
+            {/* Name */}
+            <div className="flex items-center space-x-2">
+              <FaUser className="text-gray-500" />
+              <div className="flex-1">
+                <label className="font-medium text-gray-700">Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  value={patient.name}
+                  onChange={handleInputChange}
+                  className="mt-1 p-3 w-full border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  placeholder="Enter your name"
+                />
+              </div>
+            </div>
+
+            {/* Email */}
+            <div className="flex items-center space-x-2">
+              <FaEnvelope className="text-gray-500" />
+              <div className="flex-1">
+                <label className="font-medium text-gray-700">Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={patient.email}
+                  onChange={handleInputChange}
+                  className="mt-1 p-3 w-full border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  placeholder="Enter your email"
+                />
+              </div>
+            </div>
+
+            {/* Age */}
+            <div className="flex items-center space-x-2">
+              <FaCalendarAlt className="text-gray-500" />
+              <div className="flex-1">
+                <label className="font-medium text-gray-700">Age</label>
+                <input
+                  type="number"
+                  name="age"
+                  value={patient.age}
+                  onChange={handleInputChange}
+                  className="mt-1 p-3 w-full border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  placeholder="Enter your age"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column */}
+          <div className="space-y-6">
+            {/* Blood Type */}
+            <div className="flex items-center space-x-2">
+              <FaHeartbeat className="text-gray-500" />
+              <div className="flex-1">
+                <label className="font-medium text-gray-700">Blood Type</label>
+                <select
+                  name="bloodtype"
+                  value={patient.bloodtype}
+                  onChange={handleInputChange}
+                  className="mt-1 p-3 w-full border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                >
+                  <option value="">Select blood type</option>
+                  <option value="A+">A+</option>
+                  <option value="A-">A-</option>
+                  <option value="B+">B+</option>
+                  <option value="B-">B-</option>
+                  <option value="O+">O+</option>
+                  <option value="O-">O-</option>
+                  <option value="AB+">AB+</option>
+                  <option value="AB-">AB-</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Contact */}
+            <div className="flex items-center space-x-2">
+              <FaPhone className="text-gray-500" />
+              <div className="flex-1">
+                <label className="font-medium text-gray-700">Contact</label>
+                <input
+                  type="text"
+                  name="contact"
+                  value={patient.contact}
+                  onChange={handleInputChange}
+                  className="mt-1 p-3 w-full border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  placeholder="Enter your contact number"
+                />
+              </div>
+            </div>
+
+            {/* Password */}
+            <div className="flex items-center space-x-2">
+              <FaLock className="text-gray-500" />
+              <div className="flex-1">
+                <label className="font-medium text-gray-700">Password</label>
+                <input
+                  type="password"
+                  name="password"
+                  value={patient.password}
+                  onChange={handleInputChange}
+                  className="mt-1 p-3 w-full border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  placeholder="Enter your password"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Submit Button */}
+          <div className="col-span-2 flex justify-center mt-8">
+            <button
+              type="submit"
+              className="py-3 px-6 bg-blue-600 text-white rounded-lg text-lg font-semibold hover:bg-blue-700 focus:ring-2 focus:ring-blue-300 transition-all"
+            >
+              Save Changes
+            </button>
+          </div>
+        </form>
+      )}
     </div>
   );
 };
 
-export default PatientProfile;
+export default PatientForm;

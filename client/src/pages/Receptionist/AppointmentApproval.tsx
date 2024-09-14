@@ -15,7 +15,6 @@ interface Patient {
   hospitalId: number;
   doctorId: number;
 }
-
 interface ReceptionistAppointmentApprovalProps {
   setPatientRequests: React.Dispatch<React.SetStateAction<Patient[]>>;
   handleModal: (isOpen: boolean) => void; // Function to handle modal state
@@ -54,7 +53,7 @@ const ReceptionistAppointmentApproval = ({ handleModal, patientRequests, setPati
   };
 
   const handleReject = (patient: Patient) => {
-    console.log("Rejected patient with ID:", patient);
+    socket.emit("reject-patient-request", patient);
     setPatientRequests(patientRequests.filter((p) => p !== patient));
     handleModal(false); // Close the modal after rejection
   };

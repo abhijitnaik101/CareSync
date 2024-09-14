@@ -1,7 +1,7 @@
 import { io, Socket } from 'socket.io-client';
-
+const PORT = 3000;
 // Connect to the server
-export const socket: Socket = io('http://localhost:3000', {
+export const socket: Socket = io(`http://localhost:${PORT}`, {
     transports: ['websocket'],
     reconnection: true,
 });
