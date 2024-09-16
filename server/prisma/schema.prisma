@@ -72,7 +72,7 @@ model doctor {
   specialty   String
   descripton  String?
   workinghrs  String?
-  workingdays Int
+  workingdays String[]
   averageTreatmentTime Int   @default(5) // Average treatment time in minutes
   hospitalId  Int
   hospital    hospital       @relation(fields: [hospitalId], references: [id])
@@ -119,6 +119,7 @@ model ticket {
   approved    Boolean        @default(false) 
   wardId      Int?           // Reference to the ward assigned to the patient
   ward        ward?          @relation(fields: [wardId], references: [id])
+  bed         Int?
 }
 
 model inventoryman {
