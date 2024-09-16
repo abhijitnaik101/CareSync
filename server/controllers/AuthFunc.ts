@@ -65,7 +65,7 @@ export const registerUser = async (req: Request, res: Response) => {
                         departmentId: req.body.departmentId,
                         specialty: req.body.speciality || "General",
                         hospitalId: hospitalPass.id,
-                        workingdays: Number(req.body.workingdays)
+                        workingdays: req.body.workingdays
                     },
                 });
                 break;

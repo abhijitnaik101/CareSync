@@ -10,7 +10,7 @@ export const DocRequest = z.object({
     departmentId: z.number(),
     hospitalDocpass: z.string(),
     description: z.string().optional(),
-    workingdays: z.number()
+    workingdays: z.array(z.string())
 });
 
 export type DocRequestType = z.infer<typeof DocRequest>;
