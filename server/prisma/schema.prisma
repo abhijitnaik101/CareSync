@@ -154,9 +154,9 @@ model queue {
   hospital    hospital       @relation(fields: [hospitalId], references: [id])
   doctorId    Int
   doctor      doctor         @relation(fields: [doctorId], references: [id])
-  position    Int            // Patient's position in the queue
+  position    Int?            // Patient's position in the queue
   appointmentDate DateTime   @db.Date
-  pending     Boolean        @default(false)
+  pending     Boolean        @default(true)
   ticketId    Int
   ticket      ticket         @relation(fields: [ticketId], references: [id])
 }
