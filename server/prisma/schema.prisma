@@ -72,7 +72,7 @@ model doctor {
   specialty   String
   descripton  String?
   workinghrs  String?
-  workingdays Int
+  workingdays String[]
   averageTreatmentTime Int   @default(5) // Average treatment time in minutes
   hospitalId  Int
   hospital    hospital       @relation(fields: [hospitalId], references: [id])
