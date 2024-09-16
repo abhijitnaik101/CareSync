@@ -6,13 +6,11 @@ import { route } from "../../../backendroute";
 import { socket } from "../../socket";
 
 interface AppointmentDetails {
-  id: number;
   name: string;
   age: number;
   gender: string;
   appointType: string;
   appointmentDate: string;
-  doctorName: string;
   hospitalId: number;
   doctorId: number;
 }
@@ -26,15 +24,13 @@ const NewRegistration: React.FC<NewRegistrationProps> = ({ closeModal }) => {
 
   // State to hold the appointment details
   const [appointmentDetails, setAppointmentDetails] = useState<AppointmentDetails>({
-    id: 0,
     name: "",
-    age: 0,
+    age: 10,
     gender: "other",
     appointType: "OPD",
     appointmentDate: "",
-    doctorName: "",
-    hospitalId: 0,
-    doctorId: 0,
+    hospitalId: 1,
+    doctorId: 1,
   });
 
   // Handle input change
@@ -46,15 +42,26 @@ const NewRegistration: React.FC<NewRegistrationProps> = ({ closeModal }) => {
     }));
   };
 
+  // const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const value = new Date(e.target.value);
+  //   setAppointmentDetails((prevDetails) => ({
+  //    ...prevDetails,
+  //     appointmentDate: value,
+  //   }));
+  // }
+
+  
+
   // Handle form submission
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
     try {
       // POST request to submit appointment details
-      const response = await axios.post(route + "/bookappointment", appointmentDetails);
-      console.log("Appointment booked:", response.data);
-      socket.emit('doctorFetchQueue');
+      await axios.post(route + "/booking/create/appoint", appointmentDetails);
+      if (appointmentDetails.appointType === 'OPD'){
+        socket.emit('doctorFetchQueue');
+      }
       
       // Navigate to dashboard or any other page after successful booking
       navigate("/receptionist/dashboard");
@@ -106,7 +113,7 @@ const NewRegistration: React.FC<NewRegistrationProps> = ({ closeModal }) => {
         </div>
 
         <div className="flex space-x-4">
-          <div className="flex-1 flex flex-col">
+          {/* <div className="flex-1 flex flex-col">
             <label className="font-semibold text-gray-700">Age</label>
             <input
               type="number"
@@ -116,7 +123,7 @@ const NewRegistration: React.FC<NewRegistrationProps> = ({ closeModal }) => {
               onChange={handleInputChange}
               placeholder="Enter age"
             />
-          </div>
+          </div> */}
 
           <div className="flex-1 flex flex-col">
             <label className="font-semibold text-gray-700">Gender</label>
@@ -126,9 +133,9 @@ const NewRegistration: React.FC<NewRegistrationProps> = ({ closeModal }) => {
               value={appointmentDetails.gender}
               onChange={handleInputChange}
             >
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
+              <option value="MALE">Male</option>
+              <option value="FEMALE">Female</option>
+              <option value="TRANS">Other</option>
             </select>
           </div>
         </div>
@@ -159,7 +166,7 @@ const NewRegistration: React.FC<NewRegistrationProps> = ({ closeModal }) => {
         </div>
 
         <div className="flex space-x-4">
-          <div className="flex-1 flex flex-col">
+          {/* <div className="flex-1 flex flex-col">
             <label className="font-semibold text-gray-700">Doctor Name</label>
             <input
               type="text"
@@ -169,7 +176,7 @@ const NewRegistration: React.FC<NewRegistrationProps> = ({ closeModal }) => {
               onChange={handleInputChange}
               placeholder="Enter doctor's name"
             />
-          </div>
+          </div> */}
 
           {/* <div className="flex-1 flex flex-col">
             <label className="font-semibold text-gray-700">Hospital ID</label>

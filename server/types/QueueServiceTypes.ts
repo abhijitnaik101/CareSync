@@ -13,5 +13,5 @@ export const ticketAppointRequest = z.object({
     patientId: z.number().optional(),
     doctorId: z.number().optional(),
     hospitalId: z.number(),
-    appointmentDate: z.coerce.date()
+    appointmentDate: z.string()
 });

@@ -67,18 +67,17 @@ const SearchBox: React.FC<{ coordsCallback: (coords: number[] | null) => void }>
   });
 
   async function fetchHospitals() {
-    const response = await axios.get(route + '/hospitals');
-    console.log("Response", response);
-    if (response.status === 500 || !response) {
-      console.error('Failed to fetch hospitals');
-      return;
+    try {
+      const response = await axios.get(route + '/hospitals');
+      setHospitals(response.data);
+    } catch (error) {
+      console.error(error);
     }
-  
-    setHospitals(response.data);
+    
   }
   //functions to fetch hospitals data
   useEffect(() => {
-    //fetchHospitals();
+    fetchHospitals();
   }, [])
 
 

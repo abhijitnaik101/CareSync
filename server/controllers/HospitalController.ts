@@ -45,7 +45,13 @@ export const getHospitals = async (req: Request, res: Response) => {
         name: true,
         coordinates: true,
         services: true,
-        departments: true
+        departments: {
+          include: {
+            doctors: {
+              select: { id: true, name: true, averageTreatmentTime: true }
+            }
+          }
+        }
       }
     });
     

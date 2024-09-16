@@ -17,7 +17,7 @@ export const bookAppointment = async (req: Request, res: Response) => {
   }
 
   // Extract appointment details from the request
-  const { name, age, gender, appointType, patientId, doctorId, hospitalId, appointmentDate } = req.body;
+  const { name, age, gender, appointType, patientId, doctorId, hospitalId } = req.body;
 
   try {
     // Create a new ticket entry for the patient
@@ -67,3 +67,48 @@ export const getAppointments = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const createAppointment = async (req: Request, res: Response) => {
+  // Validate the request body
+  if (!ticketAppointRequest.safeParse(req.body).success) {
+    return res.status(400).json({ message: 'Invalid request' });
+  }
+
+  // Extract appointment details from the request
+  const { name, age, gender, appointType, patientId, doctorId, hospitalId, appointmentDate } = req.body;
+
+  try {
+    // Create a new ticket entry for the patient
+    const ticket = await prisma.ticket.create({
+      data: {
+        name,
+        age,
+        gender,
+        appointType,
+        patientId,
+        doctorId,
+        hospitalId,
+        approved: true
+      },
+    });
+    
+    const queue = await prisma.queue.create({
+      data: {
+        hospitalId,
+        doctorId,
+        position: 1,
+        appointmentDate: new Date(appointmentDate).toISOString(), // Use the provided date
+        pending: false,
+        ticketId: ticket.id,
+      },
+    })
+
+    // Respond with success message, ticket details, and queue position (if OPD)
+    res.json({
+      message: 'Appointment created successfully!',
+      ticket,
+    });
+  } catch (error) {
+    res.status(500).json({ error: error });
+  }
+}
