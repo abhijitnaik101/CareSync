@@ -109,6 +109,7 @@ const DoctorsAppointment: React.FC = () => {
       setPendingPatient([...pendingPatient, patient]);
       setpatientQueue(patientQueue.filter((p) => p.id !== id));
     }
+    //backend code to delete the user
   };
 
   // Handle marking patient as pending (move to pending list)
@@ -117,6 +118,7 @@ const DoctorsAppointment: React.FC = () => {
     if (patient) {
       setpatientQueue([...patientQueue, { ...patient, status: "pending" }]);
       setPendingPatient(pendingPatient.filter((p) => p.id !== id));
+      //backend code to mark transfer patient to pending table
     }
   };
 
@@ -124,6 +126,7 @@ const DoctorsAppointment: React.FC = () => {
   const handleDelete = (id: number) => {
     setpatientQueue(patientQueue.filter((p) => p.id !== id));
     setPendingPatient(pendingPatient.filter((p) => p.id !== id));
+    //backend code to delete a patient details
   };
 
   // Handle opening modal

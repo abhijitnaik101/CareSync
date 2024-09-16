@@ -170,6 +170,17 @@ const AdministratorWard: React.FC = () => {
   const [showAdmitModal, setShowAdmitModal] = useState(false);
   const [currentPatient, setCurrentPatient] = useState<Patient | null>(null);
 
+
+  const patient: Patient = {
+    id: 1,
+    name: 'John Doe',
+    email: 'john.doe@example.com',
+    age: 30,
+    gender: 'Male',
+  };
+
+  
+  
   const handleAdmitPatient = (newPatient: Patient) => {
     setWards((prevWards) =>
       prevWards.map((ward) =>
@@ -216,6 +227,12 @@ const AdministratorWard: React.FC = () => {
             className="ml-auto bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition"
           >
             Admit Patient
+          </button>
+          <button
+            onClick={() => setShowAdmitModal(true)}
+            className="ml-auto bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition"
+          >
+            Bed Request
           </button>
         </div>
 

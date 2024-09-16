@@ -19,6 +19,11 @@ export function initializeSocket(io: Server<DefaultEventsMap, DefaultEventsMap, 
         socket.on('doctorFetchQueue', ()=> {
            io.emit('doctorFetchQueue');
         });
+
+        socket.on("bed-request", (data) => {
+            console.log("bed request data recieved from doctor", data);
+            io.emit("bed-request-response", data);
+        });
     
         socket.on('disconnect', () => {
             console.log(`Client disconnected: ${socket.id}`);

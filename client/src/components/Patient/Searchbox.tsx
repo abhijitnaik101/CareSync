@@ -37,6 +37,23 @@ const SearchBox: React.FC<{ coordsCallback: (coords: number[] | null) => void }>
   const [selectedCoordinates, setSelectedCoordinates] = useState<number[] | null>(null);
   const [hospitals, setHospitals] = useState<Hospital[]>(bhubaneswarHospitals);
 
+  const [departmentSearch, setDepartmentSearch] = useState('');
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setDepartmentSearch(event.target.value);
+    setShowSuggestions(event.target.value.length > 0);
+  };
+
+  const filteredHospitals = bhubaneswarHospitals
+    .map(hospital => ({
+      ...hospital,
+      departments: hospital.departments.filter(department =>
+        department.department.toLowerCase().includes(departmentSearch.toLowerCase())
+      ),
+    }))
+    .filter(hospital => hospital.departments.length > 0);
+
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [appointmentDetails, setAppointmentDetails] = useState({
     name: '',
@@ -95,6 +112,50 @@ const SearchBox: React.FC<{ coordsCallback: (coords: number[] | null) => void }>
   return (
     <div>
     <div className="absolute top-0 left-0 ml-6 w-full max-w-md mx-auto mt-8">
+
+    
+      <div className="max-w-md mx-auto ">
+        <h1 className="text-lg font-bold mb-4">Search Hospitals by Department</h1>
+       
+        <input
+          type="text"
+          value={departmentSearch}
+          onChange={handleSearch}
+          placeholder="Search by department (e.g., Surgery, Emergency)"
+          className="w-full p-2 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        {/* Dropdown suggestions */}
+        {showSuggestions && (
+          <div className= "absolute w-full bg-white shadow-lg rounded-md max-h-60 overflow-y-auto">
+            {filteredHospitals.length > 0 ? (
+              filteredHospitals.map(hospital => (
+                <div
+                  key={hospital.hospital_id}
+                  className="p-2 hover:bg-gray-100 cursor-pointer"
+                >
+                  <h2 className="text-lg font-semibold">{hospital.name}</h2>
+                  <ul className="pl-4 mt-1">
+                    {hospital.departments.map(department => (
+                      <li key={department.department} className="text-gray-700">
+                        <div className="font-medium">
+                          Department: {department.department}
+                        </div>
+                        <div className="text-sm">
+                          Doctors: {department.doctors.join(', ')}
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))
+            ) : (
+              <p className="p-2 text-gray-600">No hospitals found for this department.</p>
+            )}
+          </div>
+        )}
+      </div>
+    
+
       <div className="flex items-center border border-gray-300 rounded-md shadow-sm bg-indigo-500">
         <FaSearch className="mx-3 text-white" />
         <input

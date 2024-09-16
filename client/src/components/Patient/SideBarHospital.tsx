@@ -14,6 +14,7 @@ const SideBarHospital = ({ hospitals, doctors, searchTerm }) => {
     patientId: '',
     doctorId: '',
     hospitalId: '',
+    hospitalName: '',
     appointmentDate: '',
   });
 
