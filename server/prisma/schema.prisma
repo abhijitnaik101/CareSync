@@ -119,6 +119,7 @@ model ticket {
   approved    Boolean        @default(false) 
   wardId      Int?           // Reference to the ward assigned to the patient
   ward        ward?          @relation(fields: [wardId], references: [id])
+  bed         Int?
 }
 
 model inventoryman {
