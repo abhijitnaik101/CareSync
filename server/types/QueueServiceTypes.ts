@@ -1,8 +1,8 @@
 import z from "zod";
 
 export const queueRequest = z.object({
-    hospitalId: z.number(),
-    appointmentDate: z.coerce.date()
+    hospitalId: z.string(z.number()),
+    appointmentDate: z.string().pipe(z.coerce.date())
 });
 
 export const ticketAppointRequest = z.object({

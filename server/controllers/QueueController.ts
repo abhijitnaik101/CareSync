@@ -5,20 +5,21 @@ import { Request, Response } from "express";
 // Retrieves the queue for a specific doctor, appointment date, and hospital.
 export const getDoctorQueue = async (req: Request, res: Response) => {
   // Validate the request body
-  if (!queueRequest.safeParse(req.body).success) {
+  console.log(req.query);
+  if (!queueRequest.safeParse(req.query).success) {
     return res.status(400).json({ message: 'Invalid request' });
   }
 
   const { doctorId } = req.params;
-  const { appointmentDate, hospitalId } = req.body;
+  const { appointmentDate, hospitalId } = req.query;
 
   try {
     // Query the queue table with the specified filters
     const queues = await prisma.queue.findMany({
       where: {
         doctorId: Number(doctorId),
-        appointmentDate: new Date(appointmentDate).toISOString(),
-        hospitalId,
+        appointmentDate: new Date(String(appointmentDate)).toISOString(),
+        hospitalId: Number(hospitalId),
       },
       orderBy: { position: "asc" },
       include: {
@@ -42,12 +43,12 @@ export const getDoctorQueue = async (req: Request, res: Response) => {
  */
 export const getPatientQueuePosition = async (req: Request, res: Response) => {
   // Validate the request body
-  if (!queueRequest.safeParse(req.body).success) {
+  if (!queueRequest.safeParse(req.query).success) {
     return res.status(400).json({ message: 'Invalid request' });
   }
 
-  const { doctorId } = req.query;
-  const { appointmentDate, hospitalId } = req.body;
+  const { doctorId } = req.params;
+  const { appointmentDate, hospitalId } = req.query;
 
   try {
     // Query the queue table for the specified filters and select only the position
@@ -55,8 +56,8 @@ export const getPatientQueuePosition = async (req: Request, res: Response) => {
       select: { position: true },
       where: {
         doctorId: Number(doctorId),
-        appointmentDate: new Date(appointmentDate).toISOString(),
-        hospitalId,
+        appointmentDate: new Date(String(appointmentDate)).toISOString(),
+        hospitalId: Number(hospitalId),
         pending: false,
       },
       orderBy: { position: "asc" },
@@ -80,12 +81,12 @@ export const getPatientQueuePosition = async (req: Request, res: Response) => {
  */
 export const getQueueTotal = async (req: Request, res: Response) => {
   // Validate the request body
-  if (!queueRequest.safeParse(req.body).success) {
+  if (!queueRequest.safeParse(req.query).success) {
     return res.status(400).json({ message: 'Invalid request' });
   }
 
-  const { doctorId } = req.query;
-  const { appointmentDate, hospitalId } = req.body;
+  const { doctorId } = req.params;
+  const { appointmentDate, hospitalId } = req.query;
 
   try {
     // Query the queue table for the specified filters and count the entries
@@ -93,8 +94,8 @@ export const getQueueTotal = async (req: Request, res: Response) => {
       select: { position: true },
       where: {
         doctorId: Number(doctorId),
-        appointmentDate: new Date(appointmentDate).toISOString(),
-        hospitalId,
+        appointmentDate: new Date(String(appointmentDate)).toISOString(),
+        hospitalId: Number(hospitalId),
       },
     });
     const total = order.length;
@@ -118,7 +119,8 @@ export const deleteQueueEntry = async (req: Request, res: Response) => {
     return res.status(400).json({ message: 'Invalid request' });
   }
 
-  const { doctorId, position } = req.query;
+  const { doctorId } = req.params;
+  const { position } = req.query;
   const { appointmentDate, hospitalId } = req.body;
 
   try {
@@ -146,13 +148,14 @@ export const deleteQueueEntry = async (req: Request, res: Response) => {
  * @param res The Express response object.
  */
 export const createFutureAppointment = async (req: Request, res: Response) => {
-  const { doctorId, patientId, nextdate, notes } = req.body;
+  const { doctorId } = req.params;
+  const { patientId, nextdate, notes } = req.body;
 
   try {
     // Create a new future reference record in the database
     const futureReference = await prisma.futureReference.create({
       data: {
-        doctorId,
+        doctorId: Number(doctorId),
         patientId,
         futureAppointmentDate: new Date(nextdate).toISOString(),
         notes,
@@ -166,36 +169,22 @@ export const createFutureAppointment = async (req: Request, res: Response) => {
   }
 };
 
-/**
- * Marks a patient's queue entry as pending.
- *
- * @param req The Express request object.
- * @param res The Express response object.
- */
-export const markQueueEntryPending = async (req: Request, res: Response) => {
-    // Validate the request body
-    if (!queueRequest.safeParse(req.body).success) {
-      return res.status(400).json({ message: 'Invalid request' });
-    }
-  
-    const { doctorId, position } = req.query;
-    const { appointmentDate, hospitalId } = req.body;
-  
-    try {
-      // Update the queue entry to mark it as pending
-      await prisma.queue.updateMany({
-        data: { pending: true },
-        where: {
-          doctorId: Number(doctorId),
-          appointmentDate: new Date(appointmentDate).toISOString(),
-          hospitalId: Number(hospitalId),
-          position: Number(position),
-        },
-      });
-  
-      // Send a success message as a JSON response
-      res.status(200).json({ message: 'Queue entry marked as pending successfully' });
-    } catch (error) {
-      res.status(500).json({ message: "Can't update Queue status data" });
-    }
-  };
+export const AdmitPatient = async (req: Request, res: Response) => {
+  const { ticketId } = req.query;
+
+  try {
+    const ticket = await prisma.$transaction([
+      prisma.ticket.update({
+        where: { id: Number(ticketId) },
+        data: { appointType: "IPD" },
+      }),
+      prisma.queue.deleteMany({
+        where: { ticketId: Number(ticketId) },
+      })
+    ]);
+
+    res.status(200).json({ ticketId: ticket[0].id, name: ticket[0].name });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};

@@ -2,74 +2,22 @@ import React, { useState, useEffect } from "react";
 import { FaUsers, FaCalendarAlt, FaCheck, FaTrash, FaSyncAlt, FaInfoCircle } from "react-icons/fa";
 import io from "socket.io-client";
 import PatientModal from "./PatientModal";
-import PatientTable from "./PatientTable";
+import PatientTable, { Patient } from "./PatientTable";
 import { socket } from "../../socket";
 import axios from "axios";
 import { route } from "../../../backendroute";
 
 // Interface for Patient data
-interface Patient {
-  id: number;
-  name: string;
-  serial: string;
-  time: string;
-  gender: string;
-  status: "pending" | "checked";
-}
-
-
-const initialPatients : Patient[] = [
-  {
-    id: 1,
-    name: "Saswat Kumar Dash",
-    serial: "20",
-    time: "10:25",
-    gender: "female",
-    status: "pending",
-  },
-  {
-    id: 2,
-    name: "Priyanka Behera",
-    serial: "21",
-    time: "10:40",
-    gender: "male",
-    status: "pending",
-  },
-  {
-    id: 3,
-    name: "Sandeep Pradhan",
-    serial: "22",
-    time: "11:00",
-    gender: "female",
-    status: "pending",
-  },
-  {
-    id: 4,
-    name: "Rasminarjan Nayak",
-    serial: "23",
-    time: "11:15",
-    gender: "female",
-    status: "pending",
-  },
-  {
-    id: 5,
-    name: "Krishna Kumar Khuntia",
-    serial: "24",
-    time: "11:30",
-    gender: "female",
-    status: "pending",
-  },
-];
 
 const DoctorsAppointment: React.FC = () => {
-  const [patientQueue, setpatientQueue] = useState<Patient[]>(initialPatients);
+  const [patientQueue, setpatientQueue] = useState<Patient[]>([]);
   const [pendingPatient, setPendingPatient] = useState<Patient[]>([]);
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   //initial fetch of queue
   useEffect(() => {
-    //fetchQueue();
+    fetchQueue();
     //fetchPendingPatients();
   }, []);
 
@@ -81,15 +29,25 @@ const DoctorsAppointment: React.FC = () => {
     });
   })
 
-  // async function fetchQueue() {
-  //   try{
-  //     const response = await axios.get(route + '/some-route');
-  //     setpatientQueue(response.data);
-  //   }
-  //   catch(error){
-  //     console.error(error);
-  //   }
-  // }
+  async function fetchQueue() {
+    try{
+      const date = "2024-09-19";
+      const response = await axios.get(route + `/queuing/queues/doctor/1?hospitalId=1&appointmentDate=${date}`);
+      console.log(response.data);
+      setpatientQueue(response.data.map((queue: any) => {
+        return {
+          id: queue.ticket.id,
+          name: queue.ticket.name,
+          serial: queue.position,
+          gender: queue.ticket.gender,
+          status: queue.ticket.approved
+        }
+      }));
+    }
+    catch(error){
+      console.error(error);
+    }
+  }
 
   // async function fetchPendingPatients()() {
   //   try{

@@ -1,12 +1,12 @@
 import React from "react";
 import { FaCheck, FaTrash, FaSyncAlt, FaInfoCircle } from "react-icons/fa";
 
-interface Patient {
+export interface Patient {
   id: number;
   name: string;
   serial: string;
-  time: string;
   gender: string;
+  status: "pending" | "checked";
 }
 
 interface ActionButton {
@@ -56,7 +56,6 @@ const PatientTable: React.FC<PatientTableProps> = ({
             {/* Add text-left to align the headers with the table data */}
             <th className="p-4 text-left">Patient</th>
             <th className="p-4 text-left">Serial No.</th>
-            <th className="p-4 text-left">Time</th>
             <th className="p-4 text-left">Gender</th>
             <th className="p-4 text-left">Actions</th>
           </tr>
@@ -73,7 +72,6 @@ const PatientTable: React.FC<PatientTableProps> = ({
               <tr key={patient.id} className="bg-white border-b hover:bg-gray-50">
                 <td className="p-4 text-left">{patient.name}</td>
                 <td className="p-4 text-left text-blue-600">{patient.serial}</td>
-                <td className="p-4 text-left">{patient.time}</td>
                 <td className="p-4 text-left capitalize">
                   <span
                     className={`text-${patient.gender === "male" ? "blue" : "pink"}-600`}

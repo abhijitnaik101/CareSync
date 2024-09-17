@@ -168,18 +168,7 @@ const AdministratorWard: React.FC = () => {
   const [wards, setWards] = useState<Ward[]>(initialWards);
   const [selectedWard, setSelectedWard] = useState<number>(1);
   const [showAdmitModal, setShowAdmitModal] = useState(false);
-  const [currentPatient, setCurrentPatient] = useState<Patient | null>(null);
-
-
-  const patient: Patient = {
-    id: 1,
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    age: 30,
-    gender: 'Male',
-  };
-
-  
+  const [currentPatient, setCurrentPatient] = useState<Patient | null>(null);  
   
   const handleAdmitPatient = (newPatient: Patient) => {
     setWards((prevWards) =>

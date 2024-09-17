@@ -1,12 +1,13 @@
 import React from "react";
 import { FaTimes, FaBed } from "react-icons/fa";
-import { socket } from "../../socket";
+import { Socket } from "socket.io-client";
+import axios from "axios";
+import { route } from "../../../backendroute";
 
 interface Patient {
   id: number;
   name: string;
   serial: string;
-  time: string;
   gender: string;
   status: string;
 }
@@ -14,12 +15,18 @@ interface Patient {
 interface Props {
   patient: Patient;
   closeModal: () => void;
-  socket: any;
+  socket: Socket;
 }
 
 const PatientModal: React.FC<Props> = ({ patient, closeModal, socket }) => {
-  const handleAdmit = () => {
-    socket.emit("bed-request", { patientId: patient.id, name: patient.name });
+  const handleAdmit = async () => {
+    try {
+      const response = await axios.put<{ticketId: number, name: string}>(route + `/queuing/queues/toipd?ticketId=${patient.id}`)
+      socket.emit("bed-request", response.data);
+    } catch (error) {
+      console.error(error);
+    }
+    
     closeModal();
   };
 
@@ -43,9 +50,6 @@ const PatientModal: React.FC<Props> = ({ patient, closeModal, socket }) => {
           </p>
           <p>
             <strong>Serial No.:</strong> {patient.serial}
-          </p>
-          <p>
-            <strong>Time:</strong> {patient.time}
           </p>
           <p>
             <strong>Gender:</strong> {patient.gender}
