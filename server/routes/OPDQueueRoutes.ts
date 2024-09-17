@@ -22,7 +22,7 @@ queueRouter.get('/queues/status/total/:doctorId', getQueueTotal); // Changed "ar
 // Delete a patient from a doctor's queue
 queueRouter.delete("/queues/:doctorId", deleteQueueEntry);
 
-queueRouter.put("/queus/toipd", AdmitPatient);
+queueRouter.put("/queues/toipd", AdmitPatient);
 
 // Create a new future appointment reference
 queueRouter.post('/future-appointments/:doctorId', createFutureAppointment);

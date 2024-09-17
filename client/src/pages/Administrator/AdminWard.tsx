@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react"
+import { socket } from "../../socket";
 // Patient and Ward Interfaces
 interface Patient {
   id: number;
@@ -43,6 +44,25 @@ const AdmitModal: React.FC<{ onClose: () => void; onSave: (patient: Patient) => 
   onClose,
   onSave,
 }) => {
+
+  // interface Ward {
+  //   id: number;
+  //   hospitalId: number;
+  //   name: string;
+  //   totalBeds: number;
+  //   occupiedBeds: number;
+  //   availableBeds: number;
+  // }
+  const patient = {
+    id: 0,              // Default ID (can be autoincremented later)
+    hospitalId: 1,       // Default hospital ID (replace with actual logic)
+    name: "",            // Default ward name
+    totalBeds: 0,        // Default total beds
+    occupiedBeds: 0,     // Default occupied beds
+    availableBeds: 0,    // Default available beds (calculated automatically)
+    tickets: [],         // Default empty tickets array
+  }
+  
   const [patientName, setPatientName] = useState("");
   const [patientGender, setPatientGender] = useState("");
   const [selectedBed, setSelectedBed] = useState(0); // Use state for selected bed
@@ -168,8 +188,17 @@ const AdministratorWard: React.FC = () => {
   const [wards, setWards] = useState<Ward[]>(initialWards);
   const [selectedWard, setSelectedWard] = useState<number>(1);
   const [showAdmitModal, setShowAdmitModal] = useState(false);
-  const [currentPatient, setCurrentPatient] = useState<Patient | null>(null);  
+  const [currentPatient, setCurrentPatient] = useState<Patient | null>(null); 
   
+
+  useEffect(() => {
+    socket.on('bed-request-response', (data) => {
+      console.log("Patient req: ",data);
+    })
+    return () => {
+      socket.off('bed-request-response');
+    }
+  })
   const handleAdmitPatient = (newPatient: Patient) => {
     setWards((prevWards) =>
       prevWards.map((ward) =>

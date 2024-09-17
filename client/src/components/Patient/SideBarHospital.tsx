@@ -76,7 +76,7 @@ const SideBarHospital: React.FC<{ hospitals: Hospital[], searchTerm: string }> =
 
       {/* Modal for Booking Appointment */}
       {isModalOpen && (
-        <div className="fixed top-0 left-0 inset-0 w-full bg-black bg-opacity-50 flex justify-center items-center z-10">
+        <div className="fixed top-0 left-0 inset-0 w-full bg-black bg-opacity-50 flex justify-center items-center z-20">
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
             <h3 className="text-2xl font-bold text-gray-800 mb-4">Book Appointment</h3>
 

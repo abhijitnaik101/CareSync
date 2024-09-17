@@ -52,15 +52,16 @@ export interface Patient {
 export interface Ticket {
   id: number;
   hospitalId: number;
-  hospital: Hospital;
+  hospital?: Hospital;
   name: string;
   age: number;
   gender: string;
+  appointmentDate: string;
   appointType: string;
   doctorId?: number;
   patientId?: number;
   patient?: Patient;
-  queue: Queue[];
+  queue?: Queue[];
   approved: boolean;
   wardId?: number;
   ward?: Ward;

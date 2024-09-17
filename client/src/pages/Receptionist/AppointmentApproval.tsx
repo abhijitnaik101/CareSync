@@ -1,28 +1,19 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import { route } from "../../../backendroute";
 import { socket } from "../../socket";
+import { Ticket } from "../../Types";
 
-interface Patient {
-  id: number;
-  name: string;
-  age: number;
-  gender: string;
-  appointType: string;
-  appointmentDate: string;
-  doctorName: string;
-  hospitalId: number;
-  doctorId: number;
-}
 interface ReceptionistAppointmentApprovalProps {
-  setPatientRequests: React.Dispatch<React.SetStateAction<Patient[]>>;
+  setPatientRequests: React.Dispatch<React.SetStateAction<Ticket[]>>;
   handleModal: (isOpen: boolean) => void; // Function to handle modal state
-  patientRequests: Patient[]; // Add this line
+  patientRequests: Ticket[]; // Add this line
+  setRegistrations: React.Dispatch<React.SetStateAction<any>>
 }
 
-const ReceptionistAppointmentApproval = ({ handleModal, patientRequests, setPatientRequests }: ReceptionistAppointmentApprovalProps) => {
-  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
+const ReceptionistAppointmentApproval = ({ handleModal, patientRequests, setPatientRequests, setRegistrations }: ReceptionistAppointmentApprovalProps) => {
+  const [selectedPatient, setSelectedPatient] = useState<Ticket | null>(null);
   // useEffect(() => {
   //   socket.on("patient-request", (data: any) => {
   //     console.log("Received patient request:", data);
@@ -33,8 +24,8 @@ const ReceptionistAppointmentApproval = ({ handleModal, patientRequests, setPati
   //   };
   // }, []);
 
-  const handleApprove = async (patient: Patient) => {
-    const patients = patientRequests.filter((p) => p === patient);
+  const handleApprove = async (patient: Ticket) => {
+    const patients = patientRequests.filter((p) => p.id === patient.id);
     
     if (patients.length) {
       try {
@@ -45,11 +36,14 @@ const ReceptionistAppointmentApproval = ({ handleModal, patientRequests, setPati
         }, { headers: {
           Authorization: "Bearer " + token
         }});
+
+        
         // if (appointmentDetails.appointType === 'OPD'){
         //   socket.emit('doctorFetchQueue');
         // }
         ///insert the ticket details in queue database
-        setPatientRequests(patientRequests.filter((p) => p !== patient));
+        setPatientRequests(patientRequests.filter((p) => p.id !== patient.id));
+        socket.emit('fetch-ticket-client');
         //send ticket to user
         socket.emit("sendTicketToUser", response.data);
       } catch (error) {
@@ -59,9 +53,9 @@ const ReceptionistAppointmentApproval = ({ handleModal, patientRequests, setPati
     handleModal(false); // Close the modal after approval
   };
 
-  const handleReject = (patient: Patient) => {
+  const handleReject = (patient: Ticket) => {
     socket.emit("reject-patient-request", patient);
-    setPatientRequests(patientRequests.filter((p) => p !== patient));
+    setPatientRequests(patientRequests.filter((p) => p.id !== patient.id));
     handleModal(false); // Close the modal after rejection
   };
 
@@ -129,9 +123,6 @@ const ReceptionistAppointmentApproval = ({ handleModal, patientRequests, setPati
               </p>
               <p>
                 <span className="font-medium">Appointment Date:</span> {selectedPatient.appointmentDate}
-              </p>
-              <p>
-                <span className="font-medium">Doctor:</span> {selectedPatient.doctorName}
               </p>
             </div>
 

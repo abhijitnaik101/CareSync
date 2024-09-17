@@ -14,6 +14,10 @@ export function initializeSocket(io: Server<DefaultEventsMap, DefaultEventsMap, 
             io.emit('fetch-ticket');
             io.emit('UserTicket', data);
         })
+
+        socket.on('fetch-ticket-client', () => 
+            io.emit('fetch-ticket')
+        );
     
         socket.on('doctorFetchQueue', ()=> {
            io.emit('doctorFetchQueue');

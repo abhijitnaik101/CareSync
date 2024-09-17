@@ -59,6 +59,7 @@ const NewRegistration: React.FC<NewRegistrationProps> = ({ closeModal }) => {
     try {
       // POST request to submit appointment details
       await axios.post(route + "/booking/create/appoint", appointmentDetails);
+      socket.emit('fetch-ticket-client');
       if (appointmentDetails.appointType === 'OPD'){
         socket.emit('doctorFetchQueue');
       }

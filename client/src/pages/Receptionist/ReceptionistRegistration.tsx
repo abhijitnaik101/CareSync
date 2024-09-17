@@ -8,6 +8,7 @@ import ReceptionistAppointmentApproval from "./AppointmentApproval";
 import { socket } from "../../socket";
 import axios from "axios";
 import { route } from "../../../backendroute";
+import { Ticket } from "../../Types";
 
 interface RegistrationProps {
     name: string;
@@ -64,15 +65,13 @@ const dummyTickets: any = [
   },
 ]
 
-
-
 const ReceptionistRegistration: React.FC<{registrations: RegistrationProps}> = ({ registrations: initialRegistrations }) => {
 
 
   const [registrations, setRegistrations] = useState(dummyTickets);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [approveModalOpen, setApproveModalOpen] = useState(false);
-  const [patientRequests, setPatientRequests] = useState<Patient[]>([
+  const [patientRequests, setPatientRequests] = useState<Ticket[]>([
     {
       id: 1,
       name: "John Doe",
@@ -81,8 +80,8 @@ const ReceptionistRegistration: React.FC<{registrations: RegistrationProps}> = (
       appointType: "OPD",
       doctorId: 1,
       appointmentDate: "2024-09-10",
-      doctorName: "Dr. Jane Smith",
       hospitalId: 456,
+      approved: false
     }
   ]);
 
@@ -92,7 +91,7 @@ const ReceptionistRegistration: React.FC<{registrations: RegistrationProps}> = (
 
   async function fetchTickets() {
     const token = localStorage.getItem("token");
-    const response = await axios.get(route + `/booking/getappoints/1`, {
+    const response = await axios.get<Ticket[]>(route + `/booking/getappoints/1`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     console.log("Response", response);
@@ -101,7 +100,8 @@ const ReceptionistRegistration: React.FC<{registrations: RegistrationProps}> = (
       return;
     }
 
-    setRegistrations(response.data)
+    setPatientRequests(response.data.filter(p => p.approved == false));
+    setRegistrations(response.data.filter(p => p.approved == true));
   }
   //functions to fetch hospitals data
   useEffect(() => {
@@ -115,8 +115,9 @@ const ReceptionistRegistration: React.FC<{registrations: RegistrationProps}> = (
     });
 
     socket.on('fetch-ticket', ()=>{
-      //fetchTickets();
+      fetchTickets();
     })
+
 
     return () => {
       socket.off("patient-request");
@@ -126,7 +127,7 @@ const ReceptionistRegistration: React.FC<{registrations: RegistrationProps}> = (
   return (
     <div className="relative w-full">
       {approveModalOpen &&
-        <ReceptionistAppointmentApproval patientRequests={patientRequests} setPatientRequests={(value: any)=>setPatientRequests(value)} handleModal={(value: boolean)=>setApproveModalOpen(value)}/>
+        <ReceptionistAppointmentApproval patientRequests={patientRequests} setPatientRequests={(value: any)=>setPatientRequests(value)} handleModal={(value: boolean)=>setApproveModalOpen(value)} setRegistrations={setRegistrations}/>
       }
 
       <div className="min-h-screen w-full bg-gray-100 p-6">

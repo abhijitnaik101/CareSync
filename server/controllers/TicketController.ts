@@ -76,7 +76,6 @@ export const getPatientRequests = async (req: Request, res: Response) => {
     const requests = await prisma.ticket.findMany({
       where: {
         hospitalId: Number(hospitalId),
-        approved: false
       }
     });
 
