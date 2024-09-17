@@ -6,7 +6,6 @@ export function initializeSocket(io: Server<DefaultEventsMap, DefaultEventsMap, 
         console.log(`New connection: ${socket.id}`);
     
         socket.on('book-appointment', (data) => {
-            console.log("book appointment data recieved from patient", data);
             io.emit('patient-request', data);
         });
     

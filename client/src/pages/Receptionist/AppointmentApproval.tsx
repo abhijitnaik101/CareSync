@@ -39,9 +39,11 @@ const ReceptionistAppointmentApproval = ({ handleModal, patientRequests, setPati
     if (patients.length) {
       try {
         //insert the patient details in ticket database
-        const response = await axios.post(route + "/bookappointment", patients[0]);
+        await axios.post(route + "/booking/create/appoint", patients[0]);
+        // if (appointmentDetails.appointType === 'OPD'){
+        //   socket.emit('doctorFetchQueue');
+        // }
         ///insert the ticket details in queue database
-
         setPatientRequests(patientRequests.filter((p) => p !== patient));
         //send ticket to user
         socket.emit("sendTicketToUser", response.data);

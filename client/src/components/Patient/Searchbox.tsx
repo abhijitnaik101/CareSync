@@ -4,28 +4,10 @@ import { FaSearch, FaMapMarkerAlt } from 'react-icons/fa';
 import axios from 'axios';
 import { route } from '../../../backendroute';
 import SideBarHospital from './SideBarHospital';
+import { Hospital } from '../../Types';
 
 // Define interfaces based on the new data format
-interface Doctor {
-  id: number;
-  name: string;
-  averageTreatmentTime: number;
-}
 
-interface Department {
-  id: number;
-  name: string;
-  hospitalId: number;
-  doctors: Doctor[];
-}
-
-interface Hospital {
-  id: number;
-  name: string;
-  coordinates: [string, string];
-  services: string[];
-  departments: Department[];
-}
 
 const SearchBox: React.FC<{ coordsCallback: (coords: number[] | null) => void }> = ({ coordsCallback }) => {
   const [searchTerm, setSearchTerm] = useState('');

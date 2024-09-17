@@ -5,6 +5,7 @@ interface Patient {
   name: string;
   email: string;
   age: number;
+  gender?: string;
   bloodtype?: string;
   contact: string;
   password: string;

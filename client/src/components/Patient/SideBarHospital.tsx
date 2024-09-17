@@ -2,37 +2,19 @@ import React, { useState } from 'react';
 import { socket } from '../../socket';
 import { useRecoilState } from 'recoil';
 import patientState from '../../recoil/atoms/patientAtom';
-
-interface Doctor {
-  id: number;
-  name: string;
-  averageTreatmentTime: number;
-}
-
-interface Department {
-  id: number;
-  name: string;
-  hospitalId: number;
-  doctors: Doctor[];
-}
-
-interface Hospital {
-  id: number;
-  name: string;
-  coordinates: [string, string];
-  services: string[];
-  departments: Department[];
-}
+import { Hospital } from '../../Types';
 
 const SideBarHospital: React.FC<{ hospitals: Hospital[], searchTerm: string }> = ({ hospitals, searchTerm }) => {
+
+  console.log("SideBarHospital", hospitals, searchTerm);
   const [patient, setPatient] = useRecoilState(patientState);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [appointmentDetails, setAppointmentDetails] = useState({
-    name: '',
-    age: 1,
-    gender: '',
+    name: patient?.name,
+    age: patient?.age,
+    gender: patient?.gender,
     appointType: '',
-    patientId: 1,
+    patientId: patient?.id,
     doctorId: 1,
     hospitalId: 1,
     hospitalName: '',
@@ -58,7 +40,7 @@ const SideBarHospital: React.FC<{ hospitals: Hospital[], searchTerm: string }> =
 
   return (
     <div>
-      <div className="absolute w-full top-16 left-6 mt-8 p-6 h-96 bg-slate-50 rounded-lg shadow-lg overflow-y-scroll">
+      <div className="absolute w-full top-16 left-6 mt-8 p-6 h-96 bg-slate-50 rounded-lg shadow-lg overflow-y-scroll z-10">
         <div className="space-y-6">
           {selectedHospital?.departments.map(department => (
             <div key={department.id} className="p-4 border-b-2">
@@ -86,7 +68,7 @@ const SideBarHospital: React.FC<{ hospitals: Hospital[], searchTerm: string }> =
 
       {/* Modal for Booking Appointment */}
       {isModalOpen && (
-        <div className="fixed top-0 left-0 inset-0 w-full bg-black bg-opacity-50 flex justify-center items-center">
+        <div className="fixed top-0 left-0 inset-0 w-full bg-black bg-opacity-50 flex justify-center items-center z-10">
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
             <h3 className="text-2xl font-bold text-gray-800 mb-4">Book Appointment</h3>
 
@@ -107,7 +89,7 @@ const SideBarHospital: React.FC<{ hospitals: Hospital[], searchTerm: string }> =
                   type="number"
                   className="w-full mt-1 p-2 border rounded-md focus:ring focus:ring-blue-300"
                   value={appointmentDetails.age}
-                  onChange={(e) => setAppointmentDetails({ ...appointmentDetails, age: e.target.value })}
+                  onChange={(e) => setAppointmentDetails({ ...appointmentDetails, age: Number(e.target.value) })}
                 />
               </div>
 
@@ -119,8 +101,9 @@ const SideBarHospital: React.FC<{ hospitals: Hospital[], searchTerm: string }> =
                   onChange={(e) => setAppointmentDetails({ ...appointmentDetails, gender: e.target.value })}
                 >
                   <option value="">Select Gender</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
+                  <option value="MALE">Male</option>
+                  <option value="FEMALE">Female</option>
+                  <option value="TRANS">Other</option>
                 </select>
               </div>
 
@@ -133,7 +116,7 @@ const SideBarHospital: React.FC<{ hospitals: Hospital[], searchTerm: string }> =
                 >
                   <option value="">Select Type</option>
                   <option value="OPD">OPD</option>
-                  <option value="Inpatient">Inpatient</option>
+                  <option value="IPD">Inpatient</option>
                 </select>
               </div>
 

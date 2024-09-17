@@ -171,7 +171,7 @@ const end: GeoJSON.GeoJSON= {
 
   return (
 
-    <div className="relative p-5 h-screen overflow-clip  w-full flex justify-center items-center">
+    <div className="relative p-5 h-screen overflow-clip  w-full flex justify-center items-center ">
       <SearchBox coordsCallback={(coords) => setEndCoords(coords)} />
       {/* <SearchBar coordsCallback={(coords) => setEndCoords(coords)} /> */}
       

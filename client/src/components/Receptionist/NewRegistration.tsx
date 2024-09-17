@@ -26,7 +26,7 @@ const NewRegistration: React.FC<NewRegistrationProps> = ({ closeModal }) => {
   const [appointmentDetails, setAppointmentDetails] = useState<AppointmentDetails>({
     name: "",
     age: 10,
-    gender: "other",
+    gender: "MALE",
     appointType: "OPD",
     appointmentDate: "",
     hospitalId: 1,
