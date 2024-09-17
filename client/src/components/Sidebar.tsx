@@ -7,19 +7,34 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ links }) => {
   return (
-    <div className=" w-72 h-screen bg-gradient-to-b from-purple-600 to-blue-500 shadow-lg flex flex-col p-4">
-      <div className="text-white text-2xl font-bold mb-8 text-center">
-        My Dashboard
+    <div
+      className="font-poppins w-64 h-screen shadow-lg flex flex-col p-5 bg-gray-900"
+      style={{
+        background: "linear-gradient(145deg, #111827, #1f2937)", // Subtle dark gradient background
+      }}
+    >
+      {/* Dashboard Title */}
+      <div
+        className="text-white text-2xl font-semibold mb-10 text-center"
+        style={{
+          background: "linear-gradient(to right, #f472b6, #f97316)", // Vibrant gradient text
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+        }}
+      >
+        Dashboard
       </div>
-      <nav className="flex flex-col space-y-2">
+
+      {/* Navigation Links */}
+      <nav className="flex flex-col space-y-4 font-medium">
         {links.map((link) => (
           <NavLink
             to={link.path}
             className={({ isActive }) =>
-              `block py-3 px-6 rounded-lg transition duration-300 transform ${
+              `block py-2 px-4 rounded-md transition duration-300 transform hover:scale-105 ${
                 isActive
-                  ? "bg-white text-purple-600 scale-105 shadow-md"
-                  : "text-white hover:bg-purple-700 hover:scale-105"
+                  ? "bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow-lg"
+                  : "text-gray-400 hover:bg-gray-700 hover:text-white"
               }`
             }
             key={link.name}
@@ -28,6 +43,11 @@ const Sidebar: React.FC<SidebarProps> = ({ links }) => {
           </NavLink>
         ))}
       </nav>
+
+      {/* Footer */}
+      <footer className="mt-auto pt-4">
+        <p className="text-gray-500 text-xs text-center">© 2024 Your Brand</p>
+      </footer>
     </div>
   );
 };

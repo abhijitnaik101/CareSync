@@ -70,32 +70,33 @@ const SearchBox: React.FC<{ coordsCallback: (coords: number[] | null) => void }>
   };
 
   return (
-    <div>
+    <div className="bg-gray-900 h-max">
       <div className="absolute top-0 left-0 ml-6 w-full mx-auto mt-8 flex items-center justify-center z-10">
+        {/* Department Search */}
         <div className="mr-2 w-96">
-          <div className="flex items-center border border-gray-300 rounded-md shadow-sm bg-indigo-500">
-            <FaSearch className="mx-3 text-white" />
+          <div className="flex items-center border border-gray-700 rounded-md shadow-lg bg-gray-800 text-white">
+            <FaSearch className="mx-3 text-yellow-400" />
             <input
               type="text"
               value={departmentSearch}
               onChange={handleSearch}
               placeholder="Search by department (e.g., Surgery, Emergency)"
-              className="w-full p-2 pl-10 border-none rounded-l-none rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-2 pl-10 border-none rounded-l-none rounded-md bg-transparent focus:outline-none focus:ring-2 focus:ring-yellow-500 text-white"
             />
           </div>
           {/* Dropdown suggestions */}
           {showSuggestions && (
-            <div className="relative w-full bg-white shadow-lg rounded-md max-h-60 overflow-y-auto">
+            <div className="relative w-full bg-gray-800 shadow-lg rounded-md max-h-60 overflow-y-auto mt-2">
               {filteredHospitals.length > 0 ? (
                 filteredHospitals.map(hospital => (
                   <div
                     key={hospital.id}
-                    className="p-2 hover:bg-gray-100 cursor-pointer"
+                    className="p-2 hover:bg-gray-700 cursor-pointer text-white"
                   >
-                    <h2 className="text-lg font-semibold">{hospital.name}</h2>
+                    <h2 className="text-lg font-semibold text-yellow-400">{hospital.name}</h2>
                     <ul className="pl-4 mt-1">
                       {hospital.departments.map(department => (
-                        <li key={department.id} className="text-gray-700">
+                        <li key={department.id} className="text-gray-300">
                           <div className="font-medium">
                             Department: {department.name}
                           </div>
@@ -108,32 +109,33 @@ const SearchBox: React.FC<{ coordsCallback: (coords: number[] | null) => void }>
                   </div>
                 ))
               ) : (
-                <p className="p-2 text-gray-600">No hospitals found for this department.</p>
+                <p className="p-2 text-gray-400">No hospitals found for this department.</p>
               )}
             </div>
           )}
         </div>
 
+        {/* Hospital Search */}
         <div className='ml-2 w-96'>
-          <div className="flex items-center border border-gray-300 rounded-md shadow-sm bg-indigo-500">
-            <FaSearch className="mx-3 text-white" />
+          <div className="flex items-center border border-gray-700 rounded-md shadow-lg bg-gray-800 text-white">
+            <FaSearch className="mx-3 text-yellow-400" />
             <input
               type="text"
               value={searchTerm}
               onChange={handleInputChange}
               placeholder="Search for hospitals..."
-              className="w-full p-2 pl-10 border-none rounded-l-none rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-2 pl-10 border-none rounded-l-none rounded-md bg-transparent focus:outline-none focus:ring-2 focus:ring-yellow-500 text-white"
             />
           </div>
           {suggestions.length > 0 && (
-            <ul className="relative z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg">
+            <ul className="relative z-10 w-full mt-2 bg-gray-800 border border-gray-700 rounded-md shadow-lg">
               {suggestions.map((hospital) => (
                 <li
                   key={hospital.id}
-                  className="flex items-center p-2 cursor-pointer hover:bg-gray-200"
+                  className="flex items-center p-2 cursor-pointer hover:bg-gray-700 text-white"
                   onClick={() => handleSelectSuggestion(hospital)}
                 >
-                  <FaMapMarkerAlt className="text-blue-500 mr-2" />
+                  <FaMapMarkerAlt className="text-yellow-400 mr-2" />
                   {hospital.name}
                 </li>
               ))}
@@ -141,10 +143,13 @@ const SearchBox: React.FC<{ coordsCallback: (coords: number[] | null) => void }>
           )}
         </div>
       </div>
+
+      {/* Sidebar Hospital */}
       {selectedCoordinates && (
         <SideBarHospital hospitals={hospitals} searchTerm={searchTerm} />
       )}
     </div>
+
   );
 };
 

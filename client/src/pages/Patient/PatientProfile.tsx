@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { FaCalendarAlt, FaEnvelope, FaHeartbeat, FaLock, FaPhone, FaUser, FaEdit, FaPhoneAlt, FaTint, FaUserCircle } from 'react-icons/fa';
 import { useRecoilState } from 'recoil';
 import patientState from '../../recoil/atoms/patientAtom';
+
 // Interface for Patient Profile
 interface Patient {
   name: string;
@@ -24,9 +25,7 @@ const initialPatientData: Patient = {
   profilePicture: '', // Will be updated after upload
 };
 
-// PatientForm Component
 const PatientForm: React.FC = () => {
-  //const [patient, setPatient] = useState<Patient>(initialPatientData);
   const [patient, setPatient] = useRecoilState<Patient>(patientState);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -58,13 +57,13 @@ const PatientForm: React.FC = () => {
   // Function to handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-  
+
     // Basic validation
     if (!patient.name || !patient.email || !patient.age || !patient.contact || !patient.password) {
       setErrorMessage('Please fill in all required fields.');
       return;
     }
-  
+
     setPatient({
       ...patient,
       name: patient.name,
@@ -75,15 +74,15 @@ const PatientForm: React.FC = () => {
       password: patient.password,
       profilePicture: patient.profilePicture,
     });
-  
+
     setErrorMessage(null);
     setIsEditing(false); // Stop editing on submit
     console.log('Patient Data Submitted:', patient);
   };
 
   return (
-    <div className=" p-10 bg-white rounded-lg">
-      <h2 className="text-3xl font-semibold text-gray-800 mb-8 text-center">Patient Profile</h2>
+    <div className="p-10 h-screen border-l-2 border-white bg-gray-900 text-gray-300">
+      <h2 className="text-3xl font-semibold text-gray-200 mb-8 text-center">Patient Profile</h2>
 
       {/* Profile Picture */}
       <div className="flex justify-center mb-6">
@@ -93,8 +92,8 @@ const PatientForm: React.FC = () => {
             alt="Profile"
             className="rounded-full h-32 w-32 object-cover"
           />
-          <label htmlFor="profilePictureUpload" className="absolute bottom-0 right-0 bg-gray-200 rounded-full p-2 cursor-pointer">
-            <FaEdit className="text-gray-600" />
+          <label htmlFor="profilePictureUpload" className="absolute bottom-0 right-0 bg-gray-700 rounded-full p-2 cursor-pointer">
+            <FaEdit className="text-gray-300" />
           </label>
           <input
             id="profilePictureUpload"
@@ -107,57 +106,57 @@ const PatientForm: React.FC = () => {
 
       {/* Error Message */}
       {errorMessage && (
-        <div className="mb-6 p-3 text-red-600 bg-red-100 rounded-md text-center">
+        <div className="mb-6 p-3 text-red-500 bg-red-200 rounded-md text-center">
           {errorMessage}
         </div>
       )}
 
       {/* Display Patient Details or Form */}
       {!isEditing ? (
-        <div className="patient-profile px-8 py-6 rounded-lg shadow-md bg-slate-100">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-semibold text-gray-700">Patient Profile</h2>
-          <FaEdit className="text-gray-500 cursor-pointer hover:text-blue-500" onClick={() => setIsEditing(true)} />
+        <div className="patient-profile px-8 py-6 rounded-lg shadow-lg bg-gray-800">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-semibold text-gray-200">Patient Profile</h2>
+            <FaEdit className="text-gray-400 cursor-pointer hover:text-indigo-500" onClick={() => setIsEditing(true)} />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex items-center">
+              <FaUserCircle className="text-indigo-500 mr-4 text-2xl" />
+              <div>
+                <h3 className="text-lg font-medium text-gray-200">Name:</h3>
+                <p className="text-gray-400">{patient.name}</p>
+              </div>
+            </div>
+            <div className="flex items-center">
+              <FaEnvelope className="text-pink-500 mr-4 text-2xl" />
+              <div>
+                <h3 className="text-lg font-medium text-gray-200">Email:</h3>
+                <p className="text-gray-400">{patient.email}</p>
+              </div>
+            </div>
+            <div className="flex items-center">
+              <FaCalendarAlt className="text-green-500 mr-4 text-2xl" />
+              <div>
+                <h3 className="text-lg font-medium text-gray-200">Age:</h3>
+                <p className="text-gray-400">{patient.age}</p>
+              </div>
+            </div>
+            <div className="flex items-center">
+              <FaTint className="text-rose-500 mr-4 text-2xl" />
+              <div>
+                <h3 className="text-lg font-medium text-gray-200">Blood Type:</h3>
+                <p className="text-gray-400">{patient.bloodtype || 'Not specified'}</p>
+              </div>
+            </div>
+            <div className="flex items-center">
+              <FaPhoneAlt className="text-blue-500 mr-4 text-2xl" />
+              <div>
+                <h3 className="text-lg font-medium text-gray-200">Contact:</h3>
+                <p className="text-gray-400">{patient.contact}</p>
+              </div>
+            </div>
+          </div>
         </div>
-      
-        <div className="grid grid-cols-2 gap-4">
-          <div className="flex items-center">
-            <FaUserCircle className="text-indigo-500 mr-4 text-2xl" />
-            <div>
-              <h3 className="text-lg font-medium text-gray-700">Name:</h3>
-              <p className="text-gray-600">{patient.name}</p>
-            </div>
-          </div>
-          <div className="flex items-center">
-            <FaEnvelope className="text-pink-500 mr-4 text-2xl" />
-            <div>
-              <h3 className="text-lg font-medium text-gray-700">Email:</h3>
-              <p className="text-gray-600">{patient.email}</p>
-            </div>
-          </div>
-          <div className="flex items-center">
-            <FaCalendarAlt className="text-green-500 mr-4 text-2xl" />
-            <div>
-              <h3 className="text-lg font-medium text-gray-700">Age:</h3>
-              <p className="text-gray-600">{patient.age}</p>
-            </div>
-          </div>
-          <div className="flex items-center">
-            <FaTint className="text-rose-500 mr-4 text-2xl" />
-            <div>
-              <h3 className="text-lg font-medium text-gray-700">Blood Type:</h3>
-              <p className="text-gray-600">{patient.bloodtype || 'Not specified'}</p>
-            </div>
-          </div>
-          <div className="flex items-center">
-            <FaPhoneAlt className="text-blue-500 mr-4 text-2xl"/>
-            <div>
-              <h3 className="text-lg font-medium text-gray-700">Contact:</h3>
-              <p className="text-gray-600">{patient.contact}</p>
-            </div>
-          </div>
-        </div>
-      </div>
       ) : (
         <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-8">
           {/* Left Column */}
@@ -166,13 +165,13 @@ const PatientForm: React.FC = () => {
             <div className="flex items-center space-x-2">
               <FaUser className="text-gray-500" />
               <div className="flex-1">
-                <label className="font-medium text-gray-700">Name</label>
+                <label className="font-medium text-gray-300">Name</label>
                 <input
                   type="text"
                   name="name"
                   value={patient.name}
                   onChange={handleInputChange}
-                  className="mt-1 p-3 w-full border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="mt-1 p-3 w-full bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-gray-200"
                   placeholder="Enter your name"
                 />
               </div>
@@ -182,13 +181,13 @@ const PatientForm: React.FC = () => {
             <div className="flex items-center space-x-2">
               <FaEnvelope className="text-gray-500" />
               <div className="flex-1">
-                <label className="font-medium text-gray-700">Email</label>
+                <label className="font-medium text-gray-300">Email</label>
                 <input
                   type="email"
                   name="email"
                   value={patient.email}
                   onChange={handleInputChange}
-                  className="mt-1 p-3 w-full border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="mt-1 p-3 w-full bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-gray-200"
                   placeholder="Enter your email"
                 />
               </div>
@@ -198,13 +197,13 @@ const PatientForm: React.FC = () => {
             <div className="flex items-center space-x-2">
               <FaCalendarAlt className="text-gray-500" />
               <div className="flex-1">
-                <label className="font-medium text-gray-700">Age</label>
+                <label className="font-medium text-gray-300">Age</label>
                 <input
                   type="number"
                   name="age"
                   value={patient.age}
                   onChange={handleInputChange}
-                  className="mt-1 p-3 w-full border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="mt-1 p-3 w-full bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-gray-200"
                   placeholder="Enter your age"
                 />
               </div>
@@ -217,14 +216,14 @@ const PatientForm: React.FC = () => {
             <div className="flex items-center space-x-2">
               <FaHeartbeat className="text-gray-500" />
               <div className="flex-1">
-                <label className="font-medium text-gray-700">Blood Type</label>
+                <label className="font-medium text-gray-300">Blood Type</label>
                 <select
                   name="bloodtype"
                   value={patient.bloodtype}
                   onChange={handleInputChange}
-                  className="mt-1 p-3 w-full border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="mt-1 p-3 w-full bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-gray-200"
                 >
-                  <option value="">Select blood type</option>
+                  <option value="" disabled>Select blood type</option>
                   <option value="A+">A+</option>
                   <option value="A-">A-</option>
                   <option value="B+">B+</option>
@@ -241,13 +240,13 @@ const PatientForm: React.FC = () => {
             <div className="flex items-center space-x-2">
               <FaPhone className="text-gray-500" />
               <div className="flex-1">
-                <label className="font-medium text-gray-700">Contact</label>
+                <label className="font-medium text-gray-300">Contact</label>
                 <input
-                  type="text"
+                  type="tel"
                   name="contact"
                   value={patient.contact}
                   onChange={handleInputChange}
-                  className="mt-1 p-3 w-full border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="mt-1 p-3 w-full bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-gray-200"
                   placeholder="Enter your contact number"
                 />
               </div>
@@ -257,13 +256,13 @@ const PatientForm: React.FC = () => {
             <div className="flex items-center space-x-2">
               <FaLock className="text-gray-500" />
               <div className="flex-1">
-                <label className="font-medium text-gray-700">Password</label>
+                <label className="font-medium text-gray-300">Password</label>
                 <input
                   type="password"
                   name="password"
                   value={patient.password}
                   onChange={handleInputChange}
-                  className="mt-1 p-3 w-full border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="mt-1 p-3 w-full bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-gray-200"
                   placeholder="Enter your password"
                 />
               </div>
@@ -271,10 +270,10 @@ const PatientForm: React.FC = () => {
           </div>
 
           {/* Submit Button */}
-          <div className="col-span-2 flex justify-center mt-8">
+          <div className="col-span-2 text-center mt-8">
             <button
               type="submit"
-              className="py-3 px-6 bg-blue-600 text-white rounded-lg text-lg font-semibold hover:bg-blue-700 focus:ring-2 focus:ring-blue-300 transition-all"
+              className="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-gray-100 font-medium rounded-lg shadow-lg transition duration-300"
             >
               Save Changes
             </button>

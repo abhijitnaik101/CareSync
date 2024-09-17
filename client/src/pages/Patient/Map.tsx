@@ -11,6 +11,7 @@ const MapComponent: React.FC = () => {
   const mapContainer = useRef<HTMLDivElement | null>(null);
   const map = useRef<mapboxgl.Map | null>(null);
 
+
   const start: number[] = [85.776628, 20.275725];
   const [endCoords, setEndCoords] = useState<number[] | null>(null); // Initially null
 
@@ -19,12 +20,21 @@ const MapComponent: React.FC = () => {
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current!,
-      style: 'mapbox://styles/mapbox/streets-v12',
+      style: "mapbox://styles/mapbox/streets-v12",
       center: start as [number, number],
       zoom: 12
     });
 
-    map.current.addControl(new mapboxgl.NavigationControl());
+    map.current.addControl(new mapboxgl.NavigationControl({
+      showCompass: true,
+      showZoom: true,
+      visualizePitch: true,
+      
+    }));
+    
+    map.current.addControl(new mapboxgl.ScaleControl({
+      unit: 'metric'
+    }));
 
     map.current.on('load', () => {
       addStartPoint();
@@ -171,11 +181,10 @@ const end: GeoJSON.GeoJSON= {
 
   return (
 
-    <div className="relative p-5 h-screen overflow-clip  w-full flex justify-center items-center ">
+    <div className="relative p-5 h-screen w-full bg-gray-900">
       <SearchBox coordsCallback={(coords) => setEndCoords(coords)} />
       {/* <SearchBar coordsCallback={(coords) => setEndCoords(coords)} /> */}
-      
-      <div ref={mapContainer} style={{ height: '100%', width: '100%' }} />
+      <div ref={mapContainer}  className='relative h-full w-full z-0 shadow-lg rounded-lg overflow-hidden' />
     </div>
   );
 };

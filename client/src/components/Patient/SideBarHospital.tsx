@@ -40,7 +40,7 @@ const SideBarHospital: React.FC<{ hospitals: Hospital[], searchTerm: string }> =
 
   return (
     <div>
-      <div className="absolute w-full top-16 left-6 mt-8 p-6 h-96 bg-slate-50 rounded-lg shadow-lg overflow-y-scroll z-10">
+      <div className="absolute w-full top-16 left-6 mt-8 p-6 h-96 bg-slate-50 rounded-lg shadow-lg overflow-y-scroll z-20">
         <div className="space-y-6">
           {selectedHospital?.departments.map(department => (
             <div key={department.id} className="p-4 border-b-2">

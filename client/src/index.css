@@ -1,6 +1,10 @@
+@import '@fontsource/poppins';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+
   
 .slider {
     width: 800px;

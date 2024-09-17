@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { socket } from "../../socket";
+import { FaSearch, FaHospital, FaUserMd, FaCalendarAlt, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
+import { BsClock } from "react-icons/bs";
 
 // Define the options for the time period dropdown
 const timePeriodOptions = [
@@ -20,7 +22,8 @@ const appointmentsData = [
     hospital: "Apollo Hospital",
     department: "Cardiology",
     status: "Confirmed",
-    scheduledOn: "2024-11-20T22:30:00", // ISO 8601 date format
+    scheduledOn: "2024-11-20T22:30:00",
+    img: "https://via.placeholder.com/100", // Placeholder for doctor image
   },
   {
     id: 2,
@@ -29,53 +32,56 @@ const appointmentsData = [
     department: "Neurology",
     status: "Pending",
     scheduledOn: "2024-11-21T14:00:00",
+    img: "https://via.placeholder.com/100", // Placeholder for doctor image
   },
 ];
+
+// Utility to format date
+const formatDate = (dateString: string) => {
+  return new Date(dateString).toLocaleString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
 
 const PatientNotification: React.FC = () => {
   const [selectedPeriod, setSelectedPeriod] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [appointments, setAppointments] = useState(appointmentsData);
-  const [editingAppointmentId, setEditingAppointmentId] = useState<
-    number | null
-  >(null);
+  const [editingAppointmentId, setEditingAppointmentId] = useState<number | null>(null);
   const [newScheduledDate, setNewScheduledDate] = useState<string>("");
 
-
   useEffect(() => {
-    socket.on('UserTicket', (data: any) => {
-      setAppointments((prevAppointments) => {
-        return [data, ...prevAppointments];
-      });
-    })
+    socket.on("UserTicket", (data: any) => {
+      setAppointments((prevAppointments) => [data, ...prevAppointments]);
+    });
 
-    socket.on('reject-patient-request', (patient: any) => {
-      //
-    })
+    socket.on("reject-patient-request", (patient: any) => {
+      // Handle rejection
+    });
 
     return () => {
-      socket.off('UserTicket');
-    }
-  })
+      socket.off("UserTicket");
+    };
+  }, []);
 
-  // Function to filter appointments based on search query and time period
   const filterAppointments = () => {
     const lowerQuery = searchQuery.toLowerCase();
     const currentTime = new Date();
 
     return appointments.filter((appointment) => {
       const scheduledTime = new Date(appointment.scheduledOn);
-      const differenceInMinutes =
-        (scheduledTime.getTime() - currentTime.getTime()) / 60000;
+      const differenceInMinutes = (scheduledTime.getTime() - currentTime.getTime()) / 60000;
 
-      // Match search query with doctor name or hospital name
       const matchesQuery =
         appointment.doctor.toLowerCase().includes(lowerQuery) ||
         appointment.hospital.toLowerCase().includes(lowerQuery);
 
-      // Check if the appointment falls within the selected time period
-      const matchesTimePeriod =
-        selectedPeriod === null || differenceInMinutes <= selectedPeriod;
+      const matchesTimePeriod = selectedPeriod === null || differenceInMinutes <= selectedPeriod;
 
       return matchesQuery && matchesTimePeriod;
     });
@@ -83,16 +89,11 @@ const PatientNotification: React.FC = () => {
 
   const filteredAppointments = filterAppointments();
 
-  // Function to handle the "Reschedule" button click
-  const handleRescheduleClick = (
-    appointmentId: number,
-    currentDate: string
-  ) => {
+  const handleRescheduleClick = (appointmentId: number, currentDate: string) => {
     setEditingAppointmentId(appointmentId);
     setNewScheduledDate(currentDate);
   };
 
-  // Function to handle saving the new date
   const handleSaveDate = (appointmentId: number) => {
     setAppointments((prevAppointments) =>
       prevAppointments.map((appointment) =>
@@ -101,33 +102,32 @@ const PatientNotification: React.FC = () => {
           : appointment
       )
     );
-    setEditingAppointmentId(null); // Close the editing form
+    setEditingAppointmentId(null);
   };
 
-  // Function to handle canceling the reschedule action
   const handleCancel = () => {
     setEditingAppointmentId(null);
   };
 
   return (
-    <div className="flex h-screen">
-      {/* Sidebar */}
-      
-
+    <div className="flex h-screen bg-gray-900 text-gray-100 font-poppins">
       {/* Main Content */}
-      <div className="flex-grow p-8 bg-white">
+      <div className="flex-grow p-8">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">Notification</h1>
+          <h1 className="text-3xl font-bold">Notifications</h1>
           <div className="flex space-x-4">
-            <input
-              type="text"
-              placeholder="Search"
-              className="px-4 py-2 border rounded-lg focus:outline-none"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
+            <div className="relative">
+              <FaSearch className="absolute left-2 top-3 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search"
+                className="px-10 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
             <select
-              className="px-4 py-2 border rounded-lg"
+              className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
               onChange={(e) => setSelectedPeriod(Number(e.target.value))}
               value={selectedPeriod || ""}
             >
@@ -148,50 +148,55 @@ const PatientNotification: React.FC = () => {
           filteredAppointments.map((appointment) => (
             <div
               key={appointment.id}
-              className="bg-gray-100 p-6 mb-4 rounded-lg shadow-md"
+              className="bg-gray-800 p-6 mb-4 rounded-lg shadow-md transition transform hover:scale-105 duration-300 ease-in-out"
             >
-              <div className="flex justify-between items-center">
-                <div>
-                  <h2 className="font-semibold">Your Appointment</h2>
-                  <p>
-                    Doctor:{" "}
-                    <span className="font-bold">{appointment.doctor}</span>
-                  </p>
-                  <p>
-                    Hospital:{" "}
-                    <span className="font-bold">{appointment.hospital}</span>
-                  </p>
-                  <p>
-                    Department:{" "}
-                    <span className="font-bold">{appointment.department}</span>
-                  </p>
-                  <p>
-                    Status:{" "}
-                    <span className="font-bold">{appointment.status}</span>
-                  </p>
-                  <p>
-                    Scheduled on:{" "}
-                    <span className="font-bold">
-                      {new Date(appointment.scheduledOn).toLocaleString()}
-                    </span>
-                  </p>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <img
+                    src={appointment.img}
+                    alt={`${appointment.doctor}`}
+                    className="w-16 h-16 rounded-full mr-4"
+                  />
+                  <div>
+                    <h2 className="text-lg font-semibold">{appointment.doctor}</h2>
+                    <p className="text-gray-400">
+                      <FaHospital className="inline-block mr-1" />
+                      {appointment.hospital}
+                    </p>
+                    <p className="text-gray-400">
+                      <FaUserMd className="inline-block mr-1" />
+                      {appointment.department}
+                    </p>
+                    <p className="text-gray-400">
+                      <FaCalendarAlt className="inline-block mr-1" />
+                      {formatDate(appointment.scheduledOn)}
+                    </p>
+                    <p className={`text-sm font-bold ${appointment.status === "Confirmed" ? "text-green-400" : "text-yellow-400"}`}>
+                      {appointment.status === "Confirmed" ? (
+                        <FaCheckCircle className="inline-block mr-1" />
+                      ) : (
+                        <FaTimesCircle className="inline-block mr-1" />
+                      )}
+                      {appointment.status}
+                    </p>
+                  </div>
                 </div>
                 {editingAppointmentId === appointment.id ? (
-                  <div className="flex space-x-4">
+                  <div className="flex space-x-4 ">
                     <input
                       type="datetime-local"
-                      className="px-4 py-2 border rounded-lg focus:outline-none"
+                      className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none"
                       value={newScheduledDate}
                       onChange={(e) => setNewScheduledDate(e.target.value)}
                     />
                     <button
-                      className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
+                      className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition"
                       onClick={() => handleSaveDate(appointment.id)}
                     >
                       Save
                     </button>
                     <button
-                      className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
+                      className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition"
                       onClick={handleCancel}
                     >
                       Cancel
@@ -199,13 +204,8 @@ const PatientNotification: React.FC = () => {
                   </div>
                 ) : (
                   <button
-                    className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
-                    onClick={() =>
-                      handleRescheduleClick(
-                        appointment.id,
-                        appointment.scheduledOn
-                      )
-                    }
+                    className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
+                    onClick={() => handleRescheduleClick(appointment.id, appointment.scheduledOn)}
                   >
                     Reschedule
                   </button>
@@ -214,9 +214,7 @@ const PatientNotification: React.FC = () => {
             </div>
           ))
         ) : (
-          <p className="text-gray-500">
-            No appointments found matching the search criteria.
-          </p>
+          <p className="text-gray-500">No appointments found matching the search criteria.</p>
         )}
       </div>
     </div>
