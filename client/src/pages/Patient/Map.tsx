@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import SearchBox from '../../components/Patient/Searchbox';
+import SearchBar from '../../components/Patient/SearchBar';
 
 
 // Mapbox access token
@@ -40,6 +41,7 @@ const MapComponent: React.FC = () => {
     if (endCoords) {
       updateEndPoint(endCoords);
       getRoute(endCoords);
+      console.log("End coords: ", endCoords);
     }
   }, [endCoords]);
 
@@ -126,8 +128,10 @@ const end: GeoJSON.GeoJSON= {
       `https://api.mapbox.com/directions/v5/mapbox/cycling/${start[0]},${start[1]};${end[0]},${end[1]}?steps=true&geometries=geojson&access_token=${mapboxgl.accessToken}`,
       { method: 'GET' }
     );
+
     const json = await query.json();
     const data = json.routes[0];
+    console.log(json);
 
     const distance = data.distance;
     console.log(`Distance between start and end point: ${distance} meters`);
@@ -167,8 +171,10 @@ const end: GeoJSON.GeoJSON= {
 
   return (
 
-    <div className="relative h-screen overflow-clip  w-full flex justify-center items-center">
+    <div className="relative p-5 h-screen overflow-clip  w-full flex justify-center items-center">
       <SearchBox coordsCallback={(coords) => setEndCoords(coords)} />
+      {/* <SearchBar coordsCallback={(coords) => setEndCoords(coords)} /> */}
+      
       <div ref={mapContainer} style={{ height: '100%', width: '100%' }} />
     </div>
   );

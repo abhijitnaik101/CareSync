@@ -8,6 +8,7 @@ import InventoryManagerLayout from './layouts/InventoryManagerLayout';
 import ReceptionistLayout from './layouts/ReceptionistLayout';
 import Register from './layouts/Register';
 import { RecoilRoot } from 'recoil';
+import 'mapbox-gl/dist/mapbox-gl.css';
 
 const App = () => {
     return (
