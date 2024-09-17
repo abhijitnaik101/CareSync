@@ -38,8 +38,13 @@ const ReceptionistAppointmentApproval = ({ handleModal, patientRequests, setPati
     
     if (patients.length) {
       try {
+        const token = localStorage.getItem("token");
         //insert the patient details in ticket database
-        await axios.post(route + "/booking/create/appoint", patients[0]);
+        const response = await axios.post(route + `/beds/receptionist/approve/${patients[0].id}`,  {
+          hospitalId: patient.hospitalId
+        }, { headers: {
+          Authorization: "Bearer " + token
+        }});
         // if (appointmentDetails.appointType === 'OPD'){
         //   socket.emit('doctorFetchQueue');
         // }

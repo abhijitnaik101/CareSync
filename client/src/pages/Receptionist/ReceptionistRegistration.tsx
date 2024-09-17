@@ -66,12 +66,11 @@ const dummyTickets: any = [
 
 
 
-const ReceptionistRegistration: React.FC<RegistrationProps> = ({ registrations: initialRegistrations }) => {
+const ReceptionistRegistration: React.FC<{registrations: RegistrationProps}> = ({ registrations: initialRegistrations }) => {
 
 
   const [registrations, setRegistrations] = useState(dummyTickets);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [apiResponse, setApiResponse] = useState(null); // To store API response
   const [approveModalOpen, setApproveModalOpen] = useState(false);
   const [patientRequests, setPatientRequests] = useState<Patient[]>([
     {
@@ -91,67 +90,23 @@ const ReceptionistRegistration: React.FC<RegistrationProps> = ({ registrations: 
     setIsModalOpen(true); // Open the modal
   };
 
-  const handleNewRegistration = async (formData: {
-    name: string;
-    age: string;
-    gender: string;
-    department: string;
-    visitDate: string;
-    contact: string;
-    nationalId: string;
-  }) => {
-    const newRegistration = {
-      ...formData,
-      register: "Registered",
-      visit: "Scheduled",
-    };
-
-    try {
-      const response = await fetch('http://your-api-url/ticket', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          age: parseInt(formData.age),
-          gender: formData.gender.toUpperCase(),
-          appointType: "OPD", // Assuming OPD for registration
-          patientId: 1, // Assuming patientId for example
-          doctorId: 1, // Assuming doctorId for example
-          hospitalId: 1, // Assuming hospitalId for example
-          appointmentDate: formData.visitDate, // Assuming visitDate as appointmentDate
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to book appointment');
-      }
-
-      const data = await response.json();
-      setApiResponse(data); // Store the API response
-      setRegistrations([...registrations, newRegistration]); // Update registrations list
-
-      setIsModalOpen(false); // Close the modal after submission
-    } catch (error) {
-      console.error('Error booking appointment:', error);
+  async function fetchTickets() {
+    const token = localStorage.getItem("token");
+    const response = await axios.get(route + `/booking/getappoints/1`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    console.log("Response", response);
+    if (response.status === 500 || !response) {
+      console.error('Failed to fetch hospitals');
+      return;
     }
-  };
 
-  // async function fetchTickets() {
-  //   const response = await axios.get(route + '/appointments');
-  //   console.log("Response", response);
-  //   if (response.status === 500 || !response) {
-  //     console.error('Failed to fetch hospitals');
-  //     return;
-  //   }
-
-  //   setRegistrations(response.data)
-  // }
-  // //functions to fetch hospitals data
-  // useEffect(() => {
-  //   fetchTickets();
-  // }, [])
+    setRegistrations(response.data)
+  }
+  //functions to fetch hospitals data
+  useEffect(() => {
+    fetchTickets();
+  }, [])
 
   useEffect(()=> {
     socket.on("patient-request", (data: any) => {
@@ -225,7 +180,7 @@ const ReceptionistRegistration: React.FC<RegistrationProps> = ({ registrations: 
           {/* Modal for New Registration */}
           {isModalOpen && (
             <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-              <NewRegistration onNewRegistration={handleNewRegistration} closeModal={setIsModalOpen} />
+              <NewRegistration closeModal={setIsModalOpen} />
             </div>
           )}
         </div>
@@ -234,7 +189,7 @@ const ReceptionistRegistration: React.FC<RegistrationProps> = ({ registrations: 
   );
 };
 
-const Modal = ({ isOpen , onClose , children }) => {
+const Modal = ({ isOpen , onClose , children }: { isOpen: boolean , onClose: React.MouseEventHandler<HTMLButtonElement>, children: any }) => {
   return (
     <div className={`modal ${isOpen ? 'open' : 'closed'}`}>
       <div className="modal-content">

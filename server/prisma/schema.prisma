@@ -82,8 +82,10 @@ model doctor {
 
 model patient {
   id          Int            @id @default(autoincrement())
+  profilePicture String?
   name        String
   email       String         @unique
+  gender      gender         @default(MALE)
   age         Int
   bloodtype   String?
   contact     String
@@ -108,13 +110,17 @@ model ticket {
   id          Int            @id @default(autoincrement())
   hospitalId  Int
   hospital    hospital       @relation(fields: [hospitalId], references: [id])
-  name        String
-  age         Int
-  gender       gender
-  appointType  appointType
-  doctorId    Int?
   patientId   Int?
   patient     patient?       @relation(fields: [patientId], references: [id])
+  name        String
+  age         Int
+  email       String?         @unique
+  bloodtype   String?
+  contact     String?
+  gender       gender         @default(MALE)
+  appointType  appointType
+  appointmentDate DateTime   @db.Date
+  doctorId    Int?
   queue       queue[]
   approved    Boolean        @default(false) 
   wardId      Int?           // Reference to the ward assigned to the patient

@@ -16,25 +16,24 @@ export const approveBed = async (req: Request, res: Response) => {
       const ticket = await prisma.ticket.update({
         where: {
           id: ticketId,
-          hospitalId,
         },
         data: { approved: true },
       });
 
       if (ticket.appointType == "OPD") {
-        const queueCount = await prisma.queue.count({
-          where: {
-            hospitalId,
-            doctorId: ticket.doctorId!,
-            appointmentDate: new Date().toISOString(),
-          },
-        });
+        // const queueCount = await prisma.queue.count({
+        //   where: {
+        //     hospitalId,
+        //     doctorId: ticket.doctorId!,
+        //     appointmentDate: new Date().toISOString(),
+        //   },
+        // });
 
         const queue = await prisma.queue.create({
           data: {
             hospitalId,
             doctorId: ticket.doctorId!,
-            position: queueCount + 1,
+            position: 1,
             appointmentDate: new Date().toISOString(), // Use the provided date
             pending: false,
             ticketId: ticket.id,
@@ -44,6 +43,7 @@ export const approveBed = async (req: Request, res: Response) => {
 
     res.json({ message: "Ticket approved and bed assigned successfully" });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: "Server error" });
   }
 };

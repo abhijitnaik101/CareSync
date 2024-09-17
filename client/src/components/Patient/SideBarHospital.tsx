@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { socket } from '../../socket';
 import { useRecoilState } from 'recoil';
+import axios from 'axios';
 import patientState from '../../recoil/atoms/patientAtom';
 import { Hospital } from '../../Types';
+import { route } from '../../../backendroute';
 
 const SideBarHospital: React.FC<{ hospitals: Hospital[], searchTerm: string }> = ({ hospitals, searchTerm }) => {
 
@@ -31,8 +33,14 @@ const SideBarHospital: React.FC<{ hospitals: Hospital[], searchTerm: string }> =
     setIsModalOpen(true); // Open modal when "Book" button is clicked
   };
 
-  const handleSubmit = () => {
-    socket.emit('book-appointment', appointmentDetails);
+  const handleSubmit = async () => {
+    try {
+      const response = await axios.post<{message: string, ticket: any}>(route + `/booking/bookappointment/`, appointmentDetails)
+      // await axios.post(route + `/booking/bookappointment/`, appointmentDetails)
+      socket.emit('book-appointment', response.data.ticket); //server ku trigger kariba
+    } catch (error) {
+      console.error(error);
+    }
     setIsModalOpen(false);
   };
 

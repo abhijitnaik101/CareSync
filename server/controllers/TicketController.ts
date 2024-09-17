@@ -17,7 +17,7 @@ export const bookAppointment = async (req: Request, res: Response) => {
   }
 
   // Extract appointment details from the request
-  const { name, age, gender, appointType, patientId, doctorId, hospitalId } = req.body;
+  const { name, age, gender, appointType, patientId, doctorId, hospitalId, appointmentDate } = req.body;
 
   try {
     // Create a new ticket entry for the patient
@@ -30,6 +30,7 @@ export const bookAppointment = async (req: Request, res: Response) => {
         patientId,
         doctorId,
         hospitalId,
+        appointmentDate: new Date(appointmentDate).toISOString()
       },
     });
 
@@ -68,6 +69,24 @@ export const getAppointments = async (req: Request, res: Response) => {
   }
 };
 
+export const getPatientRequests = async (req: Request, res: Response) => {
+  const { hospitalId } = req.params;
+
+  try {
+    const requests = await prisma.ticket.findMany({
+      where: {
+        hospitalId: Number(hospitalId),
+        approved: false
+      }
+    });
+
+    res.json(requests);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 export const createAppointment = async (req: Request, res: Response) => {
   // Validate the request body
   if (!ticketAppointRequest.safeParse(req.body).success) {
@@ -88,7 +107,8 @@ export const createAppointment = async (req: Request, res: Response) => {
         patientId,
         doctorId,
         hospitalId,
-        approved: true
+        approved: true,
+        appointmentDate: new Date(appointmentDate).toISOString()
       },
     });
     
