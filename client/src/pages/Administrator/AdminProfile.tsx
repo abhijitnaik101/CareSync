@@ -1,7 +1,21 @@
 import React, { useState } from "react";
+import {
+  FaUserEdit,
+  FaSave,
+  FaEnvelope,
+  FaPhone,
+  FaBuilding,
+  FaUserTie,
+  FaBirthdayCake,
+  FaTransgender,
+  FaFlag,
+  FaBriefcase,
+  FaMedal,
+  FaLightbulb,
+} from "react-icons/fa";
 
 const AdminProfile: React.FC = () => {
-  const [isEditing, setIsEditing] = useState(false); // Default state is not editable
+  const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     name: "Dr. John Doe",
     title: "Chief Administrator",
@@ -24,9 +38,7 @@ const AdminProfile: React.FC = () => {
     ],
   });
 
-  const handleEditClick = () => {
-    setIsEditing(!isEditing);
-  };
+  const handleEditClick = () => setIsEditing(!isEditing);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -38,7 +50,11 @@ const AdminProfile: React.FC = () => {
     }));
   };
 
-const handleListChange = (listName: keyof typeof formData, index: number, value: string) => {
+  const handleListChange = (
+    listName: keyof typeof formData,
+    index: number,
+    value: string
+  ) => {
     const updatedList = [...formData[listName]];
     updatedList[index] = value;
     setFormData((prevData) => ({
@@ -47,25 +63,30 @@ const handleListChange = (listName: keyof typeof formData, index: number, value:
     }));
   };
 
-  const handleSave = () => {
-    // Save data to the server or update state here
-    setIsEditing(false);
-  };
+  const handleSave = () => setIsEditing(false);
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-blue-50 to-blue-100">
-      <div className="w-full mx-auto bg-white rounded-lg shadow-2xl">
-        <div className="p-6 border-b border-gray-300 flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-blue-900">Admin Profile</h1>
+    <div className="min-h-screen bg-gradient-to-r from-gray-800 via-gray-900 to-black text-white p-6">
+      <div className="w-full mx-auto bg-gray-900 bg-opacity-80 rounded-lg shadow-2xl">
+        <div className="p-6 border-b border-gray-600 flex justify-between items-center">
+          <h1 className="text-3xl font-bold text-white">Admin Profile</h1>
           <button
             onClick={isEditing ? handleSave : handleEditClick}
             className="px-5 py-2 bg-blue-600 text-white font-semibold rounded-full shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-200"
           >
-            {isEditing ? "Save" : "Edit"}
+            {isEditing ? (
+              <>
+                <FaSave className="inline mr-2" /> Save
+              </>
+            ) : (
+              <>
+                <FaUserEdit className="inline mr-2" /> Edit
+              </>
+            )}
           </button>
         </div>
+
         <div className="p-6 space-y-8">
-          {/* Profile Header */}
           <div className="flex items-center space-x-6 mb-8">
             <img
               src="/path/to/profile-picture.jpg"
@@ -74,141 +95,149 @@ const handleListChange = (listName: keyof typeof formData, index: number, value:
             />
             <div>
               <div className="mb-4">
-                <label
-                  className={`block text-gray-700 text-lg ${
-                    isEditing ? "font-semibold" : ""
-                  }`}
-                >
-                  Name:
-                </label>
+                <label className="block text-lg text-gray-300">Name:</label>
                 {isEditing ? (
                   <input
                     type="text"
                     value={formData.name}
                     onChange={(e) => handleChange(e, "name")}
-                    className="text-2xl font-semibold text-gray-900 bg-gray-100 border border-gray-300 rounded-lg p-2 w-full"
+                    className="text-2xl font-semibold text-white bg-gray-800 border border-gray-700 rounded-lg p-2 w-full"
                   />
                 ) : (
-                  <h2 className="text-2xl font-semibold text-gray-900">
-                    {formData.name}
-                  </h2>
+                  <h2 className="text-2xl font-semibold">{formData.name}</h2>
                 )}
               </div>
               <div>
-                <label
-                  className={`block text-gray-700 text-lg ${
-                    isEditing ? "font-semibold" : ""
-                  }`}
-                >
-                  Title:
-                </label>
+                <label className="block text-lg text-gray-300">Title:</label>
                 {isEditing ? (
                   <input
                     type="text"
                     value={formData.title}
                     onChange={(e) => handleChange(e, "title")}
-                    className="text-gray-700 bg-gray-100 border border-gray-300 rounded-lg p-2 w-full"
+                    className="text-white bg-gray-800 border border-gray-700 rounded-lg p-2 w-full"
                   />
                 ) : (
-                  <p className="text-gray-700">{formData.title}</p>
+                  <p className="text-white">{formData.title}</p>
                 )}
               </div>
             </div>
           </div>
 
-          {/* Profile Sections */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Personal Information */}
-            <div className={`bg-gray-50 p-6 rounded-lg shadow-md ${isEditing ? "ring-2 ring-blue-400" : ""}`}>
-              <h3 className="text-xl font-semibold text-blue-900 mb-4">
+            <div
+              className={`bg-gray-800 p-6 rounded-lg shadow-md ${
+                isEditing ? "ring-2 ring-blue-400" : ""
+              }`}
+            >
+              <h3 className="text-xl font-semibold text-blue-400 mb-4">
                 Personal Information
               </h3>
               {isEditing ? (
                 <>
                   <div className="mb-4">
-                    <label className="block text-gray-700">Date of Birth:</label>
+                    <label className="block text-gray-300">
+                      Date of Birth:
+                    </label>
                     <input
                       type="text"
                       value={formData.dob}
                       onChange={(e) => handleChange(e, "dob")}
-                      className="bg-gray-100 border border-gray-300 rounded-lg p-2 w-full"
+                      className="bg-gray-700 border border-gray-600 rounded-lg p-2 w-full"
                     />
                   </div>
                   <div className="mb-4">
-                    <label className="block text-gray-700">Gender:</label>
+                    <label className="block text-gray-300">Gender:</label>
                     <input
                       type="text"
                       value={formData.gender}
                       onChange={(e) => handleChange(e, "gender")}
-                      className="bg-gray-100 border border-gray-300 rounded-lg p-2 w-full"
+                      className="bg-gray-700 border border-gray-600 rounded-lg p-2 w-full"
                     />
                   </div>
                   <div className="mb-4">
-                    <label className="block text-gray-700">Nationality:</label>
+                    <label className="block text-gray-300">Nationality:</label>
                     <input
                       type="text"
                       value={formData.nationality}
                       onChange={(e) => handleChange(e, "nationality")}
-                      className="bg-gray-100 border border-gray-300 rounded-lg p-2 w-full"
+                      className="bg-gray-700 border border-gray-600 rounded-lg p-2 w-full"
                     />
                   </div>
                 </>
               ) : (
-                <ul className="space-y-3 text-gray-700">
-                  <li>Date of Birth: {formData.dob}</li>
-                  <li>Gender: {formData.gender}</li>
-                  <li>Nationality: {formData.nationality}</li>
+                <ul className="space-y-3 text-gray-400">
+                  <li>
+                    <FaBirthdayCake className="inline mr-2" /> {formData.dob}
+                  </li>
+                  <li>
+                    <FaTransgender className="inline mr-2" /> {formData.gender}
+                  </li>
+                  <li>
+                    <FaFlag className="inline mr-2" /> {formData.nationality}
+                  </li>
                 </ul>
               )}
             </div>
 
-            {/* Contact Details */}
-            <div className={`bg-gray-50 p-6 rounded-lg shadow-md ${isEditing ? "ring-2 ring-blue-400" : ""}`}>
-              <h3 className="text-xl font-semibold text-blue-900 mb-4">
+            <div
+              className={`bg-gray-800 p-6 rounded-lg shadow-md ${
+                isEditing ? "ring-2 ring-blue-400" : ""
+              }`}
+            >
+              <h3 className="text-xl font-semibold text-blue-400 mb-4">
                 Contact Details
               </h3>
               {isEditing ? (
                 <>
                   <div className="mb-4">
-                    <label className="block text-gray-700">Email:</label>
+                    <label className="block text-gray-300">Email:</label>
                     <input
                       type="text"
                       value={formData.email}
                       onChange={(e) => handleChange(e, "email")}
-                      className="bg-gray-100 border border-gray-300 rounded-lg p-2 w-full"
+                      className="bg-gray-700 border border-gray-600 rounded-lg p-2 w-full"
                     />
                   </div>
                   <div className="mb-4">
-                    <label className="block text-gray-700">Phone:</label>
+                    <label className="block text-gray-300">Phone:</label>
                     <input
                       type="text"
                       value={formData.phone}
                       onChange={(e) => handleChange(e, "phone")}
-                      className="bg-gray-100 border border-gray-300 rounded-lg p-2 w-full"
+                      className="bg-gray-700 border border-gray-600 rounded-lg p-2 w-full"
                     />
                   </div>
                   <div className="mb-4">
-                    <label className="block text-gray-700">Office:</label>
+                    <label className="block text-gray-300">Office:</label>
                     <input
                       type="text"
                       value={formData.office}
                       onChange={(e) => handleChange(e, "office")}
-                      className="bg-gray-100 border border-gray-300 rounded-lg p-2 w-full"
+                      className="bg-gray-700 border border-gray-600 rounded-lg p-2 w-full"
                     />
                   </div>
                 </>
               ) : (
-                <ul className="space-y-3 text-gray-700">
-                  <li>Email: {formData.email}</li>
-                  <li>Phone: {formData.phone}</li>
-                  <li>Office: {formData.office}</li>
+                <ul className="space-y-3 text-gray-400">
+                  <li>
+                    <FaEnvelope className="inline mr-2" /> {formData.email}
+                  </li>
+                  <li>
+                    <FaPhone className="inline mr-2" /> {formData.phone}
+                  </li>
+                  <li>
+                    <FaBuilding className="inline mr-2" /> {formData.office}
+                  </li>
                 </ul>
               )}
             </div>
 
-            {/* Administrative Roles */}
-            <div className={`bg-gray-50 p-6 rounded-lg shadow-md ${isEditing ? "ring-2 ring-blue-400" : ""}`}>
-              <h3 className="text-xl font-semibold text-blue-900 mb-4">
+            <div
+              className={`bg-gray-800 p-6 rounded-lg shadow-md ${
+                isEditing ? "ring-2 ring-blue-400" : ""
+              }`}
+            >
+              <h3 className="text-xl font-semibold text-blue-400 mb-4">
                 Administrative Roles
               </h3>
               {isEditing ? (
@@ -220,22 +249,27 @@ const handleListChange = (listName: keyof typeof formData, index: number, value:
                       onChange={(e) =>
                         handleListChange("roles", index, e.target.value)
                       }
-                      className="bg-gray-100 border border-gray-300 rounded-lg p-2 w-full"
+                      className="bg-gray-700 border border-gray-600 rounded-lg p-2 w-full"
                     />
                   </div>
                 ))
               ) : (
-                <ul className="space-y-3 text-gray-700">
+                <ul className="space-y-3 text-gray-400">
                   {formData.roles.map((role, index) => (
-                    <li key={index}>{role}</li>
+                    <li key={index}>
+                      <FaUserTie className="inline mr-2" /> {role}
+                    </li>
                   ))}
                 </ul>
               )}
             </div>
 
-            {/* Experience */}
-            <div className={`bg-gray-50 p-6 rounded-lg shadow-md ${isEditing ? "ring-2 ring-blue-400" : ""}`}>
-              <h3 className="text-xl font-semibold text-blue-900 mb-4">
+            <div
+              className={`bg-gray-800 p-6 rounded-lg shadow-md ${
+                isEditing ? "ring-2 ring-blue-400" : ""
+              }`}
+            >
+              <h3 className="text-xl font-semibold text-blue-400 mb-4">
                 Experience
               </h3>
               {isEditing ? (
@@ -247,72 +281,16 @@ const handleListChange = (listName: keyof typeof formData, index: number, value:
                       onChange={(e) =>
                         handleListChange("experience", index, e.target.value)
                       }
-                      className="bg-gray-100 border border-gray-300 rounded-lg p-2 w-full"
+                      className="bg-gray-700 border border-gray-600 rounded-lg p-2 w-full"
                     />
                   </div>
                 ))
               ) : (
-                <ul className="space-y-3 text-gray-700">
+                <ul className="space-y-3 text-gray-400">
                   {formData.experience.map((exp, index) => (
-                    <li key={index}>{exp}</li>
-                  ))}
-                </ul>
-              )}
-            </div>
-
-            {/* Qualifications */}
-            <div className={`bg-gray-50 p-6 rounded-lg shadow-md ${isEditing ? "ring-2 ring-blue-400" : ""}`}>
-              <h3 className="text-xl font-semibold text-blue-900 mb-4">
-                Qualifications
-              </h3>
-              {isEditing ? (
-                formData.qualifications.map((qual, index) => (
-                  <div key={index} className="mb-4">
-                    <input
-                      type="text"
-                      value={qual}
-                      onChange={(e) =>
-                        handleListChange(
-                          "qualifications",
-                          index,
-                          e.target.value
-                        )
-                      }
-                      className="bg-gray-100 border border-gray-300 rounded-lg p-2 w-full"
-                    />
-                  </div>
-                ))
-              ) : (
-                <ul className="space-y-3 text-gray-700">
-                  {formData.qualifications.map((qual, index) => (
-                    <li key={index}>{qual}</li>
-                  ))}
-                </ul>
-              )}
-            </div>
-
-            {/* Expertise */}
-            <div className={`bg-gray-50 p-6 rounded-lg shadow-md ${isEditing ? "ring-2 ring-blue-400" : ""}`}>
-              <h3 className="text-xl font-semibold text-blue-900 mb-4">
-                Expertise
-              </h3>
-              {isEditing ? (
-                formData.expertise.map((exp, index) => (
-                  <div key={index} className="mb-4">
-                    <input
-                      type="text"
-                      value={exp}
-                      onChange={(e) =>
-                        handleListChange("expertise", index, e.target.value)
-                      }
-                      className="bg-gray-100 border border-gray-300 rounded-lg p-2 w-full"
-                    />
-                  </div>
-                ))
-              ) : (
-                <ul className="space-y-3 text-gray-700">
-                  {formData.expertise.map((exp, index) => (
-                    <li key={index}>{exp}</li>
+                    <li key={index}>
+                      <FaBriefcase className="inline mr-2" /> {exp}
+                    </li>
                   ))}
                 </ul>
               )}

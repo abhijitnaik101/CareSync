@@ -1,4 +1,10 @@
 import React, { useState } from "react";
+import {
+  FaBoxOpen,
+  FaClock,
+  FaCheckCircle,
+  FaExclamationTriangle,
+} from "react-icons/fa";
 
 const InventoryNotification: React.FC = () => {
   // Dummy notification data
@@ -44,14 +50,33 @@ const InventoryNotification: React.FC = () => {
     );
   };
 
+  // Map notification types to corresponding icons
+  const getNotificationIcon = (type: string) => {
+    switch (type) {
+      case "Low Stock":
+        return <FaExclamationTriangle className="text-yellow-400" />;
+      case "Expired Medicine":
+        return <FaClock className="text-red-400" />;
+      case "Restocked":
+        return <FaBoxOpen className="text-green-400" />;
+      case "New Medicine":
+        return <FaCheckCircle className="text-blue-400" />;
+      default:
+        return <FaBoxOpen className="text-gray-400" />;
+    }
+  };
+
   return (
-    <div className="space-y-6 bg-gray-100 min-h-screen">
-      <h2 className="text-2xl font-semibold text-gray-700">Inventory Notifications</h2>
-      <div className="bg-white p-4 rounded shadow">
+    <div className="space-y-6 bg-gradient-to-br from-gray-900 to-black text-white min-h-screen p-6">
+      <h2 className="text-3xl font-semibold text-gray-200">
+        Inventory Notifications
+      </h2>
+
+      <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
         <div className="overflow-x-auto">
           <table className="min-w-full text-left text-sm">
             <thead>
-              <tr>
+              <tr className="border-b border-gray-700 text-gray-400">
                 <th className="p-2">Type</th>
                 <th className="p-2">Message</th>
                 <th className="p-2">Time</th>
@@ -61,21 +86,31 @@ const InventoryNotification: React.FC = () => {
             </thead>
             <tbody>
               {notifications.map((notification) => (
-                <tr key={notification.id} className={`border-t ${notification.status === 'unread' ? 'bg-yellow-50' : ''}`}>
-                  <td className="p-2">{notification.type}</td>
-                  <td className="p-2">{notification.message}</td>
-                  <td className="p-2">{notification.time}</td>
+                <tr
+                  key={notification.id}
+                  className={`border-t border-gray-700 ${
+                    notification.status === "unread" ? "bg-gray-700" : ""
+                  }`}
+                >
+                  <td className="p-2 flex items-center space-x-2">
+                    {getNotificationIcon(notification.type)}
+                    <span>{notification.type}</span>
+                  </td>
+                  <td className="p-2 text-gray-300">{notification.message}</td>
+                  <td className="p-2 text-gray-400">{notification.time}</td>
                   <td className="p-2">
                     <span
                       className={`px-2 py-1 text-xs font-medium rounded ${
-                        notification.status === 'unread' ? 'bg-red-200 text-red-800' : 'bg-green-200 text-green-800'
+                        notification.status === "unread"
+                          ? "bg-red-200 text-red-800"
+                          : "bg-green-200 text-green-800"
                       }`}
                     >
-                      {notification.status === 'unread' ? 'Unread' : 'Read'}
+                      {notification.status === "unread" ? "Unread" : "Read"}
                     </span>
                   </td>
                   <td className="p-2">
-                    {notification.status === 'unread' && (
+                    {notification.status === "unread" && (
                       <button
                         className="px-2 py-1 text-xs font-medium text-white bg-blue-500 rounded hover:bg-blue-600"
                         onClick={() => markAsRead(notification.id)}

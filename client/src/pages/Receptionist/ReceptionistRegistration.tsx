@@ -11,15 +11,17 @@ import { route } from "../../../backendroute";
 import { Ticket } from "../../Types";
 
 interface RegistrationProps {
-    name: string;
-    age: string;
-    gender: string;
-    department: string;
-    visitDate: string;
-    appointType: string;
-    contact: string;
-    visit: string;
-}[];
+  name: string;
+  age: string;
+  gender: string;
+  department: string;
+  visitDate: string;
+  appointType: string;
+  contact: string;
+  visit: string;
+}
+[];
+
 interface Patient {
   id: number;
   name: string;
@@ -63,11 +65,11 @@ const dummyTickets: any = [
     contact: "654-321-0987",
     visit: "Completed",
   },
-]
+];
 
-const ReceptionistRegistration: React.FC<{registrations: RegistrationProps}> = ({ registrations: initialRegistrations }) => {
-
-
+const ReceptionistRegistration: React.FC<{
+  registrations: RegistrationProps;
+}> = ({ registrations: initialRegistrations }) => {
   const [registrations, setRegistrations] = useState(dummyTickets);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [approveModalOpen, setApproveModalOpen] = useState(false);
@@ -81,8 +83,8 @@ const ReceptionistRegistration: React.FC<{registrations: RegistrationProps}> = (
       doctorId: 1,
       appointmentDate: "2024-09-10",
       hospitalId: 456,
-      approved: false
-    }
+      approved: false,
+    },
   ]);
 
   const handleNewRegistrationClick = () => {
@@ -91,113 +93,96 @@ const ReceptionistRegistration: React.FC<{registrations: RegistrationProps}> = (
 
   async function fetchTickets() {
     const token = localStorage.getItem("token");
-    const response = await axios.get<Ticket[]>(route + `/booking/getappoints/1`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    console.log("Response", response);
+    const response = await axios.get<Ticket[]>(
+      route + `/booking/getappoints/1`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+
     if (response.status === 500 || !response) {
-      console.error('Failed to fetch hospitals');
+      console.error("Failed to fetch hospitals");
       return;
     }
 
-    setPatientRequests(response.data.filter(p => p.approved == false));
-    setRegistrations(response.data.filter(p => p.approved == true));
+    setPatientRequests(response.data.filter((p) => !p.approved));
+    setRegistrations(response.data.filter((p) => p.approved));
   }
-  //functions to fetch hospitals data
+
+  // Fetch tickets on component mount
   useEffect(() => {
     fetchTickets();
-  }, [])
+  }, []);
 
-  useEffect(()=> {
+  // Listen for socket events to update patient requests
+  useEffect(() => {
     socket.on("patient-request", (data: any) => {
-      console.log("Received patient request:", data);
       setPatientRequests((prevRequests) => [...prevRequests, data]);
     });
 
-    socket.on('fetch-ticket', ()=>{
+    socket.on("fetch-ticket", () => {
       fetchTickets();
-    })
-
+    });
 
     return () => {
       socket.off("patient-request");
-    }
-  })
+    };
+  }, []);
 
   return (
-    <div className="relative w-full">
-      {approveModalOpen &&
-        <ReceptionistAppointmentApproval patientRequests={patientRequests} setPatientRequests={(value: any)=>setPatientRequests(value)} handleModal={(value: boolean)=>setApproveModalOpen(value)} setRegistrations={setRegistrations}/>
-      }
+    <div className="relative w-full bg-gray-900 text-gray-100 p-6">
+      {approveModalOpen && (
+        <ReceptionistAppointmentApproval
+          patientRequests={patientRequests}
+          setPatientRequests={setPatientRequests}
+          handleModal={setApproveModalOpen}
+          setRegistrations={setRegistrations}
+        />
+      )}
 
-      <div className="min-h-screen w-full bg-gray-100 p-6">
-        <div className="max-w-7xl mx-auto">
-          {/* Header */}
-          <div className="flex justify-between items-center mb-8">
-            <h2 className="text-2xl font-semibold text-gray-800">Receptionist Dashboard</h2>
-            <div>
-              <button onClick={() => setApproveModalOpen(true)} className="mx-2 bg-red-500 border text-white px-4 py-2 rounded-md hover:bg-red-600">
-                Registration Request
-              </button>
-              <button
-                className="mx-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-                onClick={handleNewRegistrationClick}
-              >
-                + New Registration
-              </button>
-            </div>
-
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-8">
+          <h2 className="text-2xl font-semibold text-gray-100">
+            Receptionist Dashboard
+          </h2>
+          <div>
+            <button
+              onClick={() => setApproveModalOpen(true)}
+              className="mx-2 bg-red-600 text-gray-100 px-4 py-2 rounded-md hover:bg-red-700 transition"
+            >
+              Registration Request
+            </button>
+            <button
+              className="mx-2 bg-blue-600 text-gray-100 px-4 py-2 rounded-md hover:bg-blue-700 transition"
+              onClick={handleNewRegistrationClick}
+            >
+              + New Registration
+            </button>
           </div>
-
-
-
-          {/* Summary */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-            {/* Total Registrations Card */}
-            <ReceptionistTotalRegistration/>
-
-            {/* Gender and Age Distribution */}
-            <ReceptionistGenderAgeDistribution/>
-
-            {/* Status Summary */}
-            <ReceptionistRegistrationStatus/>
-          </div>
-
-
-
-          {/* Registrations Table */}
-          <ReceptionistRegistrationTable registrations={registrations}/>
-
-          {/* API Response Display */}
-          {/* {apiResponse && (
-            <div className="bg-green-100 p-4 mt-4 rounded-md shadow-md">
-              <h3 className="text-lg font-semibold text-green-800">Appointment Response</h3>
-              <p>Message: {apiResponse.message}</p>
-              <p>Ticket ID: {apiResponse.ticket.id}</p>
-              <p>Queue Position: {apiResponse.queuePosition}</p>
-            </div>
-          )} */}
-
-          {/* Modal for New Registration */}
-          {isModalOpen && (
-            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-              <NewRegistration closeModal={setIsModalOpen} />
-            </div>
-          )}
         </div>
-      </div>
-    </div>
-  );
-};
 
-const Modal = ({ isOpen , onClose , children }: { isOpen: boolean , onClose: React.MouseEventHandler<HTMLButtonElement>, children: any }) => {
-  return (
-    <div className={`modal ${isOpen ? 'open' : 'closed'}`}>
-      <div className="modal-content">
-        {children}
-        <button className="close-button" onClick={onClose}>
-          Close
-        </button>
+        {/* Summary Section */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+          {/* Total Registrations Card */}
+          <ReceptionistTotalRegistration />
+
+          {/* Gender and Age Distribution */}
+          <ReceptionistGenderAgeDistribution />
+
+          {/* Status Summary */}
+          <ReceptionistRegistrationStatus />
+        </div>
+
+        {/* Registrations Table */}
+        <ReceptionistRegistrationTable registrations={registrations} />
+
+        {/* Modal for New Registration */}
+        {isModalOpen && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50">
+            <NewRegistration closeModal={setIsModalOpen} />
+          </div>
+        )}
       </div>
     </div>
   );

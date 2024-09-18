@@ -43,16 +43,16 @@ const MedicineDetail: React.FC<MedicineDetailProps> = ({
   };
 
   return (
-    <div className="relative flex items-center justify-center h-max rounded-md bg-gray-100">
-      <div className="w-full max-w-3xl bg-white shadow-lg rounded-lg p-8">
+    <div className="relative flex items-center justify-center h-max rounded-md bg-gray-900 text-gray-100">
+      <div className="w-full max-w-3xl bg-gray-800 shadow-lg rounded-lg p-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-semibold text-gray-800">
+          <h1 className="text-2xl font-semibold">
             {isEditing ? "Edit Medicine Details" : "Medicine Details"}
           </h1>
           <button
             onClick={() => setIsEditing(!isEditing)}
-            className="bg-indigo-600 text-white px-4 py-2 rounded-md shadow hover:bg-indigo-700 transition-colors"
+            className="bg-indigo-500 text-white px-4 py-2 rounded-md shadow hover:bg-indigo-600 transition-colors"
           >
             {isEditing ? "Save" : "Edit"}
           </button>
@@ -66,7 +66,7 @@ const MedicineDetail: React.FC<MedicineDetailProps> = ({
               src="https://via.placeholder.com/150"
               alt="Medicine"
             />
-            <button className="w-full bg-red-500 text-white py-2 rounded-md shadow hover:bg-red-600 transition-colors">
+            <button className="w-full bg-red-600 text-white py-2 rounded-md shadow hover:bg-red-700 transition-colors">
               Order More
             </button>
           </div>
@@ -76,79 +76,71 @@ const MedicineDetail: React.FC<MedicineDetailProps> = ({
             <div className="grid grid-cols-2 gap-4">
               {/* Medicine Name */}
               <div className="col-span-2">
-                <label className="block text-gray-600 font-medium mb-1">
-                  Medicine Name
-                </label>
+                <label className="block font-medium mb-1">Medicine Name</label>
                 {isEditing ? (
                   <input
                     type="text"
                     name="medicineName"
                     value={editedDetails.medicineName}
                     onChange={handleInputChange}
-                    className="w-full border rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                    className="w-full border rounded-lg px-4 py-2 text-gray-900 bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   />
                 ) : (
-                  <p className="text-gray-800 font-semibold">{medicineName}</p>
+                  <p className="font-semibold">{medicineName}</p>
                 )}
               </div>
 
               {/* In Stock */}
               <div>
-                <label className="block text-gray-600 font-medium mb-1">
-                  In Stock
-                </label>
+                <label className="block font-medium mb-1">In Stock</label>
                 {isEditing ? (
                   <input
                     type="number"
                     name="inStock"
                     value={editedDetails.inStock}
                     onChange={handleInputChange}
-                    className="w-full border rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                    className="w-full border rounded-lg px-4 py-2 text-gray-900 bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   />
                 ) : (
-                  <p className="text-gray-800">{inStock}</p>
+                  <p>{inStock}</p>
                 )}
               </div>
 
               {/* Price */}
               <div>
-                <label className="block text-gray-600 font-medium mb-1">
-                  Price (₹)
-                </label>
+                <label className="block font-medium mb-1">Price (₹)</label>
                 {isEditing ? (
                   <input
                     type="number"
                     name="price"
                     value={editedDetails.price}
                     onChange={handleInputChange}
-                    className="w-full border rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                    className="w-full border rounded-lg px-4 py-2 text-gray-900 bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   />
                 ) : (
-                  <p className="text-gray-800">₹{price}</p>
+                  <p>₹{price}</p>
                 )}
               </div>
 
               {/* Expiry Date */}
               <div>
-                <label className="block text-gray-600 font-medium mb-1">
-                  Expiry Date
-                </label>
+                <label className="block font-medium mb-1">Expiry Date</label>
                 {isEditing ? (
                   <input
                     type="date"
                     name="expDate"
                     value={editedDetails.expDate}
                     onChange={handleInputChange}
-                    className="w-full border rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                    className="w-full border rounded-lg px-4 py-2 text-gray-900 bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   />
                 ) : (
-                  <p className="text-gray-800">{expDate}</p>
+                  <p>{expDate}</p>
                 )}
               </div>
 
               {/* Manufacturing Date */}
               <div>
-                <label className="block text-gray-600 font-medium mb-1">
+                <label className="block font-medium mb-1">
                   Manufacturing Date
                 </label>
                 {isEditing ? (
@@ -157,64 +149,58 @@ const MedicineDetail: React.FC<MedicineDetailProps> = ({
                     name="mfgDate"
                     value={editedDetails.mfgDate}
                     onChange={handleInputChange}
-                    className="w-full border rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                    className="w-full border rounded-lg px-4 py-2 text-gray-900 bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   />
                 ) : (
-                  <p className="text-gray-800">{mfgDate}</p>
+                  <p>{mfgDate}</p>
                 )}
               </div>
 
               {/* Category */}
               <div>
-                <label className="block text-gray-600 font-medium mb-1">
-                  Category
-                </label>
+                <label className="block font-medium mb-1">Category</label>
                 {isEditing ? (
                   <input
                     type="text"
                     name="category"
                     value={editedDetails.category}
                     onChange={handleInputChange}
-                    className="w-full border rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                    className="w-full border rounded-lg px-4 py-2 text-gray-900 bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   />
                 ) : (
-                  <p className="text-gray-800">{category}</p>
+                  <p>{category}</p>
                 )}
               </div>
 
               {/* Type */}
               <div>
-                <label className="block text-gray-600 font-medium mb-1">
-                  Type
-                </label>
+                <label className="block font-medium mb-1">Type</label>
                 {isEditing ? (
                   <input
                     type="text"
                     name="type"
                     value={editedDetails.type}
                     onChange={handleInputChange}
-                    className="w-full border rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                    className="w-full border rounded-lg px-4 py-2 text-gray-900 bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   />
                 ) : (
-                  <p className="text-gray-800">{type}</p>
+                  <p>{type}</p>
                 )}
               </div>
             </div>
 
             {/* Description */}
             <div>
-              <label className="block text-gray-600 font-medium mb-1">
-                Description
-              </label>
+              <label className="block font-medium mb-1">Description</label>
               {isEditing ? (
                 <textarea
                   name="description"
                   value={editedDetails.description}
                   onChange={handleInputChange}
-                  className="w-full border rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-600 h-24"
+                  className="w-full border rounded-lg px-4 py-2 text-gray-900 bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 h-24"
                 />
               ) : (
-                <p className="text-gray-800">{description}</p>
+                <p>{description}</p>
               )}
             </div>
           </div>

@@ -140,6 +140,7 @@ const medicines = [
   },
 ];
 
+
 const Inventory = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedType, setSelectedType] = useState("");
@@ -165,19 +166,24 @@ const Inventory = () => {
   };
 
   return (
-    <div className="flex ">
-      <div className="bg-gray-50 w-full p-4">
-        <div className="flex justify-between mb-4">
-          <div className="flex items-center">
+    <div className="bg-gray-900 min-h-screen p-6">
+      <div className="bg-gray-800 text-white p-8 rounded-lg shadow-lg max-w-7xl mx-auto">
+        <h1 className="text-3xl font-bold mb-6 text-center tracking-wide text-white">
+          Medicine Inventory
+        </h1>
+
+        <div className="flex justify-between mb-6">
+          {/* Search Input */}
+          <div className="flex items-center space-x-4 w-2/3">
             <input
               type="text"
-              className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-blue-500 focus:ring-opacity-50"
-              placeholder="Search"
+              className="w-full border border-gray-600 rounded-md px-3 py-2 bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Search for medicines..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
             <button
-              className="ml-2 px-3 py-2 rounded-md bg-blue-500 text-white"
+              className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-500 transition"
               onClick={() => setSearchTerm(searchTerm)}
             >
               <svg
@@ -194,9 +200,11 @@ const Inventory = () => {
               </svg>
             </button>
           </div>
-          <div className="flex items-center">
+
+          {/* Filter by Type */}
+          <div className="flex items-center w-1/3">
             <select
-              className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+              className="w-full border border-gray-600 rounded-md px-3 py-2 bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={selectedType}
               onChange={(e) => setSelectedType(e.target.value)}
             >
@@ -212,43 +220,41 @@ const Inventory = () => {
             </select>
           </div>
         </div>
+
+        {/* Medicine Table */}
         {filteredMedicines.length === 0 ? (
-          <p className="text-center text-gray-500">No medicine found</p>
+          <p className="text-center text-gray-400">No medicine found</p>
         ) : (
-          <table className="w-full text-left table-auto text-gray-500">
-            <thead className="bg-blue-500 text-white min-w-full text-left text-md">
+          <table className="w-full text-left table-auto">
+            <thead className="bg-gray-700 text-white">
               <tr>
-                <th className="p-2"></th>
-                <th className="p-2">Item</th>
-                <th className="p-2">Price</th>
-                <th className="p-2">Quantity</th>
-                <th className="p-2">Expiry</th>
-                <th className="p-2">Type</th>
-                <th className="p-2"></th>
+                <th className="p-3 text-sm font-semibold">Item</th>
+                <th className="p-3 text-sm font-semibold">Price</th>
+                <th className="p-3 text-sm font-semibold">Quantity</th>
+                <th className="p-3 text-sm font-semibold">Expiry</th>
+                <th className="p-3 text-sm font-semibold">Type</th>
+                <th className="p-3 text-sm font-semibold"></th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-gray-600">
               {filteredMedicines.map((medicine) => (
-                <tr key={medicine.id} className="border-t">
-                  <td className="px-4">
-                    <button
-                      className="bg-green-500 text-white px-2 py-1 rounded-md"
-                      onClick={() => handleOpenModal(medicine)}
-                    >
-                      +
-                    </button>
+                <tr
+                  key={medicine.id}
+                  className="hover:bg-gray-800 transition duration-150"
+                >
+                  <td className="px-4 py-3 text-sm">{medicine.name}</td>
+                  <td className="px-4 py-3 text-sm">${medicine.price}</td>
+                  <td className="px-4 py-3 text-sm">{medicine.quantity}</td>
+                  <td className="px-4 py-3 text-sm text-red-400">
+                    {medicine.expiry}
                   </td>
-                  <td className="p-2">{medicine.name}</td>
-                  <td className="p-2">{medicine.price}</td>
-                  <td className="p-2">{medicine.quantity}</td>
-                  <td className="p-2 text-red-500">{medicine.expiry}</td>
-                  <td className="p-2">{medicine.type}</td>
-                  <td className="p-2">
+                  <td className="px-4 py-3 text-sm">{medicine.type}</td>
+                  <td className="px-4 py-3 text-sm">
                     <button
-                      className="text-blue-600 px-2 py-1 rounded-md"
+                      className="text-blue-500 hover:text-blue-400"
                       onClick={() => handleOpenModal(medicine)}
                     >
-                      details
+                      Details
                     </button>
                   </td>
                 </tr>
@@ -256,26 +262,28 @@ const Inventory = () => {
             </tbody>
           </table>
         )}
+
+        {/* Modal */}
         {selectedMedicine && (
-          <div
-            className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center"
-          >
-            <MedicineDetail
-              medicineName={selectedMedicine.name}
-              inStock={selectedMedicine.quantity}
-              expDate={selectedMedicine.expiry}
-              mfgDate="N/A" // Assuming mfgDate is not part of the initial data
-              price={selectedMedicine.price}
-              category="N/A" // Assuming category is not part of the initial data
-              type={selectedMedicine.type}
-              description="N/A" // Assuming description is not part of the initial data
-            />
-            <button
-              className="absolute top-4 right-4 text-2xl text-white"
-              onClick={handleCloseModal}
-            >
-              &#x2715;
-            </button>
+          <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center">
+            <div className="bg-gray-800 p-6 rounded-lg shadow-lg relative max-w-lg w-full">
+              <MedicineDetail
+                medicineName={selectedMedicine.name}
+                inStock={selectedMedicine.quantity}
+                expDate={selectedMedicine.expiry}
+                mfgDate="N/A"
+                price={selectedMedicine.price}
+                category="N/A"
+                type={selectedMedicine.type}
+                description="N/A"
+              />
+              <button
+                className="absolute top-4 right-4 text-2xl text-white"
+                onClick={handleCloseModal}
+              >
+                &#x2715;
+              </button>
+            </div>
           </div>
         )}
       </div>

@@ -10,6 +10,7 @@ interface InventoryOrderProps {
     status: string;
   }[];
 }
+
 const orders = [
   {
     name: "Aspirin",
@@ -33,6 +34,7 @@ const orders = [
     status: "processing",
   },
 ];
+
 const InventoryOrder: React.FC<InventoryOrderProps> = () => {
   const [selectedOrder, setSelectedOrder] = useState<
     null | InventoryOrderProps["orders"][0]
@@ -68,17 +70,17 @@ const InventoryOrder: React.FC<InventoryOrderProps> = () => {
   };
 
   return (
-    <div className="p-6">
+    <div className="p-6 bg-gradient-to-br from-gray-900 to-black min-h-screen text-white">
       {/* Header Buttons */}
       <div className="flex justify-between items-center mb-6">
         <div className="flex space-x-4">
-          <button className="py-2 px-4 bg-gray-200 hover:bg-gray-300 text-gray-900 rounded-lg">
+          <button className="py-2 px-4 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg hover:from-indigo-600 hover:to-blue-500 transition duration-300">
             Orders
           </button>
-          <button className="py-2 px-4 bg-gray-200 hover:bg-gray-300 text-gray-900 rounded-lg">
+          <button className="py-2 px-4 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg hover:from-indigo-600 hover:to-blue-500 transition duration-300">
             Status
           </button>
-          <button className="py-2 px-4 bg-gray-200 hover:bg-gray-300 text-gray-900 rounded-lg">
+          <button className="py-2 px-4 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg hover:from-indigo-600 hover:to-blue-500 transition duration-300">
             Manage Suppliers
           </button>
         </div>
@@ -87,12 +89,12 @@ const InventoryOrder: React.FC<InventoryOrderProps> = () => {
           <input
             type="text"
             placeholder="Search..."
-            className="px-4 py-2 border rounded-lg w-64"
+            className="px-4 py-2 border rounded-lg w-64 bg-gray-800 text-gray-300 border-gray-700 focus:ring-2 focus:ring-blue-500"
             value={searchQuery}
             onChange={handleSearchChange}
           />
           <button
-            className="py-2 px-4 bg-gray-200 hover:bg-gray-300 text-gray-900 rounded-lg"
+            className="py-2 px-4 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg hover:from-indigo-600 hover:to-blue-500 transition duration-300"
             onClick={() => handleCategoryChange("medicine")}
           >
             {selectedCategory ? "Clear Category" : "Category"}
@@ -101,10 +103,10 @@ const InventoryOrder: React.FC<InventoryOrderProps> = () => {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
         <table className="min-w-full leading-normal">
           <thead>
-            <tr className="bg-blue-500 text-white">
+            <tr className="bg-gray-700 text-gray-300">
               <th className="px-5 py-3 text-left text-sm font-semibold">
                 Name
               </th>
@@ -127,26 +129,16 @@ const InventoryOrder: React.FC<InventoryOrderProps> = () => {
           </thead>
           <tbody>
             {filteredOrders.map((order, index) => (
-              <tr key={index} className="hover:bg-gray-100">
-                <td className="px-5 py-3 text-sm text-gray-900">
-                  {order.name}
-                </td>
-                <td className="px-5 py-3 text-sm text-gray-900">
-                  {order.supplier}
-                </td>
-                <td className="px-5 py-3 text-sm text-gray-900">
-                  {order.category}
-                </td>
-                <td className="px-5 py-3 text-sm text-gray-900">
-                  {order.arrival}
-                </td>
-                <td className="px-5 py-3 text-sm text-gray-900">
-                  {order.status}
-                </td>
-                <td className="px-5 py-3 text-sm text-blue-500">
+              <tr key={index} className="hover:bg-gray-700 transition-colors">
+                <td className="px-5 py-3 text-sm">{order.name}</td>
+                <td className="px-5 py-3 text-sm">{order.supplier}</td>
+                <td className="px-5 py-3 text-sm">{order.category}</td>
+                <td className="px-5 py-3 text-sm">{order.arrival}</td>
+                <td className="px-5 py-3 text-sm">{order.status}</td>
+                <td className="px-5 py-3 text-sm">
                   <button
                     onClick={() => handleTrackClick(order)}
-                    className="px-4 py-2 bg-white border rounded-lg"
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300"
                   >
                     Track
                   </button>
@@ -159,10 +151,10 @@ const InventoryOrder: React.FC<InventoryOrderProps> = () => {
 
       {/* Modal */}
       {selectedOrder && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg shadow-lg">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-gray-900 p-6 rounded-lg shadow-lg">
             <button
-              className="text-gray-500 hover:text-gray-700"
+              className="text-gray-400 hover:text-gray-200 transition"
               onClick={closeModal}
             >
               Close

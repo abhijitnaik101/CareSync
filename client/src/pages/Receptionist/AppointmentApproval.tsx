@@ -1,99 +1,89 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { FaTimes } from "react-icons/fa";
+import React, { useState } from "react";
+import { FaTimes, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import { route } from "../../../backendroute";
 import { socket } from "../../socket";
 import { Ticket } from "../../Types";
 
 interface ReceptionistAppointmentApprovalProps {
   setPatientRequests: React.Dispatch<React.SetStateAction<Ticket[]>>;
-  handleModal: (isOpen: boolean) => void; // Function to handle modal state
-  patientRequests: Ticket[]; // Add this line
-  setRegistrations: React.Dispatch<React.SetStateAction<any>>
+  handleModal: (isOpen: boolean) => void;
+  patientRequests: Ticket[];
+  setRegistrations: React.Dispatch<React.SetStateAction<any>>;
 }
 
-const ReceptionistAppointmentApproval = ({ handleModal, patientRequests, setPatientRequests, setRegistrations }: ReceptionistAppointmentApprovalProps) => {
+const ReceptionistAppointmentApproval = ({
+  handleModal,
+  patientRequests,
+  setPatientRequests,
+}: ReceptionistAppointmentApprovalProps) => {
   const [selectedPatient, setSelectedPatient] = useState<Ticket | null>(null);
-  // useEffect(() => {
-  //   socket.on("patient-request", (data: any) => {
-  //     console.log("Received patient request:", data);
-  //     setPatientRequests((prevRequests) => [...prevRequests, data]);
-  //   });
-  //   return () => {
-  //     socket.off("patient-request");
-  //   };
-  // }, []);
 
   const handleApprove = async (patient: Ticket) => {
     const patients = patientRequests.filter((p) => p.id === patient.id);
-    
+
     if (patients.length) {
       try {
         const token = localStorage.getItem("token");
-        //insert the patient details in ticket database
-        const response = await axios.post(route + `/beds/receptionist/approve/${patients[0].id}`,  {
-          hospitalId: patient.hospitalId
-        }, { headers: {
-          Authorization: "Bearer " + token
-        }});
+        const response = await axios.post(
+          route + `/beds/receptionist/approve/${patients[0].id}`,
+          { hospitalId: patient.hospitalId },
+          { headers: { Authorization: "Bearer " + token } }
+        );
 
-        
-        // if (appointmentDetails.appointType === 'OPD'){
-        //   socket.emit('doctorFetchQueue');
-        // }
-        ///insert the ticket details in queue database
         setPatientRequests(patientRequests.filter((p) => p.id !== patient.id));
-        socket.emit('fetch-ticket-client');
-        //send ticket to user
+        socket.emit("fetch-ticket-client");
         socket.emit("sendTicketToUser", response.data);
       } catch (error) {
         console.error("Error booking appointment:", error);
       }
     }
-    handleModal(false); // Close the modal after approval
+    handleModal(false);
   };
 
   const handleReject = (patient: Ticket) => {
     socket.emit("reject-patient-request", patient);
     setPatientRequests(patientRequests.filter((p) => p.id !== patient.id));
-    handleModal(false); // Close the modal after rejection
+    handleModal(false);
   };
 
   return (
-    <div className="absolute inset-0 h-screen w-full bg-black bg-opacity-40 flex justify-center items-center z-50">
-      <div className="relative bg-white p-6 rounded-lg shadow-lg max-w-4xl w-full space-y-6">
-        <h2 className="text-2xl font-bold text-gray-800">Appointment Approval Requests</h2>
+    <div className="absolute inset-0 h-screen w-full bg-gray-900 bg-opacity-90 flex justify-center items-center z-50">
+      <div className="relative bg-gradient-to-br from-gray-800 via-gray-900 to-gray-950 p-8 rounded-xl shadow-xl max-w-4xl w-full space-y-8">
+        <h2 className="text-3xl font-bold text-white tracking-wide">
+          Appointment Approval Requests
+        </h2>
 
         {/* Close Button */}
         <button
-          className="absolute top-0 right-4 text-gray-500 hover:text-red-500"
+          className="absolute top-3 right-4 text-gray-400 hover:text-red-400 transition"
           onClick={() => handleModal(false)}
           aria-label="Close Modal"
         >
-          <FaTimes size={20} />
+          <FaTimes size={24} />
         </button>
 
         {/* Table to display patient requests */}
-        <div className="h-52 overflow-y-scroll">
-          <table className="min-w-full bg-white border rounded-lg shadow-sm ">
+        <div className="h-56 overflow-y-scroll">
+          <table className="min-w-full text-gray-200">
             <thead>
-              <tr className="bg-gray-100 border-b">
-                <th className="py-2 px-4 text-left font-semibold text-gray-700">Patient Name</th>
-                <th className="py-2 px-4 text-left font-semibold text-gray-700">Appointment Type</th>
-                <th className="py-2 px-4 text-left font-semibold text-gray-700">Appointment Date</th>
-                <th className="py-2 px-4 text-center font-semibold text-gray-700">Actions</th>
+              <tr className="bg-gray-700 bg-opacity-50 text-left font-semibold">
+                <th className="py-2 px-4">Patient Name</th>
+                <th className="py-2 px-4">Appointment Type</th>
+                <th className="py-2 px-4">Appointment Date</th>
+                <th className="py-2 px-4 text-center">Actions</th>
               </tr>
             </thead>
-            <tbody >
+            <tbody>
               {patientRequests.map((patient) => (
-                <tr key={patient.id} className="border-b">
+                <tr key={patient.id} className="border-b border-gray-600">
                   <td className="py-3 px-4">{patient.name}</td>
                   <td className="py-3 px-4">{patient.appointType}</td>
                   <td className="py-3 px-4">{patient.appointmentDate}</td>
                   <td className="py-3 px-4 text-center">
                     <button
                       onClick={() => setSelectedPatient(patient)}
-                      className="bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-600 transition duration-300"
+                      className="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-md transition"
                     >
                       Details
                     </button>
@@ -106,23 +96,34 @@ const ReceptionistAppointmentApproval = ({ handleModal, patientRequests, setPati
 
         {/* If a patient is selected, show their details */}
         {selectedPatient && (
-          <div className="mt-6 p-4 bg-gray-50 rounded-lg border">
-            <h3 className="text-xl font-bold text-gray-800">Patient Details</h3>
-            <div className="mt-4 space-y-2">
+          <div className="mt-6 p-6 bg-gray-800 rounded-lg border border-gray-600">
+            <h3 className="text-xl font-semibold text-white">
+              Patient Details
+            </h3>
+            <div className="mt-4 space-y-2 text-gray-300">
               <p>
-                <span className="font-medium">Name:</span> {selectedPatient.name}
+                <span className="font-medium text-gray-400">Name:</span>{" "}
+                {selectedPatient.name}
               </p>
               <p>
-                <span className="font-medium">Age:</span> {selectedPatient.age}
+                <span className="font-medium text-gray-400">Age:</span>{" "}
+                {selectedPatient.age}
               </p>
               <p>
-                <span className="font-medium">Gender:</span> {selectedPatient.gender}
+                <span className="font-medium text-gray-400">Gender:</span>{" "}
+                {selectedPatient.gender}
               </p>
               <p>
-                <span className="font-medium">Appointment Type:</span> {selectedPatient.appointType}
+                <span className="font-medium text-gray-400">
+                  Appointment Type:
+                </span>{" "}
+                {selectedPatient.appointType}
               </p>
               <p>
-                <span className="font-medium">Appointment Date:</span> {selectedPatient.appointmentDate}
+                <span className="font-medium text-gray-400">
+                  Appointment Date:
+                </span>{" "}
+                {selectedPatient.appointmentDate}
               </p>
             </div>
 
@@ -130,15 +131,17 @@ const ReceptionistAppointmentApproval = ({ handleModal, patientRequests, setPati
             <div className="flex justify-end space-x-4 mt-6">
               <button
                 onClick={() => handleReject(selectedPatient)}
-                className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition duration-300"
+                className="bg-red-500 hover:bg-red-400 text-white px-4 py-2 rounded-md flex items-center space-x-2 transition"
               >
-                Reject
+                <FaTimesCircle />
+                <span>Reject</span>
               </button>
               <button
                 onClick={() => handleApprove(selectedPatient)}
-                className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition duration-300"
+                className="bg-green-500 hover:bg-green-400 text-white px-4 py-2 rounded-md flex items-center space-x-2 transition"
               >
-                Approve
+                <FaCheckCircle />
+                <span>Approve</span>
               </button>
             </div>
           </div>
@@ -146,6 +149,6 @@ const ReceptionistAppointmentApproval = ({ handleModal, patientRequests, setPati
       </div>
     </div>
   );
-}
+};
 
 export default ReceptionistAppointmentApproval;
