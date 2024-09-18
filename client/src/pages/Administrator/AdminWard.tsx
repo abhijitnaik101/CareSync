@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react"
 import { socket } from "../../socket";
+import { route } from "../../../backendroute";
+import axios from "axios";
 // Patient and Ward Interfaces
 interface Patient {
   id: number;
@@ -54,14 +56,16 @@ const AdmitModal: React.FC<{ onClose: () => void; onSave: (patient: Patient) => 
   //   availableBeds: number;
   // }
   const patient = {
-    id: 0,              // Default ID (can be autoincremented later)
+    id: 1,              // Default ID (can be autoincremented later)
     hospitalId: 1,       // Default hospital ID (replace with actual logic)
     name: "",            // Default ward name
     totalBeds: 0,        // Default total beds
     occupiedBeds: 0,     // Default occupied beds
     availableBeds: 0,    // Default available beds (calculated automatically)
-    tickets: [],         // Default empty tickets array
+    ticket: []
   }
+
+  
   const [wards, setWards] = useState(patient);
   const [patientName, setPatientName] = useState("");
   const [patientGender, setPatientGender] = useState("");
@@ -82,20 +86,25 @@ const AdmitModal: React.FC<{ onClose: () => void; onSave: (patient: Patient) => 
       setAvailableBeds(available);
     }
   }, []); // Run only once on modal open
+  const handleSubmit = async () => {
+    await axios.post(route + `/beds/admin/assign-bed/1/1`, {
+      hospitalId: 1
+    });
+  }
 
-  const handleSubmit = () => {
-    if (patientName && patientGender && selectedBed) {
-      const newPatient: Patient = {
-        id: Math.floor(Math.random() * 10000),
-        name: patientName,
-        bed: selectedBed,
-        gender: patientGender,
-        status: "Occupied",
-      };
-      onSave(newPatient);
-      onClose();
-    }
-  };
+  // const handleSubmit = () => {
+  //   if (patientName && patientGender && selectedBed) {
+  //     const newPatient: Patient = {
+  //       id: Math.floor(Math.random() * 10000),
+  //       name: patientName,
+  //       bed: selectedBed,
+  //       gender: patientGender,
+  //       status: "Occupied",
+  //     };
+  //     onSave(newPatient);
+  //     onClose();
+  //   }
+  // };
 
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
