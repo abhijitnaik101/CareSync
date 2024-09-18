@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
-import Dashboard from '../components/Dashboard';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import PatientHistory from '../pages/Patient/PatientHistory';
 import PatientProfile from '../pages/Patient/PatientProfile';
 import Map from '../pages/Patient/Map';
 import PatientNotification from '../pages/Patient/PatientNotification';
+import axios from 'axios';
+import { route } from '../../backendroute';
 
 const PatientLayout: React.FC = () => {
   const patientLinks = [
@@ -14,6 +15,25 @@ const PatientLayout: React.FC = () => {
     { name: 'Profile', path: '/patient/profile' },
     { name: 'Notification', path: '/patient/notification' },
   ];
+  const navigate = useNavigate();
+
+  const fetchPatient = async (token: string) => {
+    try {
+      await axios.get(route + "/authenticate/patient", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    } catch (error) {
+      navigate("/login");
+    }
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+    } else
+    fetchPatient(token);
+  }, []);
 
   return (
     <div className="flex w-full">

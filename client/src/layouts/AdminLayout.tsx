@@ -1,12 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import AdminDashboard from "../pages/Administrator/AdminDashboard";
 import AdminWard from "../pages/Administrator/AdminWard";
 import AdminOPD from "../pages/Administrator/AdminOPD";
 import AdminNotifications from "../pages/Administrator/AdminNotifications";
 import AdminProfile from "../pages/Administrator/AdminProfile";
+import axios from "axios";
+import { route } from "../../backendroute";
 
 const AdminLayout: React.FC = () => {
   const adminLinks = [
@@ -17,37 +19,36 @@ const AdminLayout: React.FC = () => {
     { name: "Profile", path: "/admin/profile" },
   ];
 
-  const patientDummy = [
-    {
-      name: "John Doe",
-      bed: 101,
-      gender: "Male",
-      status: "Available",
-    },
-    {
-      name: "Jane Smith",
-      bed: 202,
-      gender: "Female",
-      status: "Occupied",
-    },
-    {
-      name: "Robert Johnson",
-      bed: 303,
-      gender: "Male",
-      status: "Available",
-    },
-  ];
+  const navigate = useNavigate();
+
+  const fetchAdmin = async (token: string) => {
+    try {
+      await axios.get(route + "/authenticate/admin", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    } catch (error) {
+      navigate("/login");
+    }
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+    } else
+    fetchAdmin(token);
+  }, []);
 
   return (
     <div className="flex ">
       <Sidebar links={adminLinks} />
       <div className="flex-1 p-4 overflow-y-scroll h-screen">
         <Routes>
-          <Route path="dashboard" element={<AdminDashboard title="Admin Dashboard" />}/>
-          <Route path="ward" element={<AdminWard patients={patientDummy} />} />
-          <Route path="opd" element={<AdminOPD title="OPD Management" />} />
-          <Route path="notification" element={<AdminNotifications title="Notification" />}/>
-          <Route path="profile" element={<AdminProfile title="Profile" />} />
+          <Route path="dashboard" element={<AdminDashboard />}/>
+          <Route path="ward" element={<AdminWard />} />
+          <Route path="opd" element={<AdminOPD />} />
+          <Route path="notification" element={<AdminNotifications />}/>
+          <Route path="profile" element={<AdminProfile />} />
         </Routes>
       </div>
     </div>

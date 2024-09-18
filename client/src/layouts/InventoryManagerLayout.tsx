@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Sidebar from "../components/Sidebar";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import InventoryDashboard from "../pages/InventoryManager/InventoryDashboard";
 import Inventory from "../pages/InventoryManager/Inventory";
 import InventoryOrder from "../pages/InventoryManager/InventoryOrder";
 import InventoryNotification from "../pages/InventoryManager/InventoryNotification";
+import axios from "axios";
+import { route } from "../../backendroute";
 
 const InventoryManagerLayout: React.FC = () => {
   const inventoryManagerLinks = [
@@ -13,6 +15,25 @@ const InventoryManagerLayout: React.FC = () => {
     { name: "Orders", path: "/inventory-manager/order" },
     { name: "Notifications", path: "/inventory-manager/notifications" },
   ];
+  const navigate = useNavigate();
+
+  const fetchInventoryman = async (token: string) => {
+    try {
+      await axios.get(route + "/authenticate/inventoryman", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    } catch (error) {
+      navigate("/login");
+    }
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+    } else
+    fetchInventoryman(token);
+  }, []);
 
   return (
     <div className="flex">

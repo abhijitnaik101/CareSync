@@ -65,7 +65,7 @@ const dummyTickets: any = [
   },
 ]
 
-const ReceptionistRegistration: React.FC<{registrations: RegistrationProps}> = ({ registrations: initialRegistrations }) => {
+const ReceptionistRegistration: React.FC<{initialRegistrations: RegistrationProps}> = ({ initialRegistrations }) => {
 
 
   const [registrations, setRegistrations] = useState(dummyTickets);

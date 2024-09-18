@@ -30,3 +30,24 @@ export const authorizeAdmin =  (req: Request, res: Response, next: NextFunction)
   }
   next();
 };
+
+export const authorizeDoctor = (req: Request, res: Response, next: NextFunction) => {
+  if (req.user && req.user.role != "Doctor") {
+    return res.status(403).json({ message: 'Forbidden' });
+  }
+  next();
+};
+
+export const authorizePatient = (req: Request, res: Response, next: NextFunction) => {
+  if (req.user && req.user.role != "Patient") {
+    return res.status(403).json({ message: 'Forbidden' });
+  }
+  next();
+};
+
+export const authorizeInventoryman = (req: Request, res: Response, next: NextFunction) => {
+  if (req.user && req.user.role != "Inventoryman") {
+    return res.status(403).json({ message: 'Forbidden' });
+  }
+  next();
+};

@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
-import Dashboard from '../components/Dashboard';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import ReceptionistRegistration from '../pages/Receptionist/ReceptionistRegistration';
+import axios from 'axios';
+import { route } from '../../backendroute';
 
 const ReceptionistLayout: React.FC = () => {
 
@@ -20,12 +21,31 @@ const ReceptionistLayout: React.FC = () => {
   const receptionistLinks = [
     { name: 'Dashboard', path: '/receptionist/dashboard' },
   ];
+  const navigate = useNavigate();
+
+  const fetchReceptionist = async (token: string) => {
+    try {
+      await axios.get(route + "/authenticate/receptionist", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    } catch (error) {
+      navigate("/login");
+    }
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+    } else
+    fetchReceptionist(token);
+  }, []);
 
   return (
     <div className="flex">
       <Sidebar links={receptionistLinks} />
       <Routes>
-        <Route path="dashboard" element={<ReceptionistRegistration registrations={initialRegistrations}/>} />
+        <Route path="dashboard" element={<ReceptionistRegistration initialRegistrations={initialRegistrations}/>} />
       </Routes>
     </div>
   );
