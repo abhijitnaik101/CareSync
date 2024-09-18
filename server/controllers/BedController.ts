@@ -9,7 +9,7 @@ import { Request, Response } from "express";
  */
 export const approveBed = async (req: Request, res: Response) => {
   const ticketId = Number(req.params.ticketId);
-  const { hospitalId } = req.body;
+  const { hospitalId, appointmentDate } = req.body;
 
   try {
     // Use a Prisma transaction to ensure both updates are performed atomically
@@ -34,7 +34,7 @@ export const approveBed = async (req: Request, res: Response) => {
             hospitalId,
             doctorId: ticket.doctorId!,
             position: 1,
-            appointmentDate: new Date().toISOString(), // Use the provided date
+            appointmentDate: ticket.appointmentDate, // Use the provided date
             pending: false,
             ticketId: ticket.id,
           },
