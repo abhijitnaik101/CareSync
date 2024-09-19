@@ -19,8 +19,9 @@ export function initializeSocket(io: Server<DefaultEventsMap, DefaultEventsMap, 
             io.emit('fetch-ticket')
         );
     
-        socket.on('doctorFetchQueue', ()=> {
-           io.emit('doctorFetchQueue');
+        socket.on('doctorFetchQueue', (date: string)=> {
+            console.log("Dr. fetch queue: " + date);
+           io.emit('doctorFetchQueue', date);
         });
 
         socket.on("bed-request", (data) => {
