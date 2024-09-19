@@ -1,122 +1,134 @@
 export const bhubaneswarHospitals = [
     {
-        hospital_id: 1,
-        name: "KIMS Health",
-        coordinates: [85.8245, 20.2961],
-        departments: [
-            {
-                department: "Emergency",
-                doctors: [1, 2, 3]
-            },
-            {
-                department: "Surgery",
-                doctors: [4, 5, 6]
-            }
-        ]
+      "id": 1,
+      "name": "Apollo Hospital Bhubaneswar",
+      "coordinates": ["20.2961", "85.8245"],
+      "services": ["Emergency", "Cardiology", "Orthopedics"],
+      "departments": [
+        {
+          "id": 1,
+          "name": "Cardiology",
+          "hospitalId": 1,
+          "doctors": [
+            {"id": 21, "name": "Dr. Arvind Kumar", "averageTreatmentTime": 5},
+            {"id": 22, "name": "Dr. Meera Singh", "averageTreatmentTime": 5}
+          ]
+        },
+        {
+          "id": 2,
+          "name": "Orthopedics",
+          "hospitalId": 1,
+          "doctors": [
+            {"id": 23, "name": "Dr. Ravi Gupta", "averageTreatmentTime": 5},
+            {"id": 24, "name": "Dr. Sunita Patil", "averageTreatmentTime": 5}
+          ]
+        }
+      ]
     },
     {
-        hospital_id: 2,
-        name: "Apollo Hospitals",
-        coordinates: [85.8246, 20.2962],
-        departments: [
-            {
-                department: "Cardiology",
-                doctors: [7, 8, 9]
-            },
-            {
-                department: "Neurology",
-                doctors: [10, 11, 12]
-            }
-        ]
+      "id": 2,
+      "name": "Kalinga Hospital Bhubaneswar",
+      "coordinates": ["20.2962", "85.8185"],
+      "services": ["Neurology", "Gastroenterology", "Pulmonology"],
+      "departments": [
+        {
+          "id": 3,
+          "name": "Neurology",
+          "hospitalId": 2,
+          "doctors": [
+            {"id": 25, "name": "Dr. Rakesh Mohanty", "averageTreatmentTime": 7},
+            {"id": 26, "name": "Dr. Anjali Sahoo", "averageTreatmentTime": 6}
+          ]
+        },
+        {
+          "id": 4,
+          "name": "Gastroenterology",
+          "hospitalId": 2,
+          "doctors": [
+            {"id": 27, "name": "Dr. Sunil Rath", "averageTreatmentTime": 6},
+            {"id": 28, "name": "Dr. Shilpa Mishra", "averageTreatmentTime": 5}
+          ]
+        }
+      ]
     },
     {
-        hospital_id: 3,
-        name: "City Hospital",
-        coordinates: [85.8247, 20.2963],
-        departments: [
-            {
-                department: "Orthopedics",
-                doctors: [13, 14, 15]
-            },
-            {
-                department: "Pediatrics",
-                doctors: [16, 17, 18]
-            }
-        ]
+      "id": 3,
+      "name": "SUM Hospital Bhubaneswar",
+      "coordinates": ["20.2956", "85.8125"],
+      "services": ["Oncology", "Dermatology", "Pediatrics"],
+      "departments": [
+        {
+          "id": 5,
+          "name": "Oncology",
+          "hospitalId": 3,
+          "doctors": [
+            {"id": 29, "name": "Dr. Manish Das", "averageTreatmentTime": 8},
+            {"id": 30, "name": "Dr. Sarita Behera", "averageTreatmentTime": 9}
+          ]
+        },
+        {
+          "id": 6,
+          "name": "Dermatology",
+          "hospitalId": 3,
+          "doctors": [
+            {"id": 31, "name": "Dr. Smita Rani", "averageTreatmentTime": 4},
+            {"id": 32, "name": "Dr. Anil Patnaik", "averageTreatmentTime": 5}
+          ]
+        }
+      ]
     },
     {
-        hospital_id: 4,
-        name: "Sunrise Hospital",
-        coordinates: [85.8248, 20.2964],
-        departments: [
-            {
-                department: "Oncology",
-                doctors: [19, 20, 21]
-            },
-            {
-                department: "Radiology",
-                doctors: [22, 23, 24]
-            }
-        ]
+      "id": 4,
+      "name": "AIIMS Bhubaneswar",
+      "coordinates": ["20.3073", "85.8189"],
+      "services": ["Nephrology", "Emergency", "Cardiology"],
+      "departments": [
+        {
+          "id": 7,
+          "name": "Nephrology",
+          "hospitalId": 4,
+          "doctors": [
+            {"id": 33, "name": "Dr. Suman Mishra", "averageTreatmentTime": 6},
+            {"id": 34, "name": "Dr. Arun Nayak", "averageTreatmentTime": 5}
+          ]
+        },
+        {
+          "id": 8,
+          "name": "Cardiology",
+          "hospitalId": 4,
+          "doctors": [
+            {"id": 35, "name": "Dr. Pradeep Mohapatra", "averageTreatmentTime": 6},
+            {"id": 36, "name": "Dr. Lata Rani", "averageTreatmentTime": 7}
+          ]
+        }
+      ]
     },
     {
-        hospital_id: 5,
-        name: "Greenview Hospital",
-        coordinates: [85.8150, 20.2965],
-        departments: [
-            {
-                department: "Dermatology",
-                doctors: [25, 26, 27]
-            },
-            {
-                department: "Endocrinology",
-                doctors: [28, 29, 30]
-            }
-        ]
-    },
-    {
-        hospital_id: 6,
-        name: "Hope Hospital",
-        coordinates: [85.8250, 21.2966],
-        departments: [
-            {
-                department: "ENT",
-                doctors: [31, 32, 33]
-            },
-            {
-                department: "Urology",
-                doctors: [34, 35, 36]
-            }
-        ]
-    },
-    {
-        hospital_id: 7,
-        name: "Rainbow Hospital",
-        coordinates: [85.8251, 20.2967],
-        departments: [
-            {
-                department: "Cardiology",
-                doctors: [37, 38, 39]
-            },
-            {
-                department: "Gastroenterology",
-                doctors: [40, 41, 42]
-            }
-        ]
-    },
-    {
-        hospital_id: 8,
-        name: "Silverline Hospital",
-        coordinates: [85.8252, 20.2968],
-        departments: [
-            {
-                department: "Psychiatry",
-                doctors: [43, 44, 45]
-            },
-            {
-                department: "Pulmonology",
-                doctors: [46, 47, 48]
-            }
-        ]
+      "id": 5,
+      "name": "Care Hospital Bhubaneswar",
+      "coordinates": ["20.3041", "85.8198"],
+      "services": ["Pulmonology", "Orthopedics", "Cardiology"],
+      "departments": [
+        {
+          "id": 9,
+          "name": "Pulmonology",
+          "hospitalId": 5,
+          "doctors": [
+            {"id": 37, "name": "Dr. Ashish Reddy", "averageTreatmentTime": 7},
+            {"id": 38, "name": "Dr. Priyanka Satpathy", "averageTreatmentTime": 6}
+          ]
+        },
+        {
+          "id": 10,
+          "name": "Orthopedics",
+          "hospitalId": 5,
+          "doctors": [
+            {"id": 39, "name": "Dr. Ramesh Kumar", "averageTreatmentTime": 5},
+            {"id": 40, "name": "Dr. Vani Priya", "averageTreatmentTime": 4}
+          ]
+        }
+      ]
     }
-];
+  ]
+  
+  

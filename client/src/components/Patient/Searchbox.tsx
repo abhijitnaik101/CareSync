@@ -1,21 +1,27 @@
-// src/components/SearchBox.tsx
 import React, { useEffect, useState } from 'react';
 import { FaSearch, FaMapMarkerAlt } from 'react-icons/fa';
 import axios from 'axios';
 import { route } from '../../../backendroute';
+import mapboxgl, { LngLat } from 'mapbox-gl';
 import SideBarHospital from './SideBarHospital';
 import { Hospital } from '../../Types';
+import { bhubaneswarHospitals } from '../../DB/HospitalLocations';
 
-// Define interfaces based on the new data format
+interface SearchBoxProps {
+  coordsCallback: (coords: number[] | null) => void;
+  map: mapboxgl.Map | null; // Accept the map instance as a prop
+  startingPosition: LngLat; // Starting position for routing
+}
 
-
-const SearchBox: React.FC<{ coordsCallback: (coords: number[] | null) => void }> = ({ coordsCallback }) => {
+const SearchBox: React.FC<SearchBoxProps> = ({ coordsCallback, map, startingPosition }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [departmentSearch, setDepartmentSearch] = useState('');
   const [suggestions, setSuggestions] = useState<Hospital[]>([]);
   const [selectedCoordinates, setSelectedCoordinates] = useState<number[] | null>(null);
   const [hospitals, setHospitals] = useState<Hospital[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [markers, setMarkers] = useState<mapboxgl.Marker[]>([]);
+  const [routeLayerId, setRouteLayerId] = useState<string | null>(null);
 
   // Fetch hospitals data from backend
   async function fetchHospitals() {
@@ -28,12 +34,128 @@ const SearchBox: React.FC<{ coordsCallback: (coords: number[] | null) => void }>
   }
 
   useEffect(() => {
-    fetchHospitals();
+    setHospitals(bhubaneswarHospitals);
   }, []);
 
   useEffect(() => {
     coordsCallback(selectedCoordinates);
   }, [selectedCoordinates]);
+
+  useEffect(() => {
+    if (map && selectedCoordinates) {
+      clearMarkers();
+      renderSingleMarker(selectedCoordinates);
+      if (startingPosition) {
+        renderRoute(startingPosition, selectedCoordinates);
+      }
+    }
+  }, [map, selectedCoordinates]);
+
+  const clearMarkers = () => {
+    markers.forEach(marker => marker.remove());
+    setMarkers([]);
+    if (map && routeLayerId) {
+      map.removeLayer(routeLayerId);
+      map.removeSource(routeLayerId);
+      setRouteLayerId(null);
+    }
+  };
+
+  const renderMarkers = (searchTerm: string) => {
+    clearMarkers();
+
+    const filteredHospitals = hospitals
+      .map(hospital => ({
+        ...hospital,
+        departments: hospital.departments.filter(department =>
+          department.name.toLowerCase().includes(searchTerm.toLowerCase())
+        ),
+      }))
+      .filter(hospital => hospital.departments.length > 0);
+
+    const newMarkers = filteredHospitals.map(hospital => {
+      const [lat, lng] = hospital.coordinates.map(Number);
+
+      const marker = new mapboxgl.Marker({
+        color: "#FF5733",
+      })
+        .setLngLat([lng, lat])
+        .addTo(map!);
+
+      return marker;
+    });
+
+    setMarkers(newMarkers);
+  };
+
+  const renderSingleMarker = (coords: number[]) => {
+    if (map) {
+      const [lat, lng] = coords;
+      new mapboxgl.Marker({
+        color: "#FF5733",
+      })
+        .setLngLat([lng, lat])
+        .addTo(map!);
+    }
+  };
+
+  const renderRoute = (start: LngLat, endCoords: number[]) => {
+    if (map) {
+      const [endLat, endLng] = endCoords;
+      const routeLayerId = 'route-layer';
+
+      if (map.getSource(routeLayerId)) {
+        map.removeLayer(routeLayerId);
+        map.removeSource(routeLayerId);
+      }
+
+      map.addSource(routeLayerId, {
+        type: 'geojson',
+        data: {
+          type: 'FeatureCollection',
+          features: [
+            {
+              type: 'Feature',
+              properties: {},
+              geometry: {
+                type: 'LineString',
+                coordinates: [
+                  [start.lng, start.lat],
+                  [endLng, endLat],
+                ],
+              },
+            },
+          ],
+        },
+      });
+
+      map.addLayer({
+        id: routeLayerId,
+        type: 'line',
+        source: routeLayerId,
+        layout: {
+          'line-cap': 'round',
+          'line-join': 'round',
+        },
+        paint: {
+          'line-color': '#FF5733',
+          'line-width': 5,
+        },
+      });
+
+      setRouteLayerId(routeLayerId);
+    }
+  };
+
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setDepartmentSearch(event.target.value);
+    setShowSuggestions(event.target.value.length > 0);
+    if (event.target.value) {
+      renderMarkers(event.target.value);
+    } else {
+      clearMarkers();
+    }
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -49,33 +171,27 @@ const SearchBox: React.FC<{ coordsCallback: (coords: number[] | null) => void }>
     }
   };
 
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setDepartmentSearch(event.target.value);
-    setShowSuggestions(event.target.value.length > 0);
-  };
-
-  const filteredHospitals = hospitals
-    .map(hospital => ({
-      ...hospital,
-      departments: hospital.departments.filter(department =>
-        department.name.toLowerCase().includes(departmentSearch.toLowerCase())
-      ),
-    }))
-    .filter(hospital => hospital.departments.length > 0);
-
   const handleSelectSuggestion = (hospital: Hospital) => {
     setSearchTerm(hospital.name);
-    setSelectedCoordinates(hospital.coordinates.reverse().map(Number) as number[]);
+    setDepartmentSearch('');
+    
+    // Set coordinates for the selected hospital
+    const selectedCoords = hospital.coordinates.reverse().map(Number) as number[];
+    setSelectedCoordinates(selectedCoords);
+    
+    // Trigger the route rendering via callback
+    coordsCallback(selectedCoords);
+
     setSuggestions([]);
   };
 
   return (
     <div className="bg-gray-900 h-max">
-      <div className="absolute top-0 left-0 ml-6 w-full mx-auto mt-8 flex items-center justify-center z-10">
+      <div className="absolute top-0 left-1/3 mt-8 flex items-start justify-center z-10">
         {/* Department Search */}
         <div className="mr-2 w-96">
           <div className="flex items-center border border-gray-700 rounded-md shadow-lg bg-gray-800 text-white">
-            <FaSearch className="mx-3 text-yellow-400" />
+            <FaSearch className="mx-3 text-teal-400" />
             <input
               type="text"
               value={departmentSearch}
@@ -87,13 +203,21 @@ const SearchBox: React.FC<{ coordsCallback: (coords: number[] | null) => void }>
           {/* Dropdown suggestions */}
           {showSuggestions && (
             <div className="relative w-full bg-gray-800 shadow-lg rounded-md max-h-60 overflow-y-auto mt-2">
-              {filteredHospitals.length > 0 ? (
-                filteredHospitals.map(hospital => (
+              {hospitals
+                .map(hospital => ({
+                  ...hospital,
+                  departments: hospital.departments.filter(department =>
+                    department.name.toLowerCase().includes(departmentSearch.toLowerCase())
+                  ),
+                }))
+                .filter(hospital => hospital.departments.length > 0)
+                .map(hospital => (
                   <div
                     key={hospital.id}
                     className="p-2 hover:bg-gray-700 cursor-pointer text-white"
+                    onClick={() => handleSelectSuggestion(hospital)} // Render route on selection
                   >
-                    <h2 className="text-lg font-semibold text-yellow-400">{hospital.name}</h2>
+                    <h2 className="text-lg font-semibold text-teal-400">{hospital.name}</h2>
                     <ul className="pl-4 mt-1">
                       {hospital.departments.map(department => (
                         <li key={department.id} className="text-gray-300">
@@ -107,10 +231,7 @@ const SearchBox: React.FC<{ coordsCallback: (coords: number[] | null) => void }>
                       ))}
                     </ul>
                   </div>
-                ))
-              ) : (
-                <p className="p-2 text-gray-400">No hospitals found for this department.</p>
-              )}
+                ))}
             </div>
           )}
         </div>
@@ -118,7 +239,7 @@ const SearchBox: React.FC<{ coordsCallback: (coords: number[] | null) => void }>
         {/* Hospital Search */}
         <div className='ml-2 w-96'>
           <div className="flex items-center border border-gray-700 rounded-md shadow-lg bg-gray-800 text-white">
-            <FaSearch className="mx-3 text-yellow-400" />
+            <FaSearch className="mx-3 text-teal-400" />
             <input
               type="text"
               value={searchTerm}
@@ -133,9 +254,9 @@ const SearchBox: React.FC<{ coordsCallback: (coords: number[] | null) => void }>
                 <li
                   key={hospital.id}
                   className="flex items-center p-2 cursor-pointer hover:bg-gray-700 text-white"
-                  onClick={() => handleSelectSuggestion(hospital)}
+                  onClick={() => handleSelectSuggestion(hospital)} // Render route on hospital suggestion click
                 >
-                  <FaMapMarkerAlt className="text-yellow-400 mr-2" />
+                  <FaMapMarkerAlt className="text-teal-400 mr-2" />
                   {hospital.name}
                 </li>
               ))}
@@ -149,7 +270,6 @@ const SearchBox: React.FC<{ coordsCallback: (coords: number[] | null) => void }>
         <SideBarHospital hospitals={hospitals} searchTerm={searchTerm} />
       )}
     </div>
-
   );
 };
 

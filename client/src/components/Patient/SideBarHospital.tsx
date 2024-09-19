@@ -5,9 +5,10 @@ import axios from 'axios';
 import patientState from '../../recoil/atoms/patientAtom';
 import { Hospital } from '../../Types';
 import { route } from '../../../backendroute';
+import { FaCalendarAlt, FaUserMd, FaRegClock } from 'react-icons/fa';
+import { MdClose, MdCheckCircle } from 'react-icons/md';
 
 const SideBarHospital: React.FC<{ hospitals: Hospital[], searchTerm: string }> = ({ hospitals, searchTerm }) => {
-
   console.log("SideBarHospital", hospitals, searchTerm);
   const [patient, setPatient] = useRecoilState(patientState);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -35,8 +36,7 @@ const SideBarHospital: React.FC<{ hospitals: Hospital[], searchTerm: string }> =
 
   const handleSubmit = async () => {
     try {
-      const response = await axios.post<{message: string, ticket: any}>(route + `/booking/bookappointment/`, appointmentDetails)
-      // await axios.post(route + `/booking/bookappointment/`, appointmentDetails)
+      const response = await axios.post<{ message: string, ticket: any }>(route + `/booking/bookappointment/`, appointmentDetails);
       socket.emit('book-appointment', response.data.ticket); //server ku trigger kariba
     } catch (error) {
       console.error(error);
@@ -48,20 +48,24 @@ const SideBarHospital: React.FC<{ hospitals: Hospital[], searchTerm: string }> =
 
   return (
     <div>
-      <div className="absolute w-full top-16 left-6 mt-8 p-6 h-96 bg-slate-50 rounded-lg shadow-lg overflow-y-scroll z-20">
+      <div className="absolute top-16 left-6 mt-8 p-1 h-[80%] bg-gray-900 text-white rounded-lg shadow-xl overflow-y-scroll z-20">
         <div className="space-y-6">
           {selectedHospital?.departments.map(department => (
-            <div key={department.id} className="p-4 border-b-2">
-              <p className="text-2xl font-semibold text-gray-800 mb-3">{department.name}</p>
-              <div className="border rounded-lg p-4 space-y-4 bg-white shadow-sm">
+            <div key={department.id} className="p-4 border-b-2 border-gray-700">
+              <p className="text-2xl font-bold text-teal-400 mb-3">{department.name}</p>
+              <div className="border border-gray-800 rounded-lg p-4 space-y-4 bg-gray-800 shadow-sm">
                 {department.doctors.map(doctor => (
-                  <div key={doctor.id} className="flex justify-between items-center p-2 border-b last:border-b-0">
+                  <div key={doctor.id} className="flex justify-between items-center p-2 border-b border-gray-700 last:border-b-0">
                     <div>
-                      <p className="text-lg font-semibold text-gray-900">{doctor.name}</p>
-                      <p className="text-sm text-gray-600">Avg. Treatment Time: {doctor.averageTreatmentTime} mins</p>
+                      <p className="text-lg font-semibold text-teal-300 flex items-center">
+                        <FaUserMd className="mr-2" /> {doctor.name}
+                      </p>
+                      <p className="text-sm text-gray-400 flex items-center">
+                        <FaRegClock className="mr-2" /> waiting time: <span className='font-bold mx-1'> {doctor.averageTreatmentTime}</span> mins
+                      </p>
                     </div>
                     <button
-                      className="bg-green-500 text-white px-6 py-2 rounded-md font-semibold hover:bg-green-600 transition duration-300"
+                      className="bg-teal-600 text-white px-6 py-2 rounded-md font-semibold hover:bg-teal-700 transition duration-300"
                       onClick={() => handleBookAppointment(doctor.id, doctor.name, selectedHospital.id)}
                     >
                       Book
@@ -76,35 +80,38 @@ const SideBarHospital: React.FC<{ hospitals: Hospital[], searchTerm: string }> =
 
       {/* Modal for Booking Appointment */}
       {isModalOpen && (
-        <div className="fixed top-0 left-0 inset-0 w-full bg-black bg-opacity-50 flex justify-center items-center z-20">
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
-            <h3 className="text-2xl font-bold text-gray-800 mb-4">Book Appointment</h3>
+        <div className="fixed top-0 left-0 inset-0 w-full bg-black bg-opacity-70 flex justify-center items-center z-20">
+          <div className="bg-gray-900 p-6 rounded-lg shadow-xl max-w-md w-full text-white">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-2xl font-bold text-teal-400">Book Appointment</h3>
+              <MdClose className="text-2xl cursor-pointer hover:text-teal-500" onClick={() => setIsModalOpen(false)} />
+            </div>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-gray-700 font-medium">Name</label>
+                <label className="block text-gray-400 font-medium">Name</label>
                 <input
                   type="text"
-                  className="w-full mt-1 p-2 border rounded-md focus:ring focus:ring-blue-300"
+                  className="w-full mt-1 p-2 bg-gray-800 text-white border border-gray-600 rounded-md focus:ring focus:ring-teal-500"
                   value={appointmentDetails.name}
                   onChange={(e) => setAppointmentDetails({ ...appointmentDetails, name: e.target.value })}
                 />
               </div>
 
               <div>
-                <label className="block text-gray-700 font-medium">Age</label>
+                <label className="block text-gray-400 font-medium">Age</label>
                 <input
                   type="number"
-                  className="w-full mt-1 p-2 border rounded-md focus:ring focus:ring-blue-300"
+                  className="w-full mt-1 p-2 bg-gray-800 text-white border border-gray-600 rounded-md focus:ring focus:ring-teal-500"
                   value={appointmentDetails.age}
                   onChange={(e) => setAppointmentDetails({ ...appointmentDetails, age: Number(e.target.value) })}
                 />
               </div>
 
               <div>
-                <label className="block text-gray-700 font-medium">Gender</label>
+                <label className="block text-gray-400 font-medium">Gender</label>
                 <select
-                  className="w-full mt-1 p-2 border rounded-md focus:ring focus:ring-blue-300"
+                  className="w-full mt-1 p-2 bg-gray-800 text-white border border-gray-600 rounded-md focus:ring focus:ring-teal-500"
                   value={appointmentDetails.gender}
                   onChange={(e) => setAppointmentDetails({ ...appointmentDetails, gender: e.target.value })}
                 >
@@ -116,9 +123,9 @@ const SideBarHospital: React.FC<{ hospitals: Hospital[], searchTerm: string }> =
               </div>
 
               <div>
-                <label className="block text-gray-700 font-medium">Appointment Type</label>
+                <label className="block text-gray-400 font-medium">Appointment Type</label>
                 <select
-                  className="w-full mt-1 p-2 border rounded-md focus:ring focus:ring-blue-300"
+                  className="w-full mt-1 p-2 bg-gray-800 text-white border border-gray-600 rounded-md focus:ring focus:ring-teal-500"
                   value={appointmentDetails.appointType}
                   onChange={(e) => setAppointmentDetails({ ...appointmentDetails, appointType: e.target.value })}
                 >
@@ -129,27 +136,30 @@ const SideBarHospital: React.FC<{ hospitals: Hospital[], searchTerm: string }> =
               </div>
 
               <div>
-                <label className="block text-gray-700 font-medium">Appointment Date</label>
-                <input
-                  type="date"
-                  className="w-full mt-1 p-2 border rounded-md focus:ring focus:ring-blue-300"
-                  value={appointmentDetails.appointmentDate}
-                  onChange={(e) => setAppointmentDetails({ ...appointmentDetails, appointmentDate: e.target.value })}
-                />
+                <label className="block text-gray-400 font-medium">Appointment Date</label>
+                <div className="flex items-center mt-1">
+                  <FaCalendarAlt className="text-teal-400 mr-2" />
+                  <input
+                    type="date"
+                    className="w-full p-2 bg-gray-800 text-white border border-gray-600 rounded-md focus:ring focus:ring-teal-500"
+                    value={appointmentDetails.appointmentDate}
+                    onChange={(e) => setAppointmentDetails({ ...appointmentDetails, appointmentDate: e.target.value })}
+                  />
+                </div>
               </div>
 
               <div className="flex justify-end space-x-4 mt-6">
                 <button
-                  className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition duration-300"
+                  className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition duration-300 flex items-center"
                   onClick={() => setIsModalOpen(false)}
                 >
-                  Cancel
+                  <MdClose className="mr-1" /> Cancel
                 </button>
                 <button
-                  className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300"
+                  className="bg-teal-600 text-white px-4 py-2 rounded-md hover:bg-teal-700 transition duration-300 flex items-center"
                   onClick={handleSubmit}
                 >
-                  Confirm Booking
+                  <MdCheckCircle className="mr-1" /> Confirm Booking
                 </button>
               </div>
             </div>

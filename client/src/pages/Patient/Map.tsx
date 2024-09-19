@@ -1,7 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import SearchBox from "../../components/Patient/Searchbox";
-import SearchBar from "../../components/Patient/SearchBar";
 
 // Mapbox access token
 mapboxgl.accessToken =
@@ -11,12 +10,14 @@ const MapComponent: React.FC = () => {
   const mapContainer = useRef<HTMLDivElement | null>(null);
   const map = useRef<mapboxgl.Map | null>(null);
 
-  const start: number[] = [85.776628, 20.275725];
-  const [endCoords, setEndCoords] = useState<number[] | null>(null); // Initially null
+  const start: number[] = [85.776628, 20.275725]; // Starting point in Bhubaneswar
+  const [endCoords, setEndCoords] = useState<number[] | null>(null);
+  const [hospitalMarkers, setHospitalMarkers] = useState<mapboxgl.Marker[]>([]);
 
   useEffect(() => {
-    if (map.current) return;
+    if (map.current) return; // Initialize map once
 
+    // Initialize the map instance
     map.current = new mapboxgl.Map({
       container: mapContainer.current!,
       style: "mapbox://styles/mapbox/streets-v12",
@@ -24,39 +25,33 @@ const MapComponent: React.FC = () => {
       zoom: 12,
     });
 
-    map.current.addControl(
-      new mapboxgl.NavigationControl({
-        showCompass: true,
-        showZoom: true,
-        visualizePitch: true,
-      })
-    );
+    // Add controls to the map
+    map.current.addControl(new mapboxgl.NavigationControl());
+    map.current.addControl(new mapboxgl.ScaleControl({ unit: "metric" }));
 
-    map.current.addControl(
-      new mapboxgl.ScaleControl({
-        unit: "metric",
-      })
-    );
-
+    // Add the starting point
     map.current.on("load", () => {
       addStartPoint();
-
-      // Add click event listener to the map
-      // map.current!.on('click', (e) => {
-      //   const coords: [number, number] = [e.lngLat.lng, e.lngLat.lat];
-      //   setEndCoords(coords); // Update endCoords with clicked point coordinates
-      // });
     });
+
+    if (map.current) {
+      new mapboxgl.Marker({
+        color: "#FF5733",
+      })
+        .setLngLat(start)
+        .addTo(map.current);
+    }
   }, []);
 
+  // Update endpoint when endCoords changes
   useEffect(() => {
     if (endCoords) {
       updateEndPoint(endCoords);
       getRoute(endCoords);
-      console.log("End coords: ", endCoords);
     }
   }, [endCoords]);
 
+  // Add starting point marker
   const addStartPoint = () => {
     map.current!.addLayer({
       id: "start-point",
@@ -80,26 +75,13 @@ const MapComponent: React.FC = () => {
         },
       },
       paint: {
-        "circle-radius": 10,
-        "circle-color": "#3887be",
+        "circle-radius": 8,
+        "circle-color": "#000",
       },
     });
-
-    // // Create an element to display custom marker
-    // const customMarkerElement = document.createElement('div');
-    // customMarkerElement.className = 'custom-marker'; // You can customize the CSS class
-    // //customMarkerElement.style.backgroundImage = 'url(D:\WebCode\caresync\client\public\vite.svg)'; // Replace with your marker image path
-    // customMarkerElement.style.width = '30px'; // Adjust the size as needed
-    // customMarkerElement.style.height = '30px';
-    // customMarkerElement.style.backgroundColor = '#F44336';
-    // //create an marker
-    // if (map.current) {
-    //   new mapboxgl.Marker(customMarkerElement)
-    //     .setLngLat(start)
-    //     .addTo(map.current);
-    // }
   };
 
+  // Add endpoint marker
   const addEndPoint = (coords: number[]) => {
     const end: GeoJSON.GeoJSON = {
       type: "FeatureCollection",
@@ -130,17 +112,24 @@ const MapComponent: React.FC = () => {
           data: end,
         },
         paint: {
-          "circle-radius": 10,
-          "circle-color": "#f30",
+          "circle-radius": 8,
+          "circle-color": "#000",
         },
       });
     }
   };
 
+  // Update the end point marker
   const updateEndPoint = (coords: number[]) => {
+    if (map.current!.getLayer("end-point")) {
+      // Remove existing end point marker if present
+      map.current!.removeLayer("end-point");
+      map.current!.removeSource("end-point");
+    }
     addEndPoint(coords);
   };
 
+  // Fetch and display the route from start to end
   const getRoute = async (end: number[]) => {
     const query = await fetch(
       `https://api.mapbox.com/directions/v5/mapbox/cycling/${start[0]},${start[1]};${end[0]},${end[1]}?steps=true&geometries=geojson&access_token=${mapboxgl.accessToken}`,
@@ -149,12 +138,8 @@ const MapComponent: React.FC = () => {
 
     const json = await query.json();
     const data = json.routes[0];
-    console.log(json);
-
-    const distance = data.distance;
-    console.log(`Distance between start and end point: ${distance} meters`);
-
     const route = data.geometry.coordinates;
+
     const geojson: GeoJSON.GeoJSON = {
       type: "Feature",
       properties: {},
@@ -189,10 +174,34 @@ const MapComponent: React.FC = () => {
     }
   };
 
+  // Clear hospital markers
+  const clearHospitalMarkers = () => {
+    hospitalMarkers.forEach(marker => marker.remove());
+    setHospitalMarkers([]);
+  };
+
+  // Display hospital markers
+  const displayHospitalMarkers = (hospitals: { name: string; coords: [number, number] }[]) => {
+    clearHospitalMarkers(); // Clear existing markers first
+
+    const newMarkers = hospitals.map(hospital => {
+      const marker = new mapboxgl.Marker()
+        .setLngLat(hospital.coords as [number, number])
+        .setPopup(new mapboxgl.Popup().setHTML(`<h4>${hospital.name}</h4>`)) // Add popup
+        .addTo(map.current!);
+
+      return marker;
+    });
+
+    setHospitalMarkers(newMarkers);
+  };
+
   return (
     <div className="relative p-5 h-screen w-full bg-gray-900">
-      <SearchBox coordsCallback={(coords) => setEndCoords(coords)} />
-      {/* <SearchBar coordsCallback={(coords) => setEndCoords(coords)} /> */}
+      <SearchBox 
+        coordsCallback={(coords) => setEndCoords(coords)} 
+        map={map.current} // Pass the map reference to SearchBox
+      />
       <div
         ref={mapContainer}
         className="relative h-full w-full z-0 shadow-lg rounded-lg overflow-hidden"
