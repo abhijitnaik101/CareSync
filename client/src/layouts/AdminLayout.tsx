@@ -7,6 +7,7 @@ import AdminWard from "../pages/Administrator/AdminWard";
 import AdminOPD from "../pages/Administrator/AdminOPD";
 import AdminNotifications from "../pages/Administrator/AdminNotifications";
 import AdminProfile from "../pages/Administrator/AdminProfile";
+import AdminQueue from "../pages/Administrator/AdminQueue";
 
 const AdminLayout: React.FC = () => {
   const adminLinks = [
@@ -45,7 +46,7 @@ const AdminLayout: React.FC = () => {
         <Routes>
           <Route path="dashboard" element={<AdminDashboard title="Admin Dashboard" />}/>
           <Route path="ward" element={<AdminWard patients={patientDummy} />} />
-          <Route path="opd" element={<AdminOPD title="OPD Management" />} />
+          <Route path="opd" element={<AdminQueue/>} />
           <Route path="notification" element={<AdminNotifications title="Notification" />}/>
           <Route path="profile" element={<AdminProfile title="Profile" />} />
         </Routes>

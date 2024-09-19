@@ -62,14 +62,14 @@ const PatientTable: React.FC<PatientTableProps> = ({
         </thead>
         <tbody>
           {patients.length === 0 ? (
-            <tr className="bg-white">
+            <tr className="bg-gray-800">
               <td colSpan={5} className="p-4 text-center text-gray-500">
                 No patients found.
               </td>
             </tr>
           ) : (
             patients.map((patient) => (
-              <tr key={patient.id} className="bg-white border-b hover:bg-gray-50">
+              <tr key={patient.id} className="bg-gray-800 hover:bg-gray-700">
                 <td className="p-4 text-left">{patient.name}</td>
                 <td className="p-4 text-left text-blue-600">{patient.serial}</td>
                 <td className="p-4 text-left capitalize">

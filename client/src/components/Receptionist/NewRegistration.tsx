@@ -61,7 +61,8 @@ const NewRegistration: React.FC<NewRegistrationProps> = ({ closeModal }) => {
       await axios.post(route + "/booking/create/appoint", appointmentDetails);
       socket.emit('fetch-ticket-client');
       if (appointmentDetails.appointType === 'OPD'){
-        socket.emit('doctorFetchQueue');
+        console.log("in new reg: ", appointmentDetails.appointmentDate);
+        socket.emit('doctorFetchQueue', appointmentDetails.appointmentDate);
       }
       
       // Navigate to dashboard or any other page after successful booking

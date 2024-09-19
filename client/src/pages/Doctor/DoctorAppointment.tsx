@@ -21,22 +21,26 @@ const DoctorsAppointment: React.FC = () => {
   const [pendingPatient, setPendingPatient] = useState<Patient[]>([]);
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [date, setDate] = useState("2024-09-20");
   // Initial fetch of queue
   useEffect(() => {
     fetchQueue();
   }, []);
 
-  useState(() => {
-    socket.on("doctorFetchQueue", () => {
+  useEffect(() => {
+    socket.on("doctorFetchQueue", (data: string) => {
       // Fetch data from queue table
-      // fetchQueue();
+      setDate(data);
+      console.log("date : ", data);
+      fetchQueue();
     });
+    return () => {
+      socket.off("doctorFetchQueue");
+    }
   });
 
   async function fetchQueue() {
     try {
-      const date = "2024-09-19";
       const response = await axios.get(
         route + `/queuing/queues/doctor/1?hospitalId=1&appointmentDate=${date}`
       );
@@ -102,6 +106,26 @@ const DoctorsAppointment: React.FC = () => {
     };
   }, []);
 
+  const handleButtonClick = () => {
+    const dummyPatient: Patient = {
+      id: 1,
+      name: "John Doe",
+      bed: 1,
+      gender: "Male",
+      age: 30,
+      email: "john.doe@example.com",
+      bloodtype: "O+",
+      contact: "+1234567890",
+      appointType: "Consultation",
+      status: "Occupied",
+      appointmentDate: new Date(),
+    };
+
+    socket.emit('admit-request', dummyPatient);
+    console.log("Dummy Patient Detail:", dummyPatient);
+    // You can also emit this data to other parts of your application or backend
+  };
+
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 p-6">
       {/* Top Counters */}
@@ -128,6 +152,13 @@ const DoctorsAppointment: React.FC = () => {
           <FaCheck className="text-4xl text-white" />
         </div>
       </div>
+
+      <button
+        onClick={handleButtonClick}
+        className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-800 "
+      >
+        Emit Dummy Patient Detail
+      </button>
 
       {/* Pending Patients Table */}
       <PatientTable

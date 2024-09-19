@@ -4,6 +4,7 @@ export interface Doctor {
   averageTreatmentTime: number;
 }
 
+
 export interface Department {
   id: number;
   name: string;
@@ -82,6 +83,7 @@ export interface Queue {
 }
 
 export interface Ward {
+  patients: any;
   id: number;
   hospitalId: number;
   hospital: Hospital;

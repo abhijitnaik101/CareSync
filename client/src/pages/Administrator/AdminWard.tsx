@@ -1,14 +1,26 @@
-import React, { useEffect, useState } from "react"
-import { socket } from "../../socket";
-import { route } from "../../../backendroute";
+import React, { useEffect, useState } from "react";
+import { FaUser, FaVenusMars, FaCalendarAlt, FaTint, FaPhoneAlt } from "react-icons/fa";
+import { FaBed, FaUserMd, FaTimes, FaUserPlus, FaClipboardList } from "react-icons/fa";
 import axios from "axios";
-// Patient and Ward Interfaces
+import { dummyPatients } from "../../DB/Patient";
+import { socket } from "../../socket";
+import AdmitModal from "./AdmitModal";
+import RequestModal from "./RequestModal";
+
+
+// Interfaces
 interface Patient {
   id: number;
   name: string;
   bed: number;
   gender: string;
-  status: "Occupied" | "Unoccupied";
+  age: number;
+  email: string;
+  bloodtype?: string;
+  contact: string;
+  appointType: string;
+  status: "Occupied" | "Billing";
+  appointmentDate: Date;
 }
 
 interface Ward {
@@ -17,149 +29,11 @@ interface Ward {
   patients: Patient[];
 }
 
-// Sample wards with 10 beds each (local DB)
-const initialWards: Ward[] = [
-  {
-    id: 1,
-    name: "General Ward",
-    patients: [
-      { id: 1, name: "John Doe", bed: 1, gender: "Male", status: "Occupied" },
-      { id: 2, name: "Jane Smith", bed: 2, gender: "Female", status: "Occupied" },
-      // other beds can be unoccupied initially
-      { id: 3, name: "Alice Green", bed: 3, gender: "Female", status: "Unoccupied" },
-      { id: 4, name: "Bob Brown", bed: 4, gender: "Male", status: "Unoccupied" },
-    ],
-  },
-  {
-    id: 2,
-    name: "ICU Ward",
-    patients: [
-      { id: 3, name: "Alice Green", bed: 1, gender: "Female", status: "Occupied" },
-      // other beds unoccupied initially
-      { id: 4, name: "Bob Brown", bed: 2, gender: "Male", status: "Unoccupied" },
-      { id: 5, name: "Charlie Clark", bed: 3, gender: "Male", status: "Unoccupied" },
-    ],
-  },
-];
+// Sample wards data
+const initialWards: Ward[] = dummyPatients;
+
+
 // Modal component for admitting new patient
-const AdmitModal: React.FC<{ onClose: () => void; onSave: (patient: Patient) => void }> = ({
-  onClose,
-  onSave,
-}) => {
-
-  // interface Ward {
-  //   id: number;
-  //   hospitalId: number;
-  //   name: string;
-  //   totalBeds: number;
-  //   occupiedBeds: number;
-  //   availableBeds: number;
-  // }
-  const patient = {
-    id: 1,              // Default ID (can be autoincremented later)
-    hospitalId: 1,       // Default hospital ID (replace with actual logic)
-    name: "",            // Default ward name
-    totalBeds: 0,        // Default total beds
-    occupiedBeds: 0,     // Default occupied beds
-    availableBeds: 0,    // Default available beds (calculated automatically)
-    ticket: []
-  }
-
-  
-  const [wards, setWards] = useState(patient);
-  const [patientName, setPatientName] = useState("");
-  const [patientGender, setPatientGender] = useState("");
-  const [selectedBed, setSelectedBed] = useState(0); // Use state for selected bed
-
-  const [availableBeds, setAvailableBeds] = useState<number[]>([]); // State for available beds
-
-  // Function to calculate available beds on modal open
-  useEffect(() => {
-    const wards = initialWards; // Get wards from props or state
-    const selectedWardId = 1; // Assuming selected ward is retrieved (replace with actual logic)
-    const selectedWard = wards.find((ward) => ward.id === selectedWardId);
-
-    if (selectedWard) {
-      const occupiedBeds = selectedWard.patients.map((patient) => patient.bed);
-      const allBeds = [...Array(10).keys()].map((i) => i + 1); // Assuming 10 beds (adjust)
-      const available = allBeds.filter((bed) => !occupiedBeds.includes(bed));
-      setAvailableBeds(available);
-    }
-  }, []); // Run only once on modal open
-  const handleSubmit = async () => {
-    await axios.post(route + `/beds/admin/assign-bed/1/1`, {
-      hospitalId: 1
-    });
-  }
-
-  // const handleSubmit = () => {
-  //   if (patientName && patientGender && selectedBed) {
-  //     const newPatient: Patient = {
-  //       id: Math.floor(Math.random() * 10000),
-  //       name: patientName,
-  //       bed: selectedBed,
-  //       gender: patientGender,
-  //       status: "Occupied",
-  //     };
-  //     onSave(newPatient);
-  //     onClose();
-  //   }
-  // };
-
-  return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
-      <div className="w-96 bg-white p-6 rounded-lg shadow-lg">
-        <h2 className="text-xl font-semibold mb-4">Admit Patient</h2>
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">Patient Name</label>
-          <input
-            type="text"
-            value={patientName}
-            onChange={(e) => setPatientName(e.target.value)}
-            className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">Gender</label>
-          <select
-            value={patientGender}
-            onChange={(e) => setPatientGender(e.target.value)}
-            className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
-          >
-            <option value="">Select Gender</option>
-            <option value="MALE">Male</option>
-            <option value="FEMALE">Female</option>
-            <option value="TRANS">Other</option>
-          </select>
-        </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">Bed Number</label>
-          <select
-            value={selectedBed}
-            onChange={(e) => setSelectedBed(Number(e.target.value))}
-            className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
-          >
-            <option value="">Select Bed</option>
-            {availableBeds.map((bed) => (
-              <option key={bed} value={bed}>
-                {bed}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="flex justify-end space-x-4">
-          <button onClick={onClose} className="px-4 py-2 bg-gray-200 rounded-md">
-            Cancel
-          </button>
-          <button onClick={handleSubmit} className="px-4 py-2 bg-green-500 text-white rounded-md">
-            Save
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-
-};
 
 // PatientRow Component for displaying individual patient details
 const PatientRow: React.FC<{ patient: Patient; onDischarge: () => void; onDetails: () => void }> = ({
@@ -168,21 +42,21 @@ const PatientRow: React.FC<{ patient: Patient; onDischarge: () => void; onDetail
   onDetails,
 }) => {
   return (
-    <tr className="hover:bg-gray-50 transition">
-      <td className="px-4 py-4 text-gray-800">{patient.name}</td>
-      <td className="px-4 py-4 text-gray-800">{patient.bed}</td>
-      <td className="px-4 py-4 text-gray-800">{patient.gender}</td>
+    <tr className="hover:bg-gray-700 transition">
+      <td className="px-4 py-4 text-white">{patient.name}</td>
+      <td className="px-4 py-4 text-white">{patient.bed}</td>
+      <td className="px-4 py-4 text-white">{patient.gender}</td>
       <td className="px-4 py-4">
-        <span className="px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-600">
+        <span className={`px-3 py-1 rounded-full text-sm font-medium ${patient.status === "Occupied" ? "bg-red-600" : "bg-green-600"} text-white`}>
           {patient.status}
         </span>
       </td>
       <td className="px-4 py-4">
         <div className="flex items-center space-x-3">
-          <button onClick={onDetails} className="text-blue-600 hover:text-blue-800 font-medium border border-blue-600 px-4 py-2 rounded-lg transition">
+          <button onClick={onDetails} className="text-blue-400 hover:text-blue-600 font-medium transition">
             Details
           </button>
-          <button onClick={onDischarge} className="bg-red-100 text-red-600 hover:bg-red-200 px-4 py-2 rounded-lg font-medium transition">
+          <button onClick={onDischarge} className="text-red-400 hover:text-red-600 font-medium transition">
             Discharge
           </button>
         </div>
@@ -196,17 +70,22 @@ const AdministratorWard: React.FC = () => {
   const [wards, setWards] = useState<Ward[]>(initialWards);
   const [selectedWard, setSelectedWard] = useState<number>(1);
   const [showAdmitModal, setShowAdmitModal] = useState(false);
-  const [currentPatient, setCurrentPatient] = useState<Patient | null>(null); 
-  
+  const [showRequestModal, setShowRequestModal] = useState(false);
+  const [currentPatient, setCurrentPatient] = useState<Patient | null>(null);
+
+  const [socketPatient, setSocketPatient] = useState<Patient | null>(null);
 
   useEffect(() => {
-    socket.on('bed-request-response', (data) => {
-      console.log("Patient req: ",data);
-    })
+    socket.on('admit-request-response', (data: Patient) => {
+      console.log("admin admit patient modal", data);
+      setSocketPatient(data);
+    });
+
     return () => {
-      socket.off('bed-request-response');
-    }
-  })
+      socket.off('admit-patient-response');
+    };
+  }, []);
+
   const handleAdmitPatient = (newPatient: Patient) => {
     setWards((prevWards) =>
       prevWards.map((ward) =>
@@ -230,93 +109,134 @@ const AdministratorWard: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-10 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-lg p-6">
-        <h1 className="text-3xl font-bold mb-6">Ward Management</h1>
+    <div className="bg-gray-800 text-white h-full shadow-lg p-8">
+      <h1 className="text-4xl font-bold mb-6">Ward Management</h1>
 
-        {/* Ward Selector */}
-        <div className="flex items-center space-x-4 mb-6">
-          <label className="text-lg font-medium text-gray-700">Wards</label>
-          <select
-            className="border border-gray-300 rounded-lg p-2 text-gray-700 focus:ring-blue-500 focus:border-blue-500"
-            value={selectedWard}
-            onChange={(e) => setSelectedWard(Number(e.target.value))}
-          >
-            {wards.map((ward) => (
-              <option key={ward.id} value={ward.id}>
-                {ward.name}
-              </option>
-            ))}
-          </select>
-          <button
-            onClick={() => setShowAdmitModal(true)}
-            className="ml-auto bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition"
-          >
-            Admit Patient
-          </button>
-          <button
-            onClick={() => setShowAdmitModal(true)}
-            className="ml-auto bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition"
-          >
-            Bed Request
-          </button>
-        </div>
+      {/* Ward Selector */}
+      <div className="flex items-center space-x-4 mb-6">
+        <label className="text-lg font-medium">Wards</label>
+        <select
+          value={selectedWard}
+          onChange={(e) => setSelectedWard(Number(e.target.value))}
+          className="p-2 rounded bg-gray-700 focus:ring-2 focus:ring-purple-500"
+        >
+          {wards.map((ward) => (
+            <option key={ward.id} value={ward.id}>
+              {ward.name}
+            </option>
+          ))}
+        </select>
+        <button
+          onClick={() => setShowAdmitModal(true)}
+          className="ml-auto px-4 py-2 bg-purple-600 text-white flex items-center rounded-lg hover:bg-purple-700 transition"
+        >
+          <FaUserPlus className="mr-2" />
+          Admit Patient
+        </button>
 
-        {/* Patient Table */}
-        <div className="overflow-hidden shadow rounded-lg">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Patient</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Bed</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Gender</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Status</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600"></th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {wards
-                .find((ward) => ward.id === selectedWard)
-                ?.patients.map((patient) => (
-                  <PatientRow
-                    key={patient.id}
-                    patient={patient}
-                    onDischarge={() => handleDischargePatient(patient.id)}
-                    onDetails={() => handleShowDetails(patient)}
-                  />
-                ))}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Patient Details Modal */}
-        {currentPatient && (
-          <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
-            <div className="bg-white p-6 rounded-lg shadow-lg">
-              <h2 className="text-xl font-semibold mb-4">Patient Details</h2>
-              <p><strong>Name:</strong> {currentPatient.name}</p>
-              <p><strong>Gender:</strong> {currentPatient.gender}</p>
-              <p><strong>Bed:</strong> {currentPatient.bed}</p>
-              <div className="flex justify-end mt-4">
-                <button
-                  onClick={() => setCurrentPatient(null)}
-                  className="px-4 py-2 bg-gray-200 rounded-md"
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Admit Modal */}
-        {showAdmitModal && (
-          <AdmitModal
-            onClose={() => setShowAdmitModal(false)}
-            onSave={handleAdmitPatient}
-          />
-        )}
+        <button
+          onClick={() => setShowRequestModal(true)}
+          className="ml-auto px-4 py-2 bg-purple-600 text-white flex items-center rounded-lg hover:bg-purple-700 transition"
+        >
+          <FaUserPlus className="mr-2" />
+          Admit Patient
+        </button>
       </div>
+
+      {/* Patient Table */}
+      <table className="w-full table-auto">
+        <thead>
+          <tr className="text-left text-purple-400 border-b border-gray-700">
+            <th className="px-4 py-2">Name</th>
+            <th className="px-4 py-2">Bed</th>
+            <th className="px-4 py-2">Gender</th>
+            <th className="px-4 py-2">Status</th>
+            <th className="px-4 py-2">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {wards
+            .find((ward) => ward.id === selectedWard)
+            ?.patients.map((patient) => (
+              <PatientRow
+                key={patient.id}
+                patient={patient}
+                onDischarge={() => handleDischargePatient(patient.id)}
+                onDetails={() => handleShowDetails(patient)}
+              />
+            ))}
+        </tbody>
+      </table>
+
+      {/* Admit Modal */}
+      {showAdmitModal && <AdmitModal onClose={() => setShowAdmitModal(false)} onSave={handleAdmitPatient} selectedWardId={selectedWard} wards={wards} />}
+      {/* Admit Modal */}
+      {showRequestModal && <RequestModal onClose={() => setShowRequestModal(false)} patient={socketPatient} onSave={handleAdmitPatient} selectedWardId={selectedWard} wards={wards} />}
+
+      {/* Patient Details Modal */}
+      {currentPatient && (
+        <div className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center">
+        <div className="bg-gradient-to-br from-gray-900 to-gray-800 text-white w-96 p-8 rounded-xl shadow-xl transform transition-all duration-500 ease-in-out">
+          {/* Modal Header */}
+          <h2 className="text-3xl font-semibold mb-6 flex items-center">
+            <FaUser className="mr-3 text-gray-700" />
+            Patient Details
+          </h2>
+  
+          {/* Patient Info */}
+          <div className="space-y-4 text-md font-normal">
+            <p className="flex items-center">
+              <FaUser className="mr-2 text-pink-500" />
+              <span className="font-semibold text-gray-300">Name : </span> {currentPatient.name}
+            </p>
+  
+            <p className="flex items-center">
+              <FaBed className="mr-2 text-green-500" />
+              <span className="font-semibold text-gray-300">Bed : </span> {currentPatient.bed}
+            </p>
+  
+            <p className="flex items-center">
+              <FaVenusMars className="mr-2 text-blue-400" />
+              <span className="font-semibold text-gray-300">Gender : </span> {currentPatient.gender}
+            </p>
+  
+            <p className="flex items-center">
+              <FaCalendarAlt className="mr-2 text-orange-400" />
+              <span className="font-semibold text-gray-300">Age : </span> {currentPatient.age}
+            </p>
+  
+            <p className="flex items-center">
+              <FaTint className="mr-2 text-red-500" />
+              <span className="font-semibold text-gray-300">Blood Type : </span> {currentPatient.bloodtype}
+            </p>
+  
+            <p className="flex items-center">
+              <FaPhoneAlt className="mr-2 text-yellow-500" />
+              <span className="font-semibold text-gray-300">Contact : </span> {currentPatient.contact}
+            </p>
+  
+            <p className="flex items-center">
+              <span className="font-semibold text-gray-300">Status : </span>
+              <span className={`ml-2 px-3 py-1 rounded-full text-sm font-medium ${
+                currentPatient.status === "Occupied" ? "bg-red-700" : "bg-green-700"
+              }`}>
+                {currentPatient.status}
+              </span>
+            </p>
+          </div>
+  
+          {/* Modal Actions */}
+          <div className="flex justify-end mt-8">
+            <button
+              onClick={() => setCurrentPatient(null)}
+              className="px-4 py-2 bg-gradient-to-r from-red-700 to-red-600 text-white rounded-md shadow-lg hover:from-red-600 hover:to-red-500 transition ease-in-out duration-300 transform hover:scale-105"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+      )}
     </div>
   );
 };

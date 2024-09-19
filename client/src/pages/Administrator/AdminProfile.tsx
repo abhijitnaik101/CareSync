@@ -89,7 +89,7 @@ const AdminProfile: React.FC = () => {
         <div className="p-6 space-y-8">
           <div className="flex items-center space-x-6 mb-8">
             <img
-              src="/path/to/profile-picture.jpg"
+              src="https://media.istockphoto.com/id/1311511363/photo/headshot-portrait-of-smiling-male-doctor-with-tablet.jpg?s=612x612&w=0&k=20&c=w5TecWtlA_ZHRpfGh20II-nq5AvnhpFu6BfOfMHuLMA="
               alt="Profile"
               className="w-32 h-32 rounded-full object-cover border-4 border-blue-500 shadow-lg"
             />

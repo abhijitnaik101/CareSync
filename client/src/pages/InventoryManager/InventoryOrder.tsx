@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import MedicineTrack from "./InventoryStatus";
+import { FaTimes } from "react-icons/fa";
 
 interface InventoryOrderProps {
   orders: {
@@ -152,25 +153,28 @@ const InventoryOrder: React.FC<InventoryOrderProps> = () => {
       {/* Modal */}
       {selectedOrder && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-gray-900 p-6 rounded-lg shadow-lg">
-            <button
-              className="text-gray-400 hover:text-gray-200 transition"
-              onClick={closeModal}
-            >
-              Close
-            </button>
-            <MedicineTrack
-              name={selectedOrder.name}
-              supplier={selectedOrder.supplier}
-              arrival={selectedOrder.arrival}
-              status={
-                selectedOrder.status as "packaged" | "shipped" | "arrived"
-              }
-              from="Origin"
-              to="Destination"
-            />
-          </div>
+        <div className="bg-gray-900 p-6 rounded-lg shadow-lg relative">
+          {/* Close Button */}
+          <button
+            className="absolute top-4 right-4 text-gray-400 hover:text-gray-200 transition-transform transform hover:scale-110"
+            onClick={closeModal}
+          >
+            <FaTimes className="w-6 h-6" />
+          </button>
+      
+          {/* Medicine Tracking Info */}
+          <MedicineTrack
+            name={selectedOrder.name}
+            supplier={selectedOrder.supplier}
+            arrival={selectedOrder.arrival}
+            status={
+              selectedOrder.status as "packaged" | "shipped" | "arrived"
+            }
+            from="Origin"
+            to="Destination"
+          />
         </div>
+      </div>
       )}
     </div>
   );
