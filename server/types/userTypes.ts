@@ -31,7 +31,7 @@ export const ReceptionRequest = z.object({
     name: z.string(),
     email: z.string().email(),
     password: z.string().min(8).max(100),
-    role: z.literal("Reception"),
+    role: z.literal("Receptionist"),
     hospitalName: z.string(),
     hospitalReceptionpass: z.string()
 });

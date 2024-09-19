@@ -1,4 +1,4 @@
-import { useState, useEffect, FC, ChangeEvent } from 'react';
+import { useState, useEffect, FC, ChangeEvent, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import axios from 'axios';
@@ -8,51 +8,47 @@ import { route } from '../../backendroute';
 type Role = "Admin" | "Patient" | "Doctor" | "Inventoryman" | "Receptionist";
 
 // Define form data structure for each role
-interface AdminForm {
+type AdminForm = {
   name: string;
   email: string;
   password: string;
-  confirmPassword: string;
   hospitalName: string;
   hospitalAdminpass: string;
 }
 
-interface InventorymanForm {
+type InventorymanForm = {
   name: string;
   email: string;
   password: string;
-  confirmPassword: string;
   hospitalName: string;
   hospitalInventorypass: string;
 }
 
-interface DoctorForm {
+type DoctorForm = {
   name: string;
   email: string;
   password: string;
-  confirmPassword: string;
   specialty?: string;
   hospitalName: string;
   hospitalDocpass: string;
+  departmentId: number;
   description?: string;
-  workingdays: number;
+  workingdays: string[];
 }
 
-interface PatientForm {
+type PatientForm = {
   name: string;
   email: string;
   password: string;
-  confirmPassword: string;
   age: number;
   bloodType?: string;
   contact: string;
 }
 
-interface ReceptionistForm {
+type ReceptionistForm = {
   name: string;
   email: string;
   password: string;
-  confirmPassword: string;
   hospitalName: string;
   hospitalReceptionpass: string;
 }
@@ -60,11 +56,17 @@ interface ReceptionistForm {
 // Define union type for all forms
 type FormData = AdminForm | InventorymanForm | DoctorForm | PatientForm | ReceptionistForm;
 
+interface Department {
+  id: number;
+  name: string;
+}
+
 interface Hospital {
   id: number;
   name: string;
   coordinates: number[];
   services: string[];
+  departments: Department[];
 }
 
 const Register = () => {
@@ -72,6 +74,8 @@ const Register = () => {
   const [role, setRole] = useState<Role | "">('');
   const [hospitalList, setHospitalList] = useState<Hospital[]>([]);
   const [formData, setFormData] = useState<FormData | Partial<FormData>>({});
+  const [confirmPassword, setConfirmPassword] = useState<string>('');
+  const [departmentList, setDepartmentList] = useState<Department[]>([]);
   const [isRoleSelected, setIsRoleSelected] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -102,107 +106,49 @@ const Register = () => {
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    if (name == "confirmPassword")
+      setConfirmPassword(value);
+    else if (name == "hospitalName") {
+      setFormData((prev) => ({
+        ...prev,
+        hospitalName: value,
+      }));
+      const hospital = hospitalList.find(h => h.name == value);
+      setDepartmentList(hospital?.departments || []);
+    }
+    else if (name == "workingdays" || name == "age") {
+      const days = value.split(", ");
+      setFormData((prev) => ({
+       ...prev,
+        [name]: days
+      }));
+    }
+    else if (name == "departmentId") 
+      setFormData((prev) => ({
+        ...prev,
+        [name]: Number(value),
+      }));
+    else setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = async () => {
-    if (formData.password !== formData.confirmPassword) {
+    if (formData.password !== confirmPassword) {
       setError("Passwords do not match");
       return;
     }
 
     const payload = { ...formData, role };
     try {
-      await axios.post(route + '/auth/register', payload);
-      alert('Registration Successful');
+      const response = await axios.post<{ token: string, user: any }>(route + '/auth/register', payload);
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+      navigate(role == "Inventoryman" ? "/inventory-manager" : "/" + role.toLocaleLowerCase())
     } catch (error) {
       console.error("Error during registration:", error);
-    }
-  };
-
-  const RenderFormFields: FC = () => {
-    switch (role) {
-      case 'Admin':
-        return (
-          <>
-            <input type="text" name="name" placeholder="Name" onChange={handleChange} />
-            <input type="email" name="email" placeholder="Email" onChange={handleChange} />
-            <input type="password" name="password" placeholder="Password" onChange={handleChange} />
-            <input type="password" name="confirmPassword" placeholder="Confirm Password" onChange={handleChange} />
-            <select name="hospitalName" onChange={handleChange}>
-              <option value="">Select Hospital</option>
-              {hospitalList.map(h => (
-                <option key={h.id} value={h.name}>{h.name}</option>
-              ))}
-            </select>
-            <input type="password" name="hospitalAdminpass" placeholder="Admin Password" onChange={handleChange} />
-          </>
-        );
-      case 'Inventoryman':
-        return (
-          <>
-            <input type="text" name="name" placeholder="Name" onChange={handleChange} />
-            <input type="email" name="email" placeholder="Email" onChange={handleChange} />
-            <input type="password" name="password" placeholder="Password" onChange={handleChange} />
-            <input type="password" name="confirmPassword" placeholder="Confirm Password" onChange={handleChange} />
-            <select name="hospitalName" onChange={handleChange}>
-              <option value="">Select Hospital</option>
-              {hospitalList.map(h => (
-                <option key={h.id} value={h.name}>{h.name}</option>
-              ))}
-            </select>
-            <input type="password" name="hospitalInventorypass" placeholder="Inventory Password" onChange={handleChange} />
-          </>
-        );
-      case 'Doctor':
-        return (
-          <>
-            <input type="text" name="name" placeholder="Name" onChange={handleChange} />
-            <input type="email" name="email" placeholder="Email" onChange={handleChange} />
-            <input type="password" name="password" placeholder="Password" onChange={handleChange} />
-            <input type="password" name="confirmPassword" placeholder="Confirm Password" onChange={handleChange} />
-            <input type="text" name="specialty" placeholder="Specialty" onChange={handleChange} />
-            <select name="hospitalName" onChange={handleChange}>
-              <option value="">Select Hospital</option>
-              {hospitalList.map(h => (
-                <option key={h.id} value={h.name}>{h.name}</option>
-              ))}
-            </select>
-            <input type="password" name="hospitalDocpass" placeholder="Doctor Password" onChange={handleChange} />
-            <textarea name="description" placeholder="Description" onChange={handleChange} />
-            <input type="number" name="workingdays" placeholder="Working Days" onChange={handleChange} />
-          </>
-        );
-      case 'Patient':
-        return (
-          <>
-            <input type="text" name="name" placeholder="Name" onChange={handleChange} />
-            <input type="email" name="email" placeholder="Email" onChange={handleChange} />
-            <input type="password" name="password" placeholder="Password" onChange={handleChange} />
-            <input type="password" name="confirmPassword" placeholder="Confirm Password" onChange={handleChange} />
-            <input type="number" name="age" placeholder="Age" onChange={handleChange} />
-            <input type="text" name="bloodType" placeholder="Blood Type" onChange={handleChange} />
-            <input type="text" name="contact" placeholder="Contact Number" onChange={handleChange} />
-          </>
-        );
-      case 'Receptionist':
-        return (
-          <>
-            <input type="text" name="name" placeholder="Name" onChange={handleChange} />
-            <input type="email" name="email" placeholder="Email" onChange={handleChange} />
-            <input type="password" name="password" placeholder="Password" onChange={handleChange} />
-            <input type="password" name="confirmPassword" placeholder="Confirm Password" onChange={handleChange} />
-            <select name="hospitalName" onChange={handleChange}>
-              <option value="">Select Hospital</option>
-              {hospitalList.map(h => (
-                <option key={h.id} value={h.name}>{h.name}</option>
-              ))}
-            </select>
-            <input type="password" name="hospitalReceptionpass" placeholder="Receptionist Password" onChange={handleChange} />
-          </>
-        );
-      default:
-        return null;
     }
   };
 
@@ -238,7 +184,7 @@ const Register = () => {
               {role} Registration
             </h1>
             <div className="space-y-4">
-              <RenderFormFields />
+              <RenderFormFields role={role} hospitalList={hospitalList} handleChange={handleChange} formData={formData} departmentList={departmentList} />
               <button
                 onClick={handleSubmit}
                 className="w-full px-6 py-3 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-300 transition duration-300"
@@ -275,6 +221,101 @@ const Register = () => {
 
     </div>
   );
+};
+
+const RenderFormFields: FC<{ role: Role | "", hospitalList: Hospital[], handleChange: (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void, formData: Partial<FormData>, departmentList: Department[] }> = ({ role, hospitalList, handleChange, formData, departmentList }) => {
+  const inputClass = "w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4";
+  return useMemo(() => {
+    switch (role) {
+      case 'Admin':
+        return (
+          <>
+            <input className={inputClass} type="text" name="name" placeholder="Name" value={formData.name || ''} onChange={handleChange} />
+            <input className={inputClass} type="email" name="email" placeholder="Email" value={formData.email || ''} onChange={handleChange} />
+            <input className={inputClass} type="password" name="password" placeholder="Password" value={formData.password || ''} onChange={handleChange} />
+            <input className={inputClass} type="password" name="confirmPassword" placeholder="Confirm Password" onChange={handleChange} />
+            <select className={inputClass} name="hospitalName" onChange={handleChange}>
+              <option value="">Select Hospital</option>
+              {hospitalList.map(h => (
+                <option key={h.id} value={h.name}>{h.name}</option>
+              ))}
+            </select>
+            <input className={inputClass} type="password" name="hospitalAdminpass" placeholder="Admin Password" onChange={handleChange} />
+          </>
+        );
+      case 'Inventoryman':
+        return (
+          <>
+            <input className={inputClass} type="text" name="name" placeholder="Name" value={formData.name || ''} onChange={handleChange} />
+            <input className={inputClass} type="email" name="email" placeholder="Email" value={formData.email || ''} onChange={handleChange} />
+            <input className={inputClass} type="password" name="password" placeholder="Password" value={formData.password || ''} onChange={handleChange} />
+            <input className={inputClass} type="password" name="confirmPassword" placeholder="Confirm Password" onChange={handleChange} />
+            <select className={inputClass} name="hospitalName" onChange={handleChange}>
+              <option value="">Select Hospital</option>
+              {hospitalList.map(h => (
+                <option key={h.id} value={h.name}>{h.name}</option>
+              ))}
+            </select>
+            <input className={inputClass} type="password" name="hospitalInventorypass" placeholder="Inventory Password" onChange={handleChange} />
+          </>
+        );
+      case 'Doctor':
+        return (
+          <>
+            <input className={inputClass} type="text" name="name" placeholder="Name" value={formData.name || ''} onChange={handleChange} />
+            <input className={inputClass} type="email" name="email" placeholder="Email" value={formData.email || ''} onChange={handleChange} />
+            <input className={inputClass} type="password" name="password" placeholder="Password" value={formData.password || ''} onChange={handleChange} />
+            <input className={inputClass} type="password" name="confirmPassword" placeholder="Confirm Password" onChange={handleChange} />
+            <input className={inputClass} type="text" name="specialty" placeholder="Specialty" onChange={handleChange} />
+            <select className={inputClass} name="hospitalName" onChange={handleChange}>
+              <option value="">Select Hospital</option>
+              {hospitalList.map(h => (
+                <option key={h.id} value={h.name}>{h.name}</option>
+              ))}
+            </select>
+            <select className={inputClass} name="departmentId" onChange={handleChange}>
+              <option value="">Select Department</option>
+              {departmentList.map(d => (
+                <option key={d.id} value={Number(d.id)}>{d.name}</option>
+              ))}
+            </select>
+            <input className={inputClass} type="password" name="hospitalDocpass" placeholder="Doctor Password" onChange={handleChange} />
+            <textarea className={inputClass} name="description" placeholder="Description" onChange={handleChange} />
+            <input className={inputClass} type="text" name="workingdays" placeholder="Working Days" onChange={handleChange} />
+          </>
+        );
+      case 'Patient':
+        return (
+          <>
+            <input className={inputClass} type="text" name="name" placeholder="Name" value={formData.name || ''} onChange={handleChange} />
+            <input className={inputClass} type="email" name="email" placeholder="Email" value={formData.email || ''} onChange={handleChange} />
+            <input className={inputClass} type="password" name="password" placeholder="Password" value={formData.password || ''} onChange={handleChange} />
+            <input className={inputClass} type="password" name="confirmPassword" placeholder="Confirm Password" onChange={handleChange} />
+            <input className={inputClass} type="number" name="age" placeholder="Age" onChange={handleChange} />
+            <input className={inputClass} type="text" name="bloodType" placeholder="Blood Type" onChange={handleChange} />
+            <input className={inputClass} type="text" name="contact" placeholder="Contact Number" onChange={handleChange} />
+          </>
+        );
+      case 'Receptionist':
+        return (
+          <>
+            <input className={inputClass} type="text" name="name" placeholder="Name" value={formData.name || ''} onChange={handleChange} />
+            <input className={inputClass} type="email" name="email" placeholder="Email" value={formData.email || ''} onChange={handleChange} />
+            <input className={inputClass} type="password" name="password" placeholder="Password" value={formData.password || ''} onChange={handleChange} />
+            <input className={inputClass} type="password" name="confirmPassword" placeholder="Confirm Password" onChange={handleChange} />
+            <select className={inputClass} name="hospitalName" onChange={handleChange}>
+              <option value="">Select Hospital</option>
+              {hospitalList.map(h => (
+                <option key={h.id} value={h.name}>{h.name}</option>
+              ))}
+            </select>
+            <input className={inputClass} type="password" name="hospitalReceptionpass" placeholder="Receptionist Password" onChange={handleChange} />
+          </>
+        );
+      default:
+        return null;
+    }
+  }, [role, hospitalList, formData, departmentList]);
 };
 
 export default Register;

@@ -46,7 +46,7 @@ export const getHospitals = async (req: Request, res: Response) => {
         coordinates: true,
         services: true,
         departments: {
-          include: {
+          select: { id: true, name: true,
             doctors: {
               select: { id: true, name: true, averageTreatmentTime: true }
             }

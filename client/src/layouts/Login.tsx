@@ -15,10 +15,11 @@ const Login = () => {
 
     const handleLogin = async () => {
         try {
-            const responce = await axios.post(route + '/auth/login', {
+            const responce = await axios.post<{ token: string, user: any }>(route + '/auth/login', {
                 email, password, role
             });
             localStorage.setItem('token', responce.data.token);
+            localStorage.setItem('user', JSON.stringify(responce.data.user));
             navigate(`/${role === "Inventoryman" ? "inventory-manager" : role.toLowerCase()}`);
         } catch (error) {
             setError("Wrong email or password");
