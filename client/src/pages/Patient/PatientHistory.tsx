@@ -55,16 +55,16 @@ const HistoryCard: React.FC<HistoryCardProps> = ({
   onDetailsClick,
 }) => {
   return (
-    <div className="p-4 bg-gray-800 border border-gray-700 rounded-lg flex justify-between items-center">
+    <div className="p-4 bg-gray-800 border border-gray-700 rounded-lg flex flex-col md:flex-row justify-between items-start md:items-center space-y-2 md:space-y-0">
       <div>
         <p className="font-medium text-white">{item.hospital}</p>
         <p className="text-sm text-gray-400">Dr. {item.doctor}</p>
       </div>
-      <div className="text-sm text-gray-400">
+      <div className="text-sm text-gray-400 md:text-right">
         <p>Visit Date</p>
         <p>{item.visitDate}</p>
       </div>
-      <div className="text-sm text-gray-400">
+      <div className="text-sm text-gray-400 md:text-right">
         <p>Disease</p>
         <p>{item.disease}</p>
       </div>
@@ -148,9 +148,10 @@ const PatientHistory: React.FC = () => {
 
   return (
     <div
-      className="w-full flex flex-col p-6 mx-auto shadow-lg bg-gray-900 h-screen"
+      className="w-full flex flex-col p-6 mx-auto shadow-lg bg-gray-900 min-h-screen"
       style={{
-        backgroundImage: "url(https://images.unsplash.com/photo-1558980664-10b1b5d321f6?crop=entropy&fit=crop&w=1200&q=80)", // Background image
+        backgroundImage:
+          "url(https://images.unsplash.com/photo-1558980664-10b1b5d321f6?crop=entropy&fit=crop&w=1200&q=80)", // Background image
         backgroundSize: "cover",
         backgroundBlendMode: "overlay",
       }}
@@ -162,7 +163,7 @@ const PatientHistory: React.FC = () => {
         <input
           type="text"
           placeholder="Search hospital or doctor"
-          className="p-3 w-full rounded-md bg-gray-800 text-white border border-gray-600"
+          className="p-3 w-full rounded-md bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
           value={searchTerm}
           onChange={handleSearchChange}
         />
@@ -181,7 +182,7 @@ const PatientHistory: React.FC = () => {
         )}
         <input
           type="date"
-          className="p-3 mt-4 w-full rounded-md bg-gray-800 text-white border border-gray-600"
+          className="p-3 mt-4 w-full rounded-md bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
           value={selectedDate}
           onChange={handleDateChange}
         />

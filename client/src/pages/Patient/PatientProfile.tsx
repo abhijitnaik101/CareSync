@@ -1,7 +1,18 @@
-import React, { useState } from 'react';
-import { FaCalendarAlt, FaEnvelope, FaHeartbeat, FaLock, FaPhone, FaUser, FaEdit, FaPhoneAlt, FaTint, FaUserCircle } from 'react-icons/fa';
-import { useRecoilState } from 'recoil';
-import patientState from '../../recoil/atoms/patientAtom';
+import React, { useState } from "react";
+import {
+  FaCalendarAlt,
+  FaEnvelope,
+  FaHeartbeat,
+  FaLock,
+  FaPhone,
+  FaUser,
+  FaEdit,
+  FaPhoneAlt,
+  FaTint,
+  FaUserCircle,
+} from "react-icons/fa";
+import { useRecoilState } from "recoil";
+import patientState from "../../recoil/atoms/patientAtom";
 
 // Interface for Patient Profile
 interface Patient {
@@ -16,13 +27,13 @@ interface Patient {
 
 // Dummy initial patient data
 const initialPatientData: Patient = {
-  name: 'John Doe',
-  email: 'john.doe@example.com',
+  name: "John Doe",
+  email: "john.doe@example.com",
   age: 35,
-  bloodtype: 'O+',
-  contact: '123-456-7890',
-  password: 'password123',
-  profilePicture: '', // Will be updated after upload
+  bloodtype: "O+",
+  contact: "123-456-7890",
+  password: "password123",
+  profilePicture: "", // Will be updated after upload
 };
 
 const PatientForm: React.FC = () => {
@@ -32,7 +43,9 @@ const PatientForm: React.FC = () => {
   const [profileImage, setProfileImage] = useState<string | null>(null);
 
   // Function to handle form input changes
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setPatient((prevState: any) => ({
       ...prevState,
@@ -59,8 +72,14 @@ const PatientForm: React.FC = () => {
     e.preventDefault();
 
     // Basic validation
-    if (!patient.name || !patient.email || !patient.age || !patient.contact || !patient.password) {
-      setErrorMessage('Please fill in all required fields.');
+    if (
+      !patient.name ||
+      !patient.email ||
+      !patient.age ||
+      !patient.contact ||
+      !patient.password
+    ) {
+      setErrorMessage("Please fill in all required fields.");
       return;
     }
 
@@ -77,12 +96,14 @@ const PatientForm: React.FC = () => {
 
     setErrorMessage(null);
     setIsEditing(false); // Stop editing on submit
-    console.log('Patient Data Submitted:', patient);
+    console.log("Patient Data Submitted:", patient);
   };
 
   return (
     <div className="p-10 h-screen border-l-2 border-white bg-gray-900 text-gray-300">
-      <h2 className="text-3xl font-semibold text-gray-200 mb-8 text-center">Patient Profile</h2>
+      <h2 className="text-3xl font-semibold text-gray-200 mb-8 text-center">
+        Patient Profile
+      </h2>
 
       {/* Profile Picture */}
       <div className="flex justify-center mb-6">
@@ -92,7 +113,10 @@ const PatientForm: React.FC = () => {
             alt="Profile"
             className="rounded-full h-32 w-32 object-cover"
           />
-          <label htmlFor="profilePictureUpload" className="absolute bottom-0 right-0 bg-gray-700 rounded-full p-2 cursor-pointer">
+          <label
+            htmlFor="profilePictureUpload"
+            className="absolute bottom-0 right-0 bg-gray-700 rounded-full p-2 cursor-pointer"
+          >
             <FaEdit className="text-gray-300" />
           </label>
           <input
@@ -115,8 +139,13 @@ const PatientForm: React.FC = () => {
       {!isEditing ? (
         <div className="patient-profile px-8 py-6 rounded-lg shadow-lg bg-gray-800">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-semibold text-gray-200">Patient Profile</h2>
-            <FaEdit className="text-gray-400 cursor-pointer hover:text-indigo-500" onClick={() => setIsEditing(true)} />
+            <h2 className="text-2xl font-semibold text-gray-200">
+              Patient Profile
+            </h2>
+            <FaEdit
+              className="text-gray-400 cursor-pointer hover:text-indigo-500"
+              onClick={() => setIsEditing(true)}
+            />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -144,8 +173,12 @@ const PatientForm: React.FC = () => {
             <div className="flex items-center">
               <FaTint className="text-rose-500 mr-4 text-2xl" />
               <div>
-                <h3 className="text-lg font-medium text-gray-200">Blood Type:</h3>
-                <p className="text-gray-400">{patient.bloodtype || 'Not specified'}</p>
+                <h3 className="text-lg font-medium text-gray-200">
+                  Blood Type:
+                </h3>
+                <p className="text-gray-400">
+                  {patient.bloodtype || "Not specified"}
+                </p>
               </div>
             </div>
             <div className="flex items-center">
@@ -223,7 +256,9 @@ const PatientForm: React.FC = () => {
                   onChange={handleInputChange}
                   className="mt-1 p-3 w-full bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-gray-200"
                 >
-                  <option value="" disabled>Select blood type</option>
+                  <option value="" disabled>
+                    Select blood type
+                  </option>
                   <option value="A+">A+</option>
                   <option value="A-">A-</option>
                   <option value="B+">B+</option>

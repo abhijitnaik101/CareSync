@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { socket } from "../../socket";
-import { FaSearch, FaHospital, FaUserMd, FaCalendarAlt, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
-import { BsClock } from "react-icons/bs";
+import {
+  FaSearch,
+  FaHospital,
+  FaUserMd,
+  FaCalendarAlt,
+  FaCheckCircle,
+  FaTimesCircle,
+} from "react-icons/fa";
 
 // Define the options for the time period dropdown
 const timePeriodOptions = [
@@ -52,7 +58,9 @@ const PatientNotification: React.FC = () => {
   const [selectedPeriod, setSelectedPeriod] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [appointments, setAppointments] = useState(appointmentsData);
-  const [editingAppointmentId, setEditingAppointmentId] = useState<number | null>(null);
+  const [editingAppointmentId, setEditingAppointmentId] = useState<
+    number | null
+  >(null);
   const [newScheduledDate, setNewScheduledDate] = useState<string>("");
 
   useEffect(() => {
@@ -75,13 +83,15 @@ const PatientNotification: React.FC = () => {
 
     return appointments.filter((appointment) => {
       const scheduledTime = new Date(appointment.scheduledOn);
-      const differenceInMinutes = (scheduledTime.getTime() - currentTime.getTime()) / 60000;
+      const differenceInMinutes =
+        (scheduledTime.getTime() - currentTime.getTime()) / 60000;
 
       const matchesQuery =
         appointment.doctor.toLowerCase().includes(lowerQuery) ||
         appointment.hospital.toLowerCase().includes(lowerQuery);
 
-      const matchesTimePeriod = selectedPeriod === null || differenceInMinutes <= selectedPeriod;
+      const matchesTimePeriod =
+        selectedPeriod === null || differenceInMinutes <= selectedPeriod;
 
       return matchesQuery && matchesTimePeriod;
     });
@@ -89,7 +99,10 @@ const PatientNotification: React.FC = () => {
 
   const filteredAppointments = filterAppointments();
 
-  const handleRescheduleClick = (appointmentId: number, currentDate: string) => {
+  const handleRescheduleClick = (
+    appointmentId: number,
+    currentDate: string
+  ) => {
     setEditingAppointmentId(appointmentId);
     setNewScheduledDate(currentDate);
   };
@@ -112,16 +125,16 @@ const PatientNotification: React.FC = () => {
   return (
     <div className="flex h-screen bg-gray-900 text-gray-100 font-poppins">
       {/* Main Content */}
-      <div className="flex-grow p-8">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">Notifications</h1>
-          <div className="flex space-x-4">
+      <div className="flex-grow p-4 sm:p-6 md:p-8">
+        <div className="flex flex-col md:flex-row justify-between items-center mb-6 md:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold">Notifications</h1>
+          <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 mt-4 md:mt-0">
             <div className="relative">
               <FaSearch className="absolute left-2 top-3 text-gray-400" />
               <input
                 type="text"
                 placeholder="Search"
-                className="px-10 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="px-10 py-2 w-full sm:w-auto bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -148,30 +161,38 @@ const PatientNotification: React.FC = () => {
           filteredAppointments.map((appointment) => (
             <div
               key={appointment.id}
-              className="bg-gray-800 p-6 mb-4 rounded-lg shadow-md transition transform hover:scale-105 duration-300 ease-in-out"
+              className="bg-gray-800 p-4 sm:p-6 mb-4 rounded-lg shadow-md transition transform hover:scale-105 duration-300 ease-in-out"
             >
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row items-center justify-between">
                 <div className="flex items-center">
                   <img
                     src={appointment.img}
                     alt={`${appointment.doctor}`}
-                    className="w-16 h-16 rounded-full mr-4"
+                    className="w-16 h-16 sm:w-20 sm:h-20 rounded-full mr-4"
                   />
                   <div>
-                    <h2 className="text-lg font-semibold">{appointment.doctor}</h2>
-                    <p className="text-gray-400">
+                    <h2 className="text-lg font-semibold">
+                      {appointment.doctor}
+                    </h2>
+                    <p className="text-gray-400 text-sm sm:text-base">
                       <FaHospital className="inline-block mr-1" />
                       {appointment.hospital}
                     </p>
-                    <p className="text-gray-400">
+                    <p className="text-gray-400 text-sm sm:text-base">
                       <FaUserMd className="inline-block mr-1" />
                       {appointment.department}
                     </p>
-                    <p className="text-gray-400">
+                    <p className="text-gray-400 text-sm sm:text-base">
                       <FaCalendarAlt className="inline-block mr-1" />
                       {formatDate(appointment.scheduledOn)}
                     </p>
-                    <p className={`text-sm font-bold ${appointment.status === "Confirmed" ? "text-green-400" : "text-yellow-400"}`}>
+                    <p
+                      className={`text-sm sm:text-base font-bold ${
+                        appointment.status === "Confirmed"
+                          ? "text-green-400"
+                          : "text-yellow-400"
+                      }`}
+                    >
                       {appointment.status === "Confirmed" ? (
                         <FaCheckCircle className="inline-block mr-1" />
                       ) : (
@@ -182,7 +203,7 @@ const PatientNotification: React.FC = () => {
                   </div>
                 </div>
                 {editingAppointmentId === appointment.id ? (
-                  <div className="flex space-x-4 ">
+                  <div className="flex flex-col sm:flex-row space-x-0 sm:space-x-4 space-y-4 sm:space-y-0 mt-4 sm:mt-0">
                     <input
                       type="datetime-local"
                       className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none"
@@ -204,8 +225,13 @@ const PatientNotification: React.FC = () => {
                   </div>
                 ) : (
                   <button
-                    className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
-                    onClick={() => handleRescheduleClick(appointment.id, appointment.scheduledOn)}
+                    className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition mt-4 sm:mt-0"
+                    onClick={() =>
+                      handleRescheduleClick(
+                        appointment.id,
+                        appointment.scheduledOn
+                      )
+                    }
                   >
                     Reschedule
                   </button>
@@ -214,7 +240,9 @@ const PatientNotification: React.FC = () => {
             </div>
           ))
         ) : (
-          <p className="text-gray-500">No appointments found matching the search criteria.</p>
+          <p className="text-gray-500">
+            No appointments found matching the search criteria.
+          </p>
         )}
       </div>
     </div>
