@@ -109,7 +109,7 @@ const AdministratorWard: React.FC = () => {
   };
 
   return (
-    <div className="bg-gray-800 text-white h-full shadow-lg p-8">
+    <div className="bg-gray-900 text-white h-full shadow-lg p-8">
       <h1 className="text-4xl font-bold mb-6">Ward Management</h1>
 
       {/* Ward Selector */}

@@ -22,11 +22,13 @@ const ReceptionistLayout: React.FC = () => {
   ];
 
   return (
-    <div className="flex">
+    <div className="flex ">
       <Sidebar links={receptionistLinks} />
-      <Routes>
-        <Route path="dashboard" element={<ReceptionistRegistration registrations={initialRegistrations}/>} />
-      </Routes>
+      <div className='w-full overflow-y-scroll h-screen pt-10 sm:pt-0 bg-gray-900'>
+        <Routes>
+          <Route path="dashboard" element={<ReceptionistRegistration registrations={initialRegistrations} />} />
+        </Routes>
+      </div>
     </div>
   );
 };

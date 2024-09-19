@@ -17,7 +17,7 @@ const DoctorLayout: React.FC = () => {
     <div className="flex">
       <Sidebar links={doctorLinks} />
 
-      <div className="flex-1 overflow-y-scroll h-screen">
+      <div className="flex-1 overflow-y-scroll h-screen pt-10 sm:pt-0 bg-gray-900">
         <Routes>
           <Route path="appointment" element={<DoctorAppointment />} />
           <Route path="notification" element={<DoctorNotification />} />

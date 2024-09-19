@@ -42,7 +42,7 @@ const AdminLayout: React.FC = () => {
   return (
     <div className="flex ">
       <Sidebar links={adminLinks} />
-      <div className="flex-1 overflow-y-scroll h-screen">
+      <div className="flex-1 overflow-y-scroll h-screen pt-10 sm:pt-0 bg-gray-900">
         <Routes>
           <Route path="dashboard" element={<AdminDashboard title="Admin Dashboard" />}/>
           <Route path="ward" element={<AdminWard patients={patientDummy} />} />

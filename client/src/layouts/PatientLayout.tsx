@@ -18,7 +18,7 @@ const PatientLayout: React.FC = () => {
   return (
     <div className="flex w-full">
       <Sidebar links={patientLinks} />
-      <div className='w-full overflow-y-scroll h-screen'>
+      <div className='w-full overflow-y-scroll h-screen pt-10 sm:pt-0 bg-gray-900'>
       <Routes>
         <Route path="map" element={<Map/>} />
         <Route path="medical-history" element={<PatientHistory/>} />

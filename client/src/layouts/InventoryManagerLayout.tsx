@@ -17,7 +17,7 @@ const InventoryManagerLayout: React.FC = () => {
   return (
     <div className="flex">
       <Sidebar links={inventoryManagerLinks} />
-      <div className="flex-1 overflow-y-scroll h-screen">
+      <div className="flex-1 overflow-y-scroll h-screen pt-10 sm:pt-0 bg-gray-900">
         <Routes>
           <Route path="dashboard" element={<InventoryDashboard />} />
           <Route path="inventory" element={<Inventory />} />
